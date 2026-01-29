@@ -69,3 +69,28 @@ export function Component(props: ComponentProps) {
 
 ```
 
+### Conditional Rendering
+
+```tsx
+import { If, Else, Then } from '@hairy/utils'
+
+export function Component() {
+  return (
+    <>
+     {/* simple case */}
+     <If cond={bool}>
+        aaa
+     </If>
+     {/* ternary case */}
+     <If cond={bool}>
+        <Then cond={bool2}>
+          aaa
+        </Then>
+        <Else>
+          <p>False</p>
+        </Else>
+     </If>
+    </>
+  )
+}
+```
