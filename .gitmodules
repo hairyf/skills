@@ -58,3 +58,9 @@
 [submodule "sources/nest"]
 	path = sources/nest
 	url = https://github.com/nestjs/docs.nestjs.com
+[submodule "sources/valtio"]
+	path = sources/valtio
+	url = https://github.com/pmndrs/valtio
+[submodule "vendor/valtio-define"]
+	path = vendor/valtio-define
+	url = https://github.com/hairyf/valtio-define

@@ -12,6 +12,8 @@ export const submodules = {
   'react-use': 'https://github.com/streamich/react-use',
   'tailwindcss': 'https://github.com/tailwindlabs/tailwindcss.com',
 
+  'valtio': 'https://github.com/pmndrs/valtio',
+
   'motion': 'https://github.com/motiondivision/motion',
 
   'next': 'https://github.com/vercel/next.js',
@@ -46,6 +48,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
     official: true,
     source: 'https://github.com/vueuse/skills',
     skills: { 'vueuse-functions': 'vueuse-functions' },
+  },
+
+  'valtio-define': {
+    source: 'https://github.com/hairyf/valtio-define',
+    skills: {
+      'valtio-define': 'valtio-define',
+    },
   },
 
   'vue-best-practices': {
