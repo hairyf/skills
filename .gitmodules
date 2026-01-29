@@ -67,3 +67,6 @@
 [submodule "vendor/hairylib"]
 	path = vendor/hairylib
 	url = https://github.com/hairyf/hairylib
+[submodule "vendor/overlastic"]
+	path = vendor/overlastic
+	url = https://github.com/hairyf/overlastic

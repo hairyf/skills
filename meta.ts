@@ -65,6 +65,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
     },
   },
 
+  'overlastic': {
+    source: 'https://github.com/hairyf/overlastic',
+    skills: {
+      overlastic: 'overlastic',
+    },
+  },
+
   'vue-best-practices': {
     source: 'https://github.com/hyf0/vue-skills',
     skills: {
