@@ -64,3 +64,6 @@
 [submodule "vendor/valtio-define"]
 	path = vendor/valtio-define
 	url = https://github.com/hairyf/valtio-define
+[submodule "vendor/hairylib"]
+	path = vendor/hairylib
+	url = https://github.com/hairyf/hairylib

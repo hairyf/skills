@@ -57,6 +57,14 @@ export const vendors: Record<string, VendorSkillMeta> = {
     },
   },
 
+  'hairylib': {
+    source: 'https://github.com/hairyf/hairylib',
+    skills: {
+      'hairy-utils': 'hairy-utils',
+      'hairy-react-lib': 'hairy-react-lib',
+    },
+  },
+
   'vue-best-practices': {
     source: 'https://github.com/hyf0/vue-skills',
     skills: {
