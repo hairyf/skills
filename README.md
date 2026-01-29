@@ -55,6 +55,13 @@ Generated from official documentation and fine-tuned for agent usage.
 | [vitest](skills/vitest) | Vitest - unit testing framework powered by Vite | [vitest-dev/vitest](https://github.com/vitest-dev/vitest) |
 | [unocss](skills/unocss) | UnoCSS - atomic CSS engine, presets, transformers | [unocss/unocss](https://github.com/unocss/unocss) |
 
+#### Cross-Platform (uni-app)
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [uniapp](skills/uniapp) | uni-app - cross-platform app framework (Vue syntax, App/H5/mini-programs) | [dcloud/unidocs-zh](https://gitcode.com/dcloud/unidocs-zh) |
+| [uniapp-x](skills/uniapp-x) | uni-app x - next-gen cross-platform engine (UTS/uvue/Vue, Android/iOS/HarmonyOS/Web/mini-programs) | [dcloud/unidocs-uni-app-x-zh](https://gitcode.com/dcloud/unidocs-uni-app-x-zh) |
+
 #### React Ecosystem
 
 | Skill | Description | Source |

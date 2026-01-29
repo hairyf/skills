@@ -40,7 +40,7 @@ You don't need to do anything about them unless being asked.
 ├── meta.ts                     # Project metadata (repos & URLs)
 ├── instructions/               # Instructions for generating skills
 │   └── {project}.md            # Instructions for generating skills for {project}
-│ 
+│
 ├── sources/                    # Type 1: OSS repos (generate from docs)
 │   └── {project}/
 │       └── docs/               # Read documentation from here
@@ -55,8 +55,9 @@ You don't need to do anything about them unless being asked.
         ├── SKILL.md           # Index of all skills
         ├── GENERATION.md       # Tracking metadata (for generated skills)
         ├── SYNC.md             # Tracking metadata (for synced skills)
-        └── references/
-            └── *.md            # Individual skill files
+        ├── references/
+        │   └── *.md            # Individual skill files
+        ├── assets/             # Optional: templates, resources
 ```
 
 **Important:** For Type 1 (generated), the `skills/{project}/` name must match `sources/{project}/`. For Type 2 (synced), the output name is configured in `meta.ts` and may differ from the source skill name.
@@ -233,6 +234,14 @@ Source references:
 - {source-url}
 -->
 ```
+
+### assets/
+
+Contains static resources:
+
+- Templates (document templates, configuration templates)
+- Images (diagrams, examples)
+- Data files (lookup tables, schemas)
 
 ## Writing Guidelines
 

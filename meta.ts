@@ -21,6 +21,10 @@ export const submodules = {
   'nest': 'https://github.com/nestjs/docs.nestjs.com',
 
   'vue': 'https://github.com/vuejs/docs',
+
+  'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
+  'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
+
   'pinia': 'https://github.com/vuejs/pinia',
   'nuxt': 'https://github.com/nuxt/nuxt',
   'vite': 'https://github.com/vitejs/vite',
