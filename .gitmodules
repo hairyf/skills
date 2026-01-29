@@ -49,12 +49,12 @@
 [submodule "sources/next"]
 	path = sources/next
 	url = https://github.com/vercel/next.js
-[submodule "sources/nest"]
-	path = sources/nest
-	url = https://github.com/nestjs/nest
-[submodule "sources/react-motion"]
-	path = sources/react-motion
-	url = https://github.com/motiondivision/motion
 [submodule "sources/tailwindcss"]
 	path = sources/tailwindcss
 	url = https://github.com/tailwindlabs/tailwindcss.com
+[submodule "sources/motion"]
+	path = sources/motion
+	url = https://github.com/motiondivision/motion
+[submodule "sources/nest"]
+	path = sources/nest
+	url = https://github.com/nestjs/docs.nestjs.com

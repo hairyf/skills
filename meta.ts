@@ -9,12 +9,13 @@ export interface VendorSkillMeta {
  */
 export const submodules = {
   'react': 'https://github.com/reactjs/react.dev',
-  'react-motion': 'https://github.com/motiondivision/motion',
   'react-use': 'https://github.com/streamich/react-use',
   'tailwindcss': 'https://github.com/tailwindlabs/tailwindcss.com',
 
+  'motion': 'https://github.com/motiondivision/motion',
+
   'next': 'https://github.com/vercel/next.js',
-  'nest': 'https://github.com/nestjs/nest',
+  'nest': 'https://github.com/nestjs/docs.nestjs.com',
 
   'vue': 'https://github.com/vuejs/docs',
   'pinia': 'https://github.com/vuejs/pinia',
@@ -75,4 +76,5 @@ export const vendors: Record<string, VendorSkillMeta> = {
  */
 export const manual = [
   'hairy',
+  'antfu',
 ]

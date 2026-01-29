@@ -23,6 +23,51 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Variants | Applying utilities conditionally with state, pseudo-class, and media query variants | [core-variants](references/core-variants.md) |
 | Preflight | Tailwind's base styles and how to extend or disable them | [core-preflight](references/core-preflight.md) |
 
+## Layout
+
+### Positioning
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Position | Controlling element positioning with static, relative, absolute, fixed, and sticky | [layout-position](references/layout-position.md) |
+| Inset | Controlling placement of positioned elements with top, right, bottom, left, and inset utilities | [layout-inset](references/layout-inset.md) |
+
+### Sizing
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Width | Setting element width with spacing scale, fractions, container sizes, and viewport units | [layout-width](references/layout-width.md) |
+| Height | Setting element height with spacing scale, fractions, viewport units, and content-based sizing | [layout-height](references/layout-height.md) |
+
+### Spacing
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Margin | Controlling element margins with spacing scale, negative values, logical properties, and space utilities | [layout-margin](references/layout-margin.md) |
+| Padding | Controlling element padding with spacing scale, logical properties, and directional utilities | [layout-padding](references/layout-padding.md) |
+
+### Overflow
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Overflow | Controlling how elements handle content that overflows their container | [layout-overflow](references/layout-overflow.md) |
+
+## Transforms
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Transform Base | Base transform utilities for enabling transforms, hardware acceleration, and custom transform values | [transform-base](references/transform-base.md) |
+| Translate | Translating elements on x, y, and z axes with spacing scale, percentages, and custom values | [transform-translate](references/transform-translate.md) |
+| Rotate | Rotating elements in 2D and 3D space with degree values and custom rotations | [transform-rotate](references/transform-rotate.md) |
+| Scale | Scaling elements uniformly or on specific axes with percentage values | [transform-scale](references/transform-scale.md) |
+| Skew | Skewing elements on x and y axes with degree values | [transform-skew](references/transform-skew.md) |
+
+## Typography
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Text Align | Controlling text alignment with left, center, right, justify, and logical properties | [typography-text-align](references/typography-text-align.md) |
+
 ## Features
 
 ### Dark Mode
