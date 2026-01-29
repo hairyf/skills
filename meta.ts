@@ -15,6 +15,7 @@ export const submodules = {
   'valtio': 'https://github.com/pmndrs/valtio',
 
   'motion': 'https://github.com/motiondivision/motion',
+  'anime': 'https://github.com/juliangarnier/anime',
 
   'next': 'https://github.com/vercel/next.js',
   'nest': 'https://github.com/nestjs/docs.nestjs.com',
