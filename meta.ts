@@ -25,6 +25,9 @@ export const submodules = {
   'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
 
+  'unplugin': 'https://github.com/unjs/unplugin',
+
+  'arch-unplugin': 'https://github.com/unplugin/unplugin-starter',
   'arch-tsdown': 'https://github.com/antfu/starter-ts',
   'arch-tsdown-cli': 'https://github.com/hairyf/starter-cli',
   'arch-vscode': 'https://github.com/antfu/starter-vscode',

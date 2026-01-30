@@ -103,3 +103,9 @@
 [submodule "sources/arch-webext-vue"]
 	path = sources/arch-webext-vue
 	url = https://github.com/antfu-collective/vitesse-webext
+[submodule "sources/arch-unplugin"]
+	path = sources/arch-unplugin
+	url = https://github.com/unplugin/unplugin-starter
+[submodule "sources/unplugin"]
+	path = sources/unplugin
+	url = https://github.com/unjs/unplugin
