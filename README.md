@@ -70,6 +70,13 @@ Generated from official documentation and fine-tuned for agent usage.
 | [next](skills/next) | Next.js - React framework for production | [vercel/next.js](https://github.com/vercel/next.js) |
 | [tailwindcss](skills/tailwindcss) | Tailwind CSS - utility-first CSS framework | [tailwindlabs/tailwindcss.com](https://github.com/tailwindlabs/tailwindcss.com) |
 
+#### Desktop Apps
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [electron](skills/electron) | Electron - cross-platform desktop apps with JavaScript, HTML, and CSS | [electron/electron](https://github.com/electron/electron) |
+| [tauri](skills/tauri) | Tauri - cross-platform app toolkit with Rust backend and WebView frontend | [tauri-apps/tauri-docs](https://github.com/tauri-apps/tauri-docs) |
+
 #### Backend & Tools
 
 | Skill | Description | Source |
@@ -77,6 +84,7 @@ Generated from official documentation and fine-tuned for agent usage.
 | [nest](skills/nest) | NestJS - progressive Node.js framework | [nestjs/docs.nestjs.com](https://github.com/nestjs/docs.nestjs.com) |
 | [pnpm](skills/pnpm) | pnpm - fast, disk space efficient package manager | [pnpm/pnpm.io](https://github.com/pnpm/pnpm.io) |
 | [tsdown](skills/tsdown) | tsdown - TypeScript library bundler powered by Rolldown | [rolldown/tsdown](https://github.com/rolldown/tsdown) |
+| [unplugin](skills/unplugin) | unplugin - unified plugin system for Vite, Rollup, webpack, esbuild, etc. | [unjs/unplugin](https://github.com/unjs/unplugin) |
 
 #### Animation Libraries
 
@@ -90,6 +98,26 @@ Generated from official documentation and fine-tuned for agent usage.
 | Skill | Description | Source |
 |-------|-------------|--------|
 | [valtio](skills/valtio) | Valtio - proxy-state library for React and Vanilla | [pmndrs/valtio](https://github.com/pmndrs/valtio) |
+
+#### API Specification
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [openapi-specification-v2](skills/openapi-specification-v2) | OpenAPI (Swagger) 2.0 - describe REST APIs, path/operation/parameter/response/schema | [OAI/OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification) |
+| [openapi-specification-v3.2](skills/openapi-specification-v3.2) | OpenAPI 3.2 - OAD format, paths, operations, JSON Schema 2020-12, security | [OAI/OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification) |
+
+#### Architecture & Starters
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [arch-nuxt](skills/arch-nuxt) | Vitesse-style Nuxt 4 starter (Vite, UnoCSS, Pinia, VueUse, PWA) | [antfu/vitesse-nuxt](https://github.com/antfu/vitesse-nuxt) |
+| [arch-nuxt-lite](skills/arch-nuxt-lite) | Vitesse Lite - lightweight Vite + Vue 3 SPA with file-based routing | [antfu-collective/vitesse-lite](https://github.com/antfu-collective/vitesse-lite) |
+| [arch-nuxt-module-builder](skills/arch-nuxt-module-builder) | Build and ship Nuxt modules with @nuxt/module-builder | [nuxt/module-builder](https://github.com/nuxt/module-builder) |
+| [arch-tsdown](skills/arch-tsdown) | TypeScript library starter using tsdown, pnpm, Vitest | [antfu/starter-ts](https://github.com/antfu/starter-ts) |
+| [arch-tsdown-cli](skills/arch-tsdown-cli) | TypeScript CLI starter using tsdown (library + bin) | [hairyf/starter-cli](https://github.com/hairyf/starter-cli) |
+| [arch-unplugin](skills/arch-unplugin) | Build universal build-tool plugins with unplugin-starter | [unplugin/unplugin-starter](https://github.com/unplugin/unplugin-starter) |
+| [arch-vscode](skills/arch-vscode) | VSCode extension starter (reactive-vscode, tsdown) | [antfu/starter-vscode](https://github.com/antfu/starter-vscode) |
+| [arch-webext-vue](skills/arch-webext-vue) | Browser extension with Vue 3 and Vite (popup, options, sidepanel, content script) | [antfu-collective/vitesse-webext](https://github.com/antfu-collective/vitesse-webext) |
 
 ### Vendored Skills
 
@@ -123,7 +151,8 @@ Synced from external repositories that maintain their own skills.
 
 This collection is based on [Anthony Fu's skills collection](https://github.com/antfu/skills) and extends it with:
 
-- **Additional Skills**: More skills covering React/Next.js ecosystem, animation libraries, and backend frameworks
+- **Additional Skills**: More skills covering React/Next.js ecosystem, animation libraries, backend frameworks, desktop apps (Electron, Tauri), API specifications (OpenAPI 2.0/3.2), and build tools (unplugin)
+- **Architecture & Starters**: Skills for scaffolding Nuxt/Vue/TS libraries/CLI/VSCode/WebExtension projects (arch-nuxt, arch-tsdown, arch-unplugin, arch-vscode, arch-webext-vue, etc.)
 - **Hairyf's Projects**: Skills for Hairyf's own open-source projects (hairylib, valtio-define, overlastic)
 - **Personal Preferences**: Hairyf's own opinionated preferences and best practices
 
