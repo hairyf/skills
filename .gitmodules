@@ -118,3 +118,6 @@
 [submodule "sources/electron-forge"]
 	path = sources/electron-forge
 	url = https://github.com/electron-forge/electron-forge-docs
+[submodule "sources/flutter"]
+	path = sources/flutter
+	url = https://github.com/flutter/flutter

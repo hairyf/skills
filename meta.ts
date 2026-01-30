@@ -26,6 +26,7 @@ export const submodules = {
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
 
   'tauri': 'https://github.com/tauri-apps/tauri-docs',
+  'flutter': 'https://github.com/flutter/flutter',
   'electron': 'https://github.com/electron/electron',
   'electron-forge': 'https://github.com/electron-forge/electron-forge-docs',
 

@@ -171,7 +171,7 @@ Fork this project to create your own customized skill collection.
 4. Run `nr start cleanup` to remove existing submodules and skills
 5. Run `nr start init` to clone the submodules
 6. Run `nr start sync` to sync vendored skills
-7. Ask your agent to "generate skills for \<project\> anthor \<skill-name\>, use <language>." (recommended one at a time to manage token usage)
+7. Ask your agent to "generate skills for \<project\> anthor \<author\>, use <language>." (recommended one at a time to manage token usage)
 
 **Ongoing maintenance:**
 
