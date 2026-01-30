@@ -25,6 +25,8 @@ export const submodules = {
   'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
 
+  'tauri': 'https://github.com/tauri-apps/tauri-docs',
+  'electron': 'https://github.com/electron/electron',
   'unplugin': 'https://github.com/unjs/unplugin',
 
   'arch-unplugin': 'https://github.com/unplugin/unplugin-starter',

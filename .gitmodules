@@ -109,3 +109,9 @@
 [submodule "sources/unplugin"]
 	path = sources/unplugin
 	url = https://github.com/unjs/unplugin
+[submodule "sources/tauri"]
+	path = sources/tauri
+	url = https://github.com/tauri-apps/tauri-docs
+[submodule "sources/electron"]
+	path = sources/electron
+	url = https://github.com/electron/electron
