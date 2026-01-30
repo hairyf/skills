@@ -128,4 +128,6 @@ export const vendors: Record<string, VendorSkillMeta> = {
 export const manual = [
   'hairy',
   'antfu',
+  'openapi-specification-v2',
+  'openapi-specification-v3.2',
 ]
