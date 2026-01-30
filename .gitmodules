@@ -115,3 +115,6 @@
 [submodule "sources/electron"]
 	path = sources/electron
 	url = https://github.com/electron/electron
+[submodule "sources/electron-forge"]
+	path = sources/electron-forge
+	url = https://github.com/electron-forge/electron-forge-docs

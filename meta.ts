@@ -27,6 +27,8 @@ export const submodules = {
 
   'tauri': 'https://github.com/tauri-apps/tauri-docs',
   'electron': 'https://github.com/electron/electron',
+  'electron-forge': 'https://github.com/electron-forge/electron-forge-docs',
+
   'unplugin': 'https://github.com/unjs/unplugin',
 
   'arch-unplugin': 'https://github.com/unplugin/unplugin-starter',

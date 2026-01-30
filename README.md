@@ -75,6 +75,7 @@ Generated from official documentation and fine-tuned for agent usage.
 | Skill | Description | Source |
 |-------|-------------|--------|
 | [electron](skills/electron) | Electron - cross-platform desktop apps with JavaScript, HTML, and CSS | [electron/electron](https://github.com/electron/electron) |
+| [electron-forge](skills/electron-forge) | Electron Forge - tool for building Electron applications | [electron-forge/electron-forge-docs](https://github.com/electron-forge/electron-forge-docs) |
 | [tauri](skills/tauri) | Tauri - cross-platform app toolkit with Rust backend and WebView frontend | [tauri-apps/tauri-docs](https://github.com/tauri-apps/tauri-docs) |
 
 #### Backend & Tools
@@ -170,7 +171,7 @@ Fork this project to create your own customized skill collection.
 4. Run `nr start cleanup` to remove existing submodules and skills
 5. Run `nr start init` to clone the submodules
 6. Run `nr start sync` to sync vendored skills
-7. Ask your agent to "generate skills for \<project\>" (recommended one at a time to manage token usage)
+7. Ask your agent to "generate skills for \<project\> anthor \<skill-name\>, use <language>." (recommended one at a time to manage token usage)
 
 **Ongoing maintenance:**
 
