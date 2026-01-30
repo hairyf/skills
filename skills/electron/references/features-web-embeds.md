@@ -13,7 +13,7 @@ You can embed (third-party or app) web content in an Electron window in three wa
 
 ## WebContentsView
 
-`WebContentsView` is created and controlled from the **main process**. It is not a DOM element; you add it to a `BaseWindow` (or use it alongside other views), set its bounds, and load a URL. It has full `webContents` API (IPC, events, DevTools, etc.) and is the recommended way to embed a separate web context when you need full control from main. Use when you need multiple layered pages in one window or tight integration with main-process logic.
+`WebContentsView` is created and controlled from the **main process**. **BrowserView** is deprecated; use WebContentsView instead. It is not a DOM element; you add it to a `BaseWindow` (or use it alongside other views), set its bounds, and load a URL. It has full `webContents` API (IPC, events, DevTools, etc.) and is the recommended way to embed a separate web context when you need full control from main. Use when you need multiple layered pages in one window or tight integration with main-process logic.
 
 ```js
 const { BaseWindow, WebContentsView } = require('electron')
