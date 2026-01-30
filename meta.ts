@@ -9,7 +9,9 @@ export interface VendorSkillMeta {
  */
 export const submodules = {
   'react': 'https://github.com/reactjs/react.dev',
+  'react-router': 'https://github.com/remix-run/react-router',
   'react-use': 'https://github.com/streamich/react-use',
+
   'tailwindcss': 'https://github.com/tailwindlabs/tailwindcss.com',
 
   'valtio': 'https://github.com/pmndrs/valtio',
@@ -21,6 +23,7 @@ export const submodules = {
   'nest': 'https://github.com/nestjs/docs.nestjs.com',
 
   'vue': 'https://github.com/vuejs/docs',
+  'vue-router': 'https://github.com/vuejs/router',
 
   'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',

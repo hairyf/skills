@@ -124,3 +124,9 @@
 [submodule "sources/react-native"]
 	path = sources/react-native
 	url = https://github.com/facebook/react-native-website
+[submodule "sources/react-router"]
+	path = sources/react-router
+	url = https://github.com/remix-run/react-router
+[submodule "sources/vue-router"]
+	path = sources/vue-router
+	url = https://github.com/vuejs/router
