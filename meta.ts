@@ -35,6 +35,8 @@ export const submodules = {
   'vitest': 'https://github.com/vitest-dev/vitest',
 
   'vitepress': 'https://github.com/vuejs/vitepress',
+
+  'openapi-specification': 'https://github.com/OAI/OpenAPI-Specification',
 }
 
 /**

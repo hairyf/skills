@@ -79,3 +79,6 @@
 [submodule "sources/uniapp"]
 	path = sources/uniapp
 	url = https://gitcode.com/dcloud/unidocs-zh
+[submodule "sources/openapi-specification"]
+	path = sources/openapi-specification
+	url = https://github.com/OAI/OpenAPI-Specification
