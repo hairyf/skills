@@ -121,3 +121,6 @@
 [submodule "sources/flutter"]
 	path = sources/flutter
 	url = https://github.com/flutter/flutter
+[submodule "sources/react-native"]
+	path = sources/react-native
+	url = https://github.com/facebook/react-native-website

@@ -23,6 +23,7 @@ Flutter uses Dart as its programming language and follows a widget-based archite
 | State Management | setState, StatefulWidget, ValueNotifier, ChangeNotifier | [core-state-management](references/core-state-management.md) |
 | Layout System | Row, Column, Stack, Flex, constraints, sizing | [core-layout](references/core-layout.md) |
 | BuildContext | Context usage, InheritedWidget, theme access | [core-build-context](references/core-build-context.md) |
+| InheritedWidget | Sharing data down widget tree, InheritedWidget patterns | [features-inherited-widget](references/features-inherited-widget.md) |
 
 ## Widgets
 
@@ -36,6 +37,11 @@ Flutter uses Dart as its programming language and follows a widget-based archite
 | Buttons | ElevatedButton, TextButton, OutlinedButton, IconButton | [widgets-buttons](references/widgets-buttons.md) |
 | Input Fields | TextField, TextFormField, Form, FormField | [widgets-input](references/widgets-input.md) |
 | Async Widgets | FutureBuilder, StreamBuilder, async operations | [widgets-async](references/widgets-async.md) |
+| ValueListenableBuilder | Building widgets based on ValueListenable changes | [widgets-value-listenable](references/widgets-value-listenable.md) |
+| PageView | Swipeable pages, PageController, page navigation | [widgets-pageview](references/widgets-pageview.md) |
+| RefreshIndicator | Pull-to-refresh functionality | [widgets-refresh-indicator](references/widgets-refresh-indicator.md) |
+| Dismissible | Swipe-to-dismiss widgets | [widgets-dismissible](references/widgets-dismissible.md) |
+| TabBar & Tabs | Tab navigation, TabController, TabBarView | [widgets-tabs](references/widgets-tabs.md) |
 | Forms & Validation | Form validation, validators, form handling | [features-forms-validation](references/features-forms-validation.md) |
 
 ### Layout Widgets
@@ -47,6 +53,7 @@ Flutter uses Dart as its programming language and follows a widget-based archite
 | Container | Container, BoxDecoration, padding, margin | [layout-container](references/layout-container.md) |
 | List Views | ListView, ListTile, GridView, Sliver widgets | [layout-lists](references/layout-lists.md) |
 | Slivers | CustomScrollView, SliverList, SliverGrid, advanced scrolling | [features-slivers](references/features-slivers.md) |
+| Scroll Controller | Programmatic scroll control, scroll listeners | [features-scroll-controller](references/features-scroll-controller.md) |
 
 ## Features
 
@@ -99,6 +106,7 @@ Flutter uses Dart as its programming language and follows a widget-based archite
 | Keys | ValueKey, ObjectKey, GlobalKey, when to use keys | [features-keys](references/features-keys.md) |
 | Widget Lifecycle | initState, dispose, lifecycle management | [features-lifecycle](references/features-lifecycle.md) |
 | Error Handling | Try-catch, error widgets, error boundaries | [features-error-handling](references/features-error-handling.md) |
+| PopScope | Handle back button and navigation pop events | [features-pop-scope](references/features-pop-scope.md) |
 
 ## Advanced
 

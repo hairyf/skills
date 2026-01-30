@@ -29,6 +29,7 @@ export const submodules = {
   'flutter': 'https://github.com/flutter/flutter',
   'electron': 'https://github.com/electron/electron',
   'electron-forge': 'https://github.com/electron-forge/electron-forge-docs',
+  'react-native': 'https://github.com/facebook/react-native-website',
 
   'unplugin': 'https://github.com/unjs/unplugin',
 
