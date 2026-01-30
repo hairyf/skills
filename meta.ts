@@ -25,6 +25,14 @@ export const submodules = {
   'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
 
+  'arch-tsdown': 'https://github.com/antfu/starter-ts',
+  'arch-tsdown-cli': 'https://github.com/hairyf/starter-cli',
+  'arch-vscode': 'https://github.com/antfu/starter-vscode',
+  'arch-nuxt': 'https://github.com/antfu/vitesse-nuxt',
+  'arch-nuxt-module-builder': 'https://github.com/nuxt/module-builder',
+  'arch-nuxt-lite': 'https://github.com/antfu-collective/vitesse-lite',
+  'arch-webext-vue': 'https://github.com/antfu-collective/vitesse-webext',
+
   'pinia': 'https://github.com/vuejs/pinia',
   'nuxt': 'https://github.com/nuxt/nuxt',
   'vite': 'https://github.com/vitejs/vite',

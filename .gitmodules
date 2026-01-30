@@ -82,3 +82,24 @@
 [submodule "sources/openapi-specification"]
 	path = sources/openapi-specification
 	url = https://github.com/OAI/OpenAPI-Specification
+[submodule "sources/arch-tsdown"]
+	path = sources/arch-tsdown
+	url = https://github.com/antfu/starter-ts
+[submodule "sources/arch-tsdown-cli"]
+	path = sources/arch-tsdown-cli
+	url = https://github.com/hairyf/starter-cli
+[submodule "sources/arch-vscode"]
+	path = sources/arch-vscode
+	url = https://github.com/antfu/starter-vscode
+[submodule "sources/arch-nuxt"]
+	path = sources/arch-nuxt
+	url = https://github.com/antfu/vitesse-nuxt
+[submodule "sources/arch-nuxt-module-builder"]
+	path = sources/arch-nuxt-module-builder
+	url = https://github.com/nuxt/module-builder
+[submodule "sources/arch-nuxt-lite"]
+	path = sources/arch-nuxt-lite
+	url = https://github.com/antfu-collective/vitesse-lite
+[submodule "sources/arch-webext-vue"]
+	path = sources/arch-webext-vue
+	url = https://github.com/antfu-collective/vitesse-webext
