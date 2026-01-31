@@ -136,3 +136,12 @@
 [submodule "sources/undocs"]
 	path = sources/undocs
 	url = https://github.com/unjs/undocs
+[submodule "sources/writing-styles-juejin"]
+	path = sources/writing-styles-juejin
+	url = https://github.com/hairyf/juejin-excellent-article
+[submodule "vendor/writing-humanizer-zh"]
+	path = vendor/writing-humanizer-zh
+	url = https://github.com/op7418/Humanizer-zh
+[submodule "vendor/writing-humanizer"]
+	path = vendor/writing-humanizer
+	url = https://github.com/blader/humanizer

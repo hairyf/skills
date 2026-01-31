@@ -28,6 +28,8 @@ export const submodules = {
   'uniapp-x': 'https://gitcode.com/dcloud/unidocs-uni-app-x-zh',
   'uniapp': 'https://gitcode.com/dcloud/unidocs-zh',
 
+  'writing-styles-juejin': 'https://github.com/hairyf/juejin-excellent-article',
+
   'tauri': 'https://github.com/tauri-apps/tauri-docs',
   'flutter': 'https://github.com/flutter/flutter',
   'electron': 'https://github.com/electron/electron',
@@ -65,6 +67,18 @@ export const submodules = {
  * Already generated skills, sync with their `skills/` directory
  */
 export const vendors: Record<string, VendorSkillMeta> = {
+  'writing-humanizer-zh': {
+    source: 'https://github.com/op7418/Humanizer-zh',
+    skills: {
+      'writing-humanizer-zh': 'humanizer',
+    },
+  },
+  'writing-humanizer': {
+    source: 'https://github.com/blader/humanizer',
+    skills: {
+      'writing-humanizer': 'humanizer',
+    },
+  },
   'slidev': {
     official: true,
     source: 'https://github.com/slidevjs/slidev',
