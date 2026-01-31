@@ -20,6 +20,7 @@ arch-nuxt-module-builder skills cover **@nuxt/module-builder**: the complete sol
 | Module definition | defineNuxtModule, ModuleOptions, hooks, runtime config types | [core-module-definition](references/core-module-definition.md) |
 | Dist output | module.mjs, module.json, types.d.mts, runtime/* | [core-dist-output](references/core-dist-output.md) |
 | CLI | nuxt-module-build build/prepare, args (cwd, outDir, stub) | [core-cli](references/core-cli.md) |
+| CI | GitHub Actions — lint, typecheck, build, test | [core-ci](references/core-ci.md) |
 
 ## Features
 
@@ -35,3 +36,9 @@ arch-nuxt-module-builder skills cover **@nuxt/module-builder**: the complete sol
 |-------|-------------|-----------|
 | Package exports | exports, typesVersions, prepack, files | [best-practices-package-exports](references/best-practices-package-exports.md) |
 | Setup patterns | createResolver, addPlugin without extension | [best-practices-setup-patterns](references/best-practices-setup-patterns.md) |
+
+## Assets
+
+| Asset | Description |
+|-------|-------------|
+| [ci.yml](assets/ci.yml) | GitHub Actions CI workflow template — copy to `.github/workflows/ci.yml` |

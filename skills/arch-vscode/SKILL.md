@@ -3,7 +3,7 @@ name: arch-vscode
 description: VSCode extension starter using reactive-vscode and tsdown. Use when scaffolding or maintaining a VSCode extension with reactive APIs, CJS build, and vscode-ext-gen.
 metadata:
   author: hairy
-  version: "2026.1.30"
+  version: "2026.2.1"
   source: Generated from https://github.com/antfu/starter-vscode, scripts located at https://github.com/antfu/skills
 ---
 
@@ -28,6 +28,7 @@ arch-vscode is a **VSCode extension** starter (based on antfu/starter-vscode) th
 | Scripts | build, dev, update, release, ext:package, ext:publish | [core-scripts](references/core-scripts.md) |
 | Contributes | commands, configuration, activationEvents | [core-contributes](references/core-contributes.md) |
 | Development | launch.json, tasks.json, Extension Host | [core-development](references/core-development.md) |
+| CI | GitHub Actions workflow — lint, typecheck, build, test | [core-ci](references/core-ci.md) |
 
 ## Best Practices
 

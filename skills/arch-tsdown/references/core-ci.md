@@ -39,6 +39,10 @@ The starter uses a single **CI** workflow (`.github/workflows/ci.yml`) on push/P
 
 Release is **not** in the CI workflow. It runs on **tag push** (e.g. `v*`) via `.github/workflows/release.yml` and uses `sxzz/workflows` with `publish: true` to publish to npm. See [core-scripts](core-scripts.md) for the release flow.
 
+## Template
+
+A ready-to-use workflow is in **assets/ci.yml**. Copy it to `.github/workflows/ci.yml` in your repo.
+
 <!--
 Source references:
 - https://github.com/antfu/starter-ts

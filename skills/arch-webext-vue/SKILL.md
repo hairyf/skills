@@ -18,6 +18,7 @@ arch-webext-vue skills cover **Vitesse WebExt**: a Vite-powered WebExtension sta
 | Overview | Features, stack, when to use | [core-overview](references/core-overview.md) |
 | Project structure | Folders, entry points, scripts | [core-project-structure](references/core-project-structure.md) |
 | Manifest | Dynamic manifest, MV3, Firefox vs Chrome | [core-manifest](references/core-manifest.md) |
+| CI | GitHub Actions — lint, typecheck, build, test, optional E2E | [core-ci](references/core-ci.md) |
 
 ## Features
 

@@ -18,6 +18,7 @@ arch-unplugin skills cover **unplugin-starter**: a template for writing one plug
 | Overview | What unplugin-starter is, unplugin architecture, template usage | [core-overview](references/core-overview.md) |
 | Project structure | Package exports, src layout, entry points | [core-project-structure](references/core-project-structure.md) |
 | Factory and API | UnpluginFactory, createUnplugin, transformInclude, transform | [core-factory-api](references/core-factory-api.md) |
+| CI | GitHub Actions — lint, typecheck, build, test | [core-ci](references/core-ci.md) |
 
 ## Features
 

@@ -24,6 +24,7 @@ arch-nuxt-lite (Vitesse Lite) is the **lightweight Vite + Vue 3 SPA** starter: f
 | App structure | Entry, RouterView, path alias, App.vue | [core-app-structure](references/core-app-structure.md) |
 | Vite config | defineConfig, plugins, alias, Vitest | [core-vite-config](references/core-vite-config.md) |
 | Scripts | build, dev, lint, typecheck, preview, test | [core-scripts](references/core-scripts.md) |
+| CI | GitHub Actions — build, test, lint, typecheck matrix | [core-ci](references/core-ci.md) |
 | ESLint | @antfu/eslint-config, unocss, formatters, pnpm | [core-eslint](references/core-eslint.md) |
 
 ## Features

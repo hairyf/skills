@@ -28,6 +28,10 @@ The starter runs **lint** and **test** jobs on push/PR to `main`, and **release*
 
 When using npm Trusted Publisher, the release workflow publishes to npm on tag push; no manual `pnpm publish` needed after the first-time setup.
 
+## Template
+
+A ready-to-use CI workflow is in **assets/ci.yml**. Copy it to `.github/workflows/ci.yml` in your CLI repo.
+
 <!--
 Source references:
 - https://github.com/hairyf/starter-cli
