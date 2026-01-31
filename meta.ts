@@ -115,10 +115,19 @@ export const vendors: Record<string, VendorSkillMeta> = {
     },
   },
 
-  'vue-best-practices': {
-    source: 'https://github.com/hyf0/vue-skills',
+  'tsdown': {
+    official: true,
+    source: 'https://github.com/rolldown/tsdown',
+    skills: {
+      tsdown: 'tsdown',
+    },
+  },
+  'vuejs-ai': {
+    source: 'https://github.com/vuejs-ai/skills',
     skills: {
       'vue-best-practices': 'vue-best-practices',
+      'vue-router-best-practices': 'vue-router-best-practices',
+      'vue-testing-best-practices': 'vue-testing-best-practices',
     },
   },
 
