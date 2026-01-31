@@ -1,111 +1,232 @@
 ---
 name: knitwork-x
-description: Utilities to generate safe JavaScript code
+description: Utilities to generate safe JavaScript and TypeScript code (comprehensive fork of knitwork)
 ---
 
 # Knitwork-X
 
-Knitwork-X provides utilities for generating safe JavaScript code programmatically, useful for code generation tools and build-time transformations. This is an actively maintained fork of the original knitwork package.
+Knitwork-X provides utilities for generating safe JavaScript and TypeScript code programmatically. Forked from [unjs/knitwork](https://github.com/unjs/knitwork), it adds comprehensive TypeScript code-generation APIs (classes, control flow, types, decorators, etc.). Use for codegen tools, build-time transformations, and plugin output.
+
+**Package:** `knitwork-x` · **Source:** https://github.com/hairyf/knitwork-x
 
 ## Usage
 
-### ESM Exports
+### ESM
 
 ```typescript
-import { genDefaultExport, genExport, genExportStar } from 'knitwork'
+import {
+  genDefaultExport,
+  genDynamicImport,
+  genExport,
+  genImport,
+  genTypeExport,
+} from 'knitwork-x'
 
-// Default export
 genDefaultExport("foo")
 // ~> `export default foo;`
 
-// Named exports
 genExport("pkg", ["a", "b"])
 // ~> `export { a, b } from "pkg";`
 
-// Re-export all
-genExportStar("pkg")
+genExport("pkg", "*")
 // ~> `export * from "pkg";`
-```
 
-### ESM Imports
+genExport("pkg", { name: "*", as: "bar" })
+// ~> `export * as bar from "pkg";`
 
-```typescript
-import { genImport, genTypeImport } from 'knitwork'
-
-// Default import
 genImport("pkg", "foo")
 // ~> `import foo from "pkg";`
 
-// Named imports
 genImport("pkg", ["a", "b"])
 // ~> `import { a, b } from "pkg";`
 
-// Type imports
-genTypeImport("@nuxt/utils", ["test"])
+genImport("@nuxt/utils", ["test"], { type: true })
 // ~> `import type { test } from "@nuxt/utils";`
-```
-
-### Dynamic Imports
-
-```typescript
-import { genDynamicImport } from 'knitwork'
 
 genDynamicImport("pkg")
-// ~> `() => import("pkg")`
-
-genDynamicImport("pkg", { wrapper: false })
 // ~> `import("pkg")`
 
-genDynamicImport("pkg", { interopDefault: true })
-// ~> `() => import("pkg").then(m => m.default || m)`
+genDynamicImport("pkg", { wrapper: true })
+// ~> `() => import("pkg")`
+
+genDynamicImport("pkg", { type: true, name: "foo" })
+// ~> `typeof import("pkg").foo`
+
+genTypeExport("@nuxt/utils", ["test"])
+// ~> `export type { test } from "@nuxt/utils";`
 ```
 
-### TypeScript Code Generation
+### Serialization
 
 ```typescript
-import { genFunction, genInterface, genTypeAlias, genVariable } from 'knitwork'
+import { genArray, genMap, genObject, genSet } from 'knitwork-x'
 
-// Function declaration
-genFunction({ name: "foo", parameters: [{ name: "x", type: "string" }] })
-// ~> `function foo(x: string) {}`
+genArray([1, 2, 3])
+// ~> `[1, 2, 3]`
 
-// Interface
-genInterface("FooInterface", { name: "string", count: "number" })
-// ~> `interface FooInterface { name: string, count: number }`
+genObject({ foo: "bar", test: '() => import("pkg")' })
+// ~> `{ foo: bar, test: () => import("pkg") }`
 
-// Type alias
-genTypeAlias("Foo", "string")
-// ~> `type Foo = string`
+genMap([["foo", "bar"], ["baz", 1]])
+// ~> `new Map([["foo", "bar"], ["baz", 1]])`
 
-// Variable
-genVariable("a", "2")
-// ~> `const a = 2`
+genSet(["foo", "bar", 1])
+// ~> `new Set(["foo", "bar", 1])`
 ```
 
-### String Utilities
+### String
 
 ```typescript
-import { genString, genSafeVariableName, escapeString } from 'knitwork'
+import { escapeString, genString, genTemplateLiteral, genVariableName } from 'knitwork-x'
 
 genString("foo")
 // ~> `"foo"`
 
-genSafeVariableName("for")
+genVariableName("for")
 // ~> `_for`
 
 escapeString("foo'bar")
 // ~> `foo\'bar`
+
+genTemplateLiteral(["hello ", "x"])
+// ~> `hello ${x}`
+```
+
+### TypeScript — Functions, types, control flow
+
+```typescript
+import {
+  genArrowFunction,
+  genFunction,
+  genInterface,
+  genTypeAlias,
+  genVariable,
+  genBlock,
+  genIf,
+  genReturn,
+  genAugmentation,
+  genInlineTypeImport,
+} from 'knitwork-x'
+
+genFunction({ name: "foo", parameters: [{ name: "x", type: "string" }] })
+// ~> `function foo(x: string) {}`
+
+genArrowFunction({ parameters: [{ name: "x", type: "number" }], body: "x * 2" })
+// ~> `(x: number) => x * 2`
+
+genInterface("FooInterface", { name: "string", count: "number" })
+// ~> `interface FooInterface { name: string, count: number }`
+
+genTypeAlias("Foo", "string")
+// ~> `type Foo = string`
+
+genVariable("a", "2")
+// ~> `const a = 2`
+
+genBlock(["const a = 1;", "return a;"])
+// ~> `{ const a = 1; return a; }`
+
+genAugmentation("@nuxt/utils", "interface MyInterface {}")
+// ~> `declare module "@nuxt/utils" { interface MyInterface {} }`
+
+genInlineTypeImport("@nuxt/utils", "genString")
+// ~> `typeof import("@nuxt/utils").genString`
+```
+
+### TypeScript — Classes, enums, switch, try/catch
+
+```typescript
+import {
+  genClass,
+  genConstructor,
+  genMethod,
+  genGetter,
+  genSetter,
+  genEnum,
+  genConstEnum,
+  genSwitch,
+  genCase,
+  genDefault,
+  genTry,
+  genCatch,
+  genFinally,
+} from 'knitwork-x'
+
+genClass("Bar", [genConstructor([], ["super();"])])
+// ~> `class Bar { constructor() { super(); } }`
+
+genClass("Baz", [], { extends: "Base", implements: ["I1", "I2"] })
+// ~> `class Baz extends Base implements I1, I2 {}`
+
+genEnum("Color", { Red: 0, Green: 1, Blue: 2 })
+// ~> `enum Color { Red = 0, Green = 1, Blue = 2 }`
+
+genSwitch("x", [genCase("1", "break;"), genDefault("return 0;")])
+// ~> `switch (x) { case 1: break; default: return 0; }`
+```
+
+### TypeScript — Type-level
+
+```typescript
+import {
+  genUnion,
+  genIntersection,
+  genConditionalType,
+  genMappedType,
+  genKeyOf,
+  genTemplateLiteralType,
+  genTypeObject,
+  genSatisfies,
+  genTypeAssertion,
+} from 'knitwork-x'
+
+genUnion(["string", "number"])
+// ~> `string | number`
+
+genConditionalType("T", "null", "never", "T")
+// ~> `T extends null ? never : T`
+
+genMappedType("K", "keyof T", "U")
+// ~> `{ [K in keyof T]: U }`
+
+genTemplateLiteralType(["Hello ", "T", ""])
+// ~> `` `Hello ${T}` ``
+
+genSatisfies("config", "ConfigType")
+// ~> `config satisfies ConfigType`
+```
+
+### Utils
+
+```typescript
+import { genComment, genJSDocComment, genKey, genLiteral, genRegExp } from 'knitwork-x'
+
+genComment("Single line comment")
+// ~> `// Single line comment`
+
+genJSDocComment({ description: "Fn", param: { x: "number" }, returns: "void" })
+// ~> JSDoc block with @param and @returns
+
+genKey("foo-bar")
+// ~> `"foo-bar"`
+
+genLiteral(['type', ['type', 'A'], ['...', 'b']])
+// ~> `{ type, type: A, ...b }`
+
+genRegExp("foo", "gi")
+// ~> `/foo/gi`
 ```
 
 ## Key Points
 
-- Code generation: Programmatically generate JavaScript and TypeScript
-- Type-safe: Full TypeScript support with type generation utilities
-- Safe: Generates safe, properly escaped code
-- Comprehensive: Supports ESM, TypeScript, strings, serialization, and more
-- Actively maintained: Fork maintained at https://github.com/hairyf/knitwork-x
+- **Package:** Use `knitwork-x` (not `knitwork`) for the extended API.
+- **ESM:** `genImport` / `genExport`; type imports via `genImport(..., { type: true })`; re-export all with `genExport("pkg", "*")`.
+- **Safe names:** `genVariableName(name)` for identifiers; `genKey(key)` for object keys (quotes when needed).
+- **TypeScript:** Covers functions, classes, enums, control flow (if/switch/for/try), type aliases, interfaces, conditional/mapped types, `declare module`, and JSDoc.
+- **Serialization:** `genArray`, `genObject`, `genMap`, `genSet` for runtime values; `genTypeObject` for type shapes.
 
 <!--
 Source references:
 - https://github.com/hairyf/knitwork-x
+- https://github.com/hairyf/knitwork-x/blob/main/README.md
 -->
