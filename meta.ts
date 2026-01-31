@@ -36,7 +36,7 @@ export const submodules = {
 
   'unplugin': 'https://github.com/unjs/unplugin',
   'unjs': 'https://github.com/unjs/website',
-  // 'unjs-docs': 'https://github.com/unjs/docs',
+  'undocs': 'https://github.com/unjs/undocs',
 
   'arch-unplugin': 'https://github.com/unplugin/unplugin-starter',
   'arch-tsdown': 'https://github.com/antfu/starter-ts',

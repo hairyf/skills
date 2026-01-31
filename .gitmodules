@@ -133,3 +133,6 @@
 [submodule "sources/unjs"]
 	path = sources/unjs
 	url = https://github.com/unjs/website
+[submodule "sources/undocs"]
+	path = sources/undocs
+	url = https://github.com/unjs/undocs
