@@ -18,6 +18,8 @@ Undocs is a minimal Documentation Theme and CLI built with Nuxt, Nuxt Content, a
 | Getting Started | Quick start guide for creating documentation sites | [core-getting-started](references/core-getting-started.md) |
 | CLI Commands | Development and build commands for undocs | [core-cli](references/core-cli.md) |
 | Configuration | Configure documentation site using docs.yaml | [core-configuration](references/core-configuration.md) |
+| Navigation | Navigation system and icon configuration | [core-navigation](references/core-navigation.md) |
+| Project Structure | Recommended project structure and organization | [core-project-structure](references/core-project-structure.md) |
 
 ## Features
 
@@ -29,9 +31,24 @@ Undocs is a minimal Documentation Theme and CLI built with Nuxt, Nuxt Content, a
 | Package Manager | Cross-package-manager command components (npm, pnpm, yarn, bun, deno) | [features-package-manager](references/features-package-manager.md) |
 | Read More | Styled link component for cross-referencing pages | [features-read-more](references/features-read-more.md) |
 | Mermaid Diagrams | Render Mermaid diagrams and flowcharts in documentation | [features-mermaid](references/features-mermaid.md) |
+| Nuxt UI Prose | Use Nuxt UI Prose components in markdown files | [features-nuxt-ui-prose](references/features-nuxt-ui-prose.md) |
 
 ### Content Transformations
 
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | Content Transformations | Automatic markdown transformations (GitHub notes, code groups, steps, config references) | [features-content-transformation](references/features-content-transformation.md) |
+
+### Additional Features
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Blog | Create and manage blog posts | [features-blog](references/features-blog.md) |
+| SEO | SEO optimization and Open Graph image generation | [features-seo](references/features-seo.md) |
+| Automd Integration | Integrate automd for automatic documentation updates | [features-automd](references/features-automd.md) |
+
+## Best Practices
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Deployment | Deploy undocs sites to various hosting platforms | [best-practices-deployment](references/best-practices-deployment.md) |
