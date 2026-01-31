@@ -146,7 +146,7 @@ UnJS (Unified JavaScript) is an ecosystem of high-quality, single-purpose JavaSc
 |-------|-------------|-----------|
 | Magicast | Programmatically modify JavaScript and TypeScript source codes | [features-magicast](references/features-magicast.md) |
 | Magic-regexp | A compiled-away, type-safe, readable RegExp alternative | [features-magic-regexp](references/features-magic-regexp.md) |
-| Knitwork | Utilities to generate JavaScript code | [features-knitwork](references/features-knitwork.md) |
+| Knitwork-X | Utilities to generate safe JavaScript code (actively maintained fork) | [features-knitwork](references/features-knitwork.md) |
 | Jiti | Runtime TypeScript and ESM support for Node.js | [features-jiti](references/features-jiti.md) |
 
 ### Database & Storage

@@ -1,56 +1,111 @@
 ---
-name: knitwork
-description: Utilities to generate JavaScript code
+name: knitwork-x
+description: Utilities to generate safe JavaScript code
 ---
 
-# Knitwork
+# Knitwork-X
 
-Knitwork provides utilities for generating JavaScript code programmatically, useful for code generation tools and build-time transformations.
+Knitwork-X provides utilities for generating safe JavaScript code programmatically, useful for code generation tools and build-time transformations. This is an actively maintained fork of the original knitwork package.
 
 ## Usage
 
-### Generate Code
+### ESM Exports
 
 ```typescript
-import { generateCode } from 'knitwork'
+import { genDefaultExport, genExport, genExportStar } from 'knitwork'
 
-const code = generateCode({
-  type: 'export',
-  name: 'config',
-  value: {
-    port: 3000,
-    host: 'localhost',
-  },
-})
+// Default export
+genDefaultExport("foo")
+// ~> `export default foo;`
+
+// Named exports
+genExport("pkg", ["a", "b"])
+// ~> `export { a, b } from "pkg";`
+
+// Re-export all
+genExportStar("pkg")
+// ~> `export * from "pkg";`
 ```
 
-### Generate Functions
+### ESM Imports
 
 ```typescript
-import { generateFunction } from 'knitwork'
+import { genImport, genTypeImport } from 'knitwork'
 
-const fn = generateFunction('add', ['a', 'b'], 'return a + b')
-// function add(a, b) { return a + b }
+// Default import
+genImport("pkg", "foo")
+// ~> `import foo from "pkg";`
+
+// Named imports
+genImport("pkg", ["a", "b"])
+// ~> `import { a, b } from "pkg";`
+
+// Type imports
+genTypeImport("@nuxt/utils", ["test"])
+// ~> `import type { test } from "@nuxt/utils";`
 ```
 
-### Generate Imports
+### Dynamic Imports
 
 ```typescript
-import { generateImport } from 'knitwork'
+import { genDynamicImport } from 'knitwork'
 
-const importCode = generateImport('vue', ['ref', 'computed'])
-// import { ref, computed } from 'vue'
+genDynamicImport("pkg")
+// ~> `() => import("pkg")`
+
+genDynamicImport("pkg", { wrapper: false })
+// ~> `import("pkg")`
+
+genDynamicImport("pkg", { interopDefault: true })
+// ~> `() => import("pkg").then(m => m.default || m)`
+```
+
+### TypeScript Code Generation
+
+```typescript
+import { genFunction, genInterface, genTypeAlias, genVariable } from 'knitwork'
+
+// Function declaration
+genFunction({ name: "foo", parameters: [{ name: "x", type: "string" }] })
+// ~> `function foo(x: string) {}`
+
+// Interface
+genInterface("FooInterface", { name: "string", count: "number" })
+// ~> `interface FooInterface { name: string, count: number }`
+
+// Type alias
+genTypeAlias("Foo", "string")
+// ~> `type Foo = string`
+
+// Variable
+genVariable("a", "2")
+// ~> `const a = 2`
+```
+
+### String Utilities
+
+```typescript
+import { genString, genSafeVariableName, escapeString } from 'knitwork'
+
+genString("foo")
+// ~> `"foo"`
+
+genSafeVariableName("for")
+// ~> `_for`
+
+escapeString("foo'bar")
+// ~> `foo\'bar`
 ```
 
 ## Key Points
 
-- Code generation: Programmatically generate JavaScript
-- Type-safe: Full TypeScript support
-- Flexible: Supports various code structures
-- Formatting: Generates formatted code
-- AST-based: Uses AST for code generation
+- Code generation: Programmatically generate JavaScript and TypeScript
+- Type-safe: Full TypeScript support with type generation utilities
+- Safe: Generates safe, properly escaped code
+- Comprehensive: Supports ESM, TypeScript, strings, serialization, and more
+- Actively maintained: Fork maintained at https://github.com/hairyf/knitwork-x
 
 <!--
 Source references:
-- https://github.com/unjs/knitwork
+- https://github.com/hairyf/knitwork-x
 -->

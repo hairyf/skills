@@ -39,3 +39,14 @@ Each package YAML file contains:
 - Some packages may not have npm packages (internal tools)
 - Documentation links may point to GitHub READMEs or dedicated documentation sites
 - When updating skills, check for new packages added since the last generation
+
+## Package Replacements
+
+### Knitwork → Knitwork-X
+
+**Important**: The original `knitwork` package (https://github.com/unjs/knitwork) is no longer actively maintained. It has been replaced with `knitwork-x` (https://github.com/hairyf/knitwork-x), which is actively maintained.
+
+- **Do NOT** generate or update skills for the original `knitwork` package
+- **Use** `knitwork-x` instead when referencing code generation utilities
+- The skill file `features-knitwork.md` references `knitwork-x` and should be updated accordingly
+- When the UnJS website lists `knitwork`, replace it with `knitwork-x` in skills generation
