@@ -173,9 +173,10 @@ Fork this project to create your own customized skill collection.
 6. Run `nr start sync` to sync vendored skills
 7. Ask your agent to "generate skills for \<project\> anthor \<author\>, use <language>." (recommended one at a time to manage token usage)
 
+generate skills for vue-router anthor hairy, use english.
 **Ongoing maintenance:**
 
-- **More** — When you say "more" (or ask for more coverage) for an existing skill, the agent compares current `references/` with the source docs, identifies missing modules, adds new reference files, and updates `SKILL.md` (and `GENERATION.md` for Type 1).
+- **More, until all** — When you say "more" (or ask for more coverage) for an existing skill, the agent compares current `references/` with the source docs, identifies missing modules, adds new reference files, and updates `SKILL.md` (and `GENERATION.md` for Type 1).
 - **Update** — When you say "update" (or ask to refresh from source) for a skill, the agent runs `git diff` against the SHA in `GENERATION.md` / `SYNC.md`, then updates only the affected references, `SKILL.md`, and tracking metadata.
 
 See [AGENTS.md](AGENTS.md) for detailed generation guidelines.
