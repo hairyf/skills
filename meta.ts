@@ -43,6 +43,8 @@ export const submodules = {
 
   'arch-unplugin': 'https://github.com/unplugin/unplugin-starter',
   'arch-tsdown': 'https://github.com/antfu/starter-ts',
+  'arch-tsdown-monorepo': 'https://github.com/hairyf/starter-monorepo',
+
   'arch-tsdown-cli': 'https://github.com/hairyf/starter-cli',
   'arch-vscode': 'https://github.com/antfu/starter-vscode',
   'arch-nuxt': 'https://github.com/antfu/vitesse-nuxt',
