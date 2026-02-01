@@ -39,5 +39,6 @@
     "css",
     "less",
     "scss"
-  ]
+  ],
+  "vsicons.presets.angular": true
 }

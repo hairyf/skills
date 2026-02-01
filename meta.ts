@@ -18,6 +18,7 @@ export const submodules = {
 
   'motion': 'https://github.com/motiondivision/motion',
   'anime': 'https://github.com/juliangarnier/anime',
+  'pixijs': 'https://github.com/pixijs/pixijs',
 
   'next': 'https://github.com/vercel/next.js',
   'nest': 'https://github.com/nestjs/docs.nestjs.com',
@@ -155,4 +156,5 @@ export const manual = [
   'antfu',
   'openapi-specification-v2',
   'openapi-specification-v3.2',
+  'create-skills-from-repo',
 ]
