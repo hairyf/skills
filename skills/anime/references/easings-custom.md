@@ -94,6 +94,20 @@ animate('.box', {
 });
 ```
 
+## Irregular
+
+Random stepped easing (variable step lengths):
+
+```javascript
+import { irregular } from 'animejs';
+
+// irregular(length, randomness) — length steps, randomness 0–1
+animate('.box', {
+  x: 100,
+  ease: irregular(10, 1)
+});
+```
+
 ## Function Easing
 
 Custom easing function:
@@ -122,10 +136,9 @@ animate('.box', {
 
 ## Key Points
 
-- Use `cubicBezier()` for custom curves
-- Use `createSpring()` for physics-based easing
-- Use `steps()` for stepped animations
-- Custom functions accept progress (0-1) and return eased value
+- Use `cubicBezier()` for custom curves; `spring()` / `createSpring()` for physics-based easing
+- Use `steps()` for uniform steps; `irregular(length, randomness)` for random step lengths
+- Use `linear` for no easing; custom functions accept progress (0-1) and return eased value
 - Different properties can use different easings
 - Spring parameters control bounce and damping
 

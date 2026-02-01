@@ -3,7 +3,7 @@ name: tailwindcss
 description: Tailwind CSS utility-first CSS framework. Use when styling web applications with utility classes, building responsive designs, or customizing design systems with theme variables.
 metadata:
   author: Hairyf
-  version: "2026.1.28"
+  version: "2026.2.1"
   source: Generated from https://github.com/tailwindlabs/tailwindcss.com, scripts located at https://github.com/hairyf/skills
 ---
 
@@ -17,6 +17,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 
 | Topic | Description | Reference |
 |-------|-------------|-----------|
+| Installation | Vite, PostCSS, CLI, and CDN setup | [core-installation](references/core-installation.md) |
 | Utility Classes | Understanding Tailwind's utility-first approach and styling elements | [core-utility-classes](references/core-utility-classes.md) |
 | Theme Variables | Design tokens, customizing theme, and theme variable namespaces | [core-theme](references/core-theme.md) |
 | Responsive Design | Mobile-first breakpoints, responsive variants, and container queries | [core-responsive](references/core-responsive.md) |
@@ -24,6 +25,15 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Preflight | Tailwind's base styles and how to extend or disable them | [core-preflight](references/core-preflight.md) |
 
 ## Layout
+
+### Display & Flexbox & Grid
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Display | flex, grid, block, inline, hidden, sr-only, flow-root, contents | [layout-display](references/layout-display.md) |
+| Flexbox | flex-direction, justify, items, gap, grow, shrink, wrap, order | [layout-flexbox](references/layout-flexbox.md) |
+| Grid | grid-cols, grid-rows, gap, place-items, col-span, row-span, subgrid | [layout-grid](references/layout-grid.md) |
+| Aspect Ratio | Controlling element aspect ratio for responsive media | [layout-aspect-ratio](references/layout-aspect-ratio.md) |
 
 ### Positioning
 
@@ -66,7 +76,23 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 
 | Topic | Description | Reference |
 |-------|-------------|-----------|
+| Font & Text | Font size, weight, color, line-height, letter-spacing, decoration, truncate | [typography-font-text](references/typography-font-text.md) |
 | Text Align | Controlling text alignment with left, center, right, justify, and logical properties | [typography-text-align](references/typography-text-align.md) |
+
+## Visual
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Background | Background color, gradient, image, size, position | [visual-background](references/visual-background.md) |
+| Border | Border width, color, radius, divide, ring | [visual-border](references/visual-border.md) |
+| Effects | Box shadow, opacity, mix-blend, backdrop-blur, filter | [visual-effects](references/visual-effects.md) |
+
+## Effects & Interactivity
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Transition & Animation | CSS transitions, animation keyframes, reduced motion | [effects-transition-animation](references/effects-transition-animation.md) |
+| Visibility & Interactivity | Visibility, cursor, pointer-events, user-select, z-index | [effects-visibility-interactivity](references/effects-visibility-interactivity.md) |
 
 ## Features
 
@@ -83,6 +109,12 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Custom Styles | Adding custom styles, utilities, variants, and working with arbitrary values | [features-custom-styles](references/features-custom-styles.md) |
 | Functions & Directives | Tailwind's CSS directives and functions for working with your design system | [features-functions-directives](references/features-functions-directives.md) |
 | Content Detection | How Tailwind detects classes and how to customize content scanning | [features-content-detection](references/features-content-detection.md) |
+
+## Best Practices
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Utility Patterns | Managing duplication, conflicts, important modifier, when to use components | [best-practices-utility-patterns](references/best-practices-utility-patterns.md) |
 
 ## Key Recommendations
 

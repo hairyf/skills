@@ -122,6 +122,15 @@ const tl = createTimeline({
 tl.add('.box', { x: 100 });  // Uses defaults
 ```
 
+## Additional Methods
+
+- **`tl.sync(animation, position?)`** — Add a WAAPI or Timer so the timeline follows its progress (e.g. `tl.sync(waapiAnim, 0)`). Pauses the synced object; timeline drives playback.
+- **`tl.set(targets, params, position?)`** — Apply values instantly (0-duration replace). Same params as `add()` but no animation.
+- **`tl.call(callback, position?)`** — Run a function at a position: `tl.call(() => console.log('hit'), 500)`.
+- **`tl.remove(targets, propertyName?)`** — Remove targets (and optionally a property) from the timeline.
+- **`tl.stretch(newDuration)`** — Scale timeline duration; child durations and labels scale proportionally.
+- **`tl.refresh()`** — Recompute timeline duration from children (e.g. after adding/removing).
+
 ## Key Points
 
 - Use `createTimeline()` to create a timeline

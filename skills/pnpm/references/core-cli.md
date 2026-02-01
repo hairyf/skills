@@ -169,6 +169,14 @@ pnpm store prune
 pnpm store status
 ```
 
+### Doctor
+
+```bash
+pnpm doctor
+```
+
+Checks for common pnpm configuration issues.
+
 ### Other commands
 ```bash
 # Clean install (like npm ci)

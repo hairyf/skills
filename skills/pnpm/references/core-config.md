@@ -36,6 +36,16 @@ catalogs:
 overrides:
   lodash: ^4.17.21
   'foo@^1.0.0>bar': ^2.0.0
+  'foo@1>bar': '-'   # Remove transitive dep
+
+# Extend package manifests (fix broken packages)
+packageExtensions:
+  react-redux:
+    peerDependencies:
+      react-dom: '*'
+  'antd@5':
+    peerDependencies:
+      '@types/react': '*'
 
 # pnpm settings (alternative to .npmrc)
 settings:

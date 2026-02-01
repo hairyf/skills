@@ -199,6 +199,35 @@ function readPackage(pkg, context) {
 }
 ```
 
+## updateConfig Hook (v10.8+)
+
+Modify pnpm config before resolution. Useful with [config dependencies](features-config-dependencies.md):
+
+```js
+module.exports = {
+  hooks: {
+    updateConfig(config) {
+      return Object.assign(config, {
+        enablePrePostScripts: false,
+        optimisticRepeatInstall: true,
+      })
+    }
+  }
+}
+```
+
+## beforePacking Hook (v10.28+)
+
+Modify manifest before `pnpm pack` or `pnpm publish`. Only affects tarball, not local `package.json`:
+
+```js
+function beforePacking(pkg) {
+  delete pkg.devDependencies
+  pkg.main = './dist/index.js'
+  return pkg
+}
+```
+
 ## Hooks vs Overrides
 
 | Feature | Hooks (.pnpmfile.cjs) | Overrides |

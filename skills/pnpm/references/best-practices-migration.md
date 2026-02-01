@@ -7,6 +7,20 @@ description: Migrating from npm or Yarn to pnpm with minimal friction
 
 Guide for migrating existing projects from npm or Yarn to pnpm.
 
+## Enforce pnpm Only
+
+Prevent accidental `npm install` or `yarn`:
+
+```json
+{
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  }
+}
+```
+
+Use `npx -y only-allow pnpm` for npm v7+.
+
 ## Quick Migration
 
 ### From npm

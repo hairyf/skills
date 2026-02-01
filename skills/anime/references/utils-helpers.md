@@ -99,11 +99,62 @@ utils.snap(100)(value)  // Snap to nearest 100
 utils.lerp(start, end, t)  // t is 0-1
 ```
 
+### Damp
+
+```javascript
+// Frame-rate independent damped lerp (e.g. smooth follow)
+utils.damp(start, end, deltaTimeMs, factor)
+```
+
 ### Map Range
 
 ```javascript
 // Map value from one range to another
 utils.mapRange(value, inMin, inMax, outMin, outMax)
+```
+
+### Format / Angles
+
+```javascript
+utils.roundPad(v, decimals)   // toFixed string
+utils.padStart(v, length, pad)
+utils.padEnd(v, length, pad)
+utils.degToRad(degrees)
+utils.radToDeg(radians)
+```
+
+## Time
+
+### sync
+
+Run a callback on the next frame (1ms timer):
+
+```javascript
+utils.sync(() => console.log('next frame'));
+```
+
+### keepTime
+
+Wrap a constructor so animation state (e.g. iteration, progress) is preserved when re-running:
+
+```javascript
+const cleanup = utils.keepTime(() => animate('.box', { x: 100 }))();
+```
+
+## Random (extras)
+
+```javascript
+utils.createSeededRandom(seed, min, max, decimals)  // seeded RNG
+utils.randomPick([a, b, c])   // pick one
+utils.shuffle([a, b, c])      // shuffle copy
+```
+
+## Remove targets
+
+Remove targets from an animation/timeline:
+
+```javascript
+utils.remove(targets, renderable, propertyName);
 ```
 
 ## Value Helpers
@@ -134,18 +185,22 @@ const currentTime = utils.now();
 
 ### Clean Inline Styles
 
+Remove inline styles applied by an animation or timeline:
+
 ```javascript
-utils.cleanInlineStyles('.box');
+const anim = animate('.box', { x: 100 });
+utils.cleanInlineStyles(anim);  // or anim.cleanInlineStyles()
 ```
 
 ## Key Points
 
-- `utils.$()` queries DOM elements
-- `utils.get()` and `utils.set()` manipulate values
-- `utils.set()` returns revertable styles object
-- Math utilities: `round`, `random`, `clamp`, `wrap`, `snap`, `lerp`, `mapRange`
-- Chainable utilities for complex transformations
-- Use for value modifiers in animations
+- `utils.$()` is alias for `registerTargets`; `utils.get()` / `utils.set()` for DOM values
+- `utils.set()` returns object with `.revert()` to restore inline styles
+- Math: `round`, `random`, `clamp`, `wrap`, `snap`, `lerp`, `damp`, `mapRange`, `roundPad`, `padStart`, `padEnd`, `degToRad`, `radToDeg`
+- Time: `sync(callback)` (next frame), `keepTime(constructor)` (preserve animation state)
+- Random: `createSeededRandom`, `randomPick`, `shuffle`
+- `utils.remove(targets, renderable, propertyName)` removes targets from a renderable
+- Chainable form: e.g. `utils.round(0).clamp(0, 100)(value)`
 
 <!--
 Source references:
