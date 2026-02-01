@@ -151,3 +151,6 @@
 [submodule "sources/tsdown"]
 	path = sources/tsdown
 	url = https://github.com/rolldown/tsdown
+[submodule "sources/arch-tsdown-monorepo"]
+	path = sources/arch-tsdown-monorepo
+	url = https://github.com/hairyf/starter-monorepo
