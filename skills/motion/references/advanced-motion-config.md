@@ -68,15 +68,49 @@ For non-interactive contexts (like Framer canvas):
 </MotionConfig>
 ```
 
+### transformPagePoint
+
+Transform pointer/measurement coordinates. Essential for SVG with viewBox or scaled containers:
+
+```jsx
+import { MotionConfig, transformViewBoxPoint } from "motion/react"
+
+const svgRef = useRef(null)
+
+<MotionConfig transformPagePoint={transformViewBoxPoint(svgRef)}>
+  <svg ref={svgRef} viewBox="0 0 100 100" width={500} height={500}>
+    <motion.rect drag width={10} height={10} />
+  </svg>
+</MotionConfig>
+```
+
+Custom transform:
+
+```jsx
+<MotionConfig transformPagePoint={(p) => ({ x: p.x / 2, y: p.y / 2 })}>
+```
+
+### MotionGlobalConfig
+
+Global overrides (use sparingly):
+
+```js
+import { MotionGlobalConfig } from "motion/react"
+
+MotionGlobalConfig.instantAnimations = true   // Skip animations
+MotionGlobalConfig.useManualTiming = true     // For deterministic tests
+MotionGlobalConfig.mix = customMixer          // Custom value mixing
+```
+
 ## Key Points
 
 - `MotionConfig` sets global defaults
+- `transformPagePoint` for SVG viewBox and scaled layouts
+- `transformViewBoxPoint(svgRef)` creates a viewBox-aware transform
+- `MotionGlobalConfig` for global overrides
 - Wrap app or component tree
 - `reducedMotion` respects accessibility
-- `transition` sets default transitions
-- `isStatic` for non-interactive contexts
 - Config applies to all child components
-- Override with component-level props
 
 <!--
 Source references:

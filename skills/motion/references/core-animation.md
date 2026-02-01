@@ -78,6 +78,25 @@ Shortcuts for transform values:
 - `scale`, `scaleX`, `scaleY` - Scale
 - `skew`, `skewX`, `skewY` - Skew
 
+### values (Custom MotionValues)
+
+Pass MotionValues to animate custom or derived properties:
+
+```jsx
+const distance = useMotionValue(100)
+const angle = useMotionValue(0)
+const x = useTransform([distance, angle], ([d, a]) => Math.cos(a) * d)
+const y = useTransform([distance, angle], ([d, a]) => Math.sin(a) * d)
+
+<motion.div
+  values={{ distance, angle }}
+  animate={{ distance: 50, angle: Math.PI }}
+  style={{ x, y }}
+/>
+```
+
+Use when animating values that drive `useTransform` or when you need to animate custom properties.
+
 ### Style Properties
 
 Standard CSS properties:

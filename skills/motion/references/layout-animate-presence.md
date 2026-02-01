@@ -44,7 +44,15 @@ Control when exiting elements are removed:
 <AnimatePresence mode="sync">
   {/* Default: enter and exit simultaneously */}
 </AnimatePresence>
+
+<AnimatePresence mode="popLayout" anchorY="bottom">
+  {/* Exiting elements "pop" from layout; siblings reflow immediately */}
+</AnimatePresence>
 ```
+
+- `sync` — Enter and exit at once (default)
+- `wait` — Exit first, then enter
+- `popLayout` — Exiting elements removed from layout flow; use `anchorX`/`anchorY` for positioning
 
 ### Initial
 

@@ -63,6 +63,20 @@ Share layout between components:
 <motion.div layoutId="shared" />  // Animates between these
 ```
 
+### id and inherit
+
+Use `id` to scope layout groups; `inherit` controls parent group/id inheritance:
+
+```jsx
+<LayoutGroup id="A">
+  <LayoutGroup id="B" inherit="id">  {/* id becomes "A-B" */}
+  <LayoutGroup inherit={false}>       {/* New isolated group */}
+```
+
+- `inherit={true}` — Inherit group and id (default)
+- `inherit="id"` — Inherit id only, new group
+- `inherit={false}` — Isolated group
+
 ## Key Points
 
 - `LayoutGroup` coordinates layout animations
