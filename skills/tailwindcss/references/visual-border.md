@@ -73,8 +73,21 @@ Utilities for border width, color, style, and radius.
 
 ```html
 <button class="ring-2 ring-blue-500 ring-offset-2">Ring</button>
-<button class="focus:outline-none focus:ring-2 focus:ring-blue-500">Focus ring</button>
+<button class="focus:ring-3 focus:ring-blue-500">Focus ring</button>
 ```
+
+### Outline
+
+Separate from border; used for focus states. In v4: `outline` = 1px; `outline-2`, `outline-4` for width. Use `outline-offset-2` for offset.
+
+```html
+<button class="outline outline-offset-2 outline-sky-500">Outline</button>
+<button class="focus:outline-2 focus:outline-cyan-500">Focus outline</button>
+<!-- Accessibility: invisible but visible in forced-colors -->
+<button class="focus:outline-hidden">Focus outline-hidden</button>
+```
+
+v4: `outline-none` = `outline-style: none`; `outline-hidden` = invisible but shows in forced-colors mode.
 
 ## Key Points
 
@@ -82,7 +95,8 @@ Utilities for border width, color, style, and radius.
 - Color: `border-{color}`, opacity modifier
 - Radius: `rounded-{size}`, `rounded-full`, `rounded-{t,r,b,l,s,e}-*`, logical `rounded-s-*`, `rounded-e-*`
 - Divide: `divide-{x,y}`, `divide-{color}` for borders between flex/grid children
-- Ring: `ring`, `ring-{n}`, `ring-{color}`, `ring-offset-{n}`
+- Ring: `ring`, `ring-{n}`, `ring-{color}`, `ring-offset-{n}` (v4 default ring = 1px; use `ring-3` for 3px)
+- Outline: `outline`, `outline-{n}`, `outline-{color}`, `outline-offset-{n}`, `outline-hidden`, `outline-none`
 
 <!--
 Source references:

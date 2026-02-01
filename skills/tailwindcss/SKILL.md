@@ -3,7 +3,7 @@ name: tailwindcss
 description: Tailwind CSS utility-first CSS framework. Use when styling web applications with utility classes, building responsive designs, or customizing design systems with theme variables.
 metadata:
   author: Hairyf
-  version: "2026.2.1"
+  version: "2026.2.2"
   source: Generated from https://github.com/tailwindlabs/tailwindcss.com, scripts located at https://github.com/hairyf/skills
 ---
 
@@ -34,6 +34,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Flexbox | flex-direction, justify, items, gap, grow, shrink, wrap, order | [layout-flexbox](references/layout-flexbox.md) |
 | Grid | grid-cols, grid-rows, gap, place-items, col-span, row-span, subgrid | [layout-grid](references/layout-grid.md) |
 | Aspect Ratio | Controlling element aspect ratio for responsive media | [layout-aspect-ratio](references/layout-aspect-ratio.md) |
+| Columns | Multi-column layout for magazine-style or masonry layouts | [layout-columns](references/layout-columns.md) |
 
 ### Positioning
 
@@ -48,6 +49,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 |-------|-------------|-----------|
 | Width | Setting element width with spacing scale, fractions, container sizes, and viewport units | [layout-width](references/layout-width.md) |
 | Height | Setting element height with spacing scale, fractions, viewport units, and content-based sizing | [layout-height](references/layout-height.md) |
+| Min & Max Sizing | min-width, max-width, min-height, max-height constraints | [layout-min-max-sizing](references/layout-min-max-sizing.md) |
 
 ### Spacing
 
@@ -61,6 +63,18 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | Overflow | Controlling how elements handle content that overflows their container | [layout-overflow](references/layout-overflow.md) |
+
+### Images & Replaced Elements
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Object Fit & Position | Controlling how images and video are resized and positioned | [layout-object-fit-position](references/layout-object-fit-position.md) |
+
+### Tables
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Table Layout | border-collapse, table-auto, table-fixed | [layout-tables](references/layout-tables.md) |
 
 ## Transforms
 
@@ -78,6 +92,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 |-------|-------------|-----------|
 | Font & Text | Font size, weight, color, line-height, letter-spacing, decoration, truncate | [typography-font-text](references/typography-font-text.md) |
 | Text Align | Controlling text alignment with left, center, right, justify, and logical properties | [typography-text-align](references/typography-text-align.md) |
+| List Style | list-style-type, list-style-position for bullets and markers | [typography-list-style](references/typography-list-style.md) |
 
 ## Visual
 
@@ -86,6 +101,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Background | Background color, gradient, image, size, position | [visual-background](references/visual-background.md) |
 | Border | Border width, color, radius, divide, ring | [visual-border](references/visual-border.md) |
 | Effects | Box shadow, opacity, mix-blend, backdrop-blur, filter | [visual-effects](references/visual-effects.md) |
+| SVG | fill, stroke, stroke-width for SVG and icon styling | [visual-svg](references/visual-svg.md) |
 
 ## Effects & Interactivity
 
@@ -93,6 +109,8 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 |-------|-------------|-----------|
 | Transition & Animation | CSS transitions, animation keyframes, reduced motion | [effects-transition-animation](references/effects-transition-animation.md) |
 | Visibility & Interactivity | Visibility, cursor, pointer-events, user-select, z-index | [effects-visibility-interactivity](references/effects-visibility-interactivity.md) |
+| Form Controls | accent-color, appearance, caret-color, resize | [effects-form-controls](references/effects-form-controls.md) |
+| Scroll Snap | scroll-snap-type, scroll-snap-align for carousels | [effects-scroll-snap](references/effects-scroll-snap.md) |
 
 ## Features
 
@@ -101,6 +119,12 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom user i
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | Dark Mode | Implementing dark mode with the dark variant and custom strategies | [features-dark-mode](references/features-dark-mode.md) |
+
+### Migration
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Upgrade Guide | Migrating from v3 to v4, breaking changes, rename mappings | [features-upgrade](references/features-upgrade.md) |
 
 ### Customization
 

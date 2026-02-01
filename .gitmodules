@@ -145,3 +145,9 @@
 [submodule "vendor/vuejs-ai"]
 	path = vendor/vuejs-ai
 	url = https://github.com/vuejs-ai/skills
+[submodule "sources/pixijs"]
+	path = sources/pixijs
+	url = https://github.com/pixijs/pixijs
+[submodule "sources/tsdown"]
+	path = sources/tsdown
+	url = https://github.com/rolldown/tsdown
