@@ -1,5 +1,5 @@
 ---
-name: create-skills-from-repo
+name: create-skill-from-repo
 description: Creates Agent Skills from an arbitrary repository when no existing reference exists. Clones the repo to .temp/repos, generates skills under a user-defined name following project conventions, iterates until major modules are covered, then removes the temp clone. Use when the user provides a repo URL and a skills name to bootstrap skills for a framework or project.
 metadata:
   author: hairy

@@ -156,5 +156,5 @@ export const manual = [
   'antfu',
   'openapi-specification-v2',
   'openapi-specification-v3.2',
-  'create-skills-from-repo',
+  'create-skill-from-repo',
 ]
