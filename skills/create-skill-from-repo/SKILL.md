@@ -3,24 +3,23 @@ name: create-skill-from-repo
 description: Creates Agent Skills from an arbitrary repository when no existing reference exists. Adds the repo as a submodule under sources/, generates skills under a user-defined name following project conventions, iterates until major modules are covered. Use when the user provides a repo URL and a skills name to bootstrap skills for a framework or project.
 metadata:
   author: hairy
-  version: "2026.2.2"
+  version: "2026.2.3"
   source: Hand-written, scripts at https://github.com/hairyf/skills
 ---
 
 # Create Skills from Repo
 
-Workflow for quickly producing a skill set from any repository and applying it in the project. Use when the user supplies `<repo-url>` and `<skills-name>` and there is no existing skill source for that framework or project (i.e. not in `meta.ts` submodules or vendors).
+Workflow for quickly producing a skill set from any repository and applying it in the project. Use when the user supplies `<repo-url>` and `<skills-name>` and there is no existing skill for that framework or project.
 
 ## When to Use
 
 - User provides a repository URL and a desired skills name.
-- No entry exists in `meta.ts` submodules or vendors for that project.
-- Goal is to bootstrap skills from docs/source in this repo (output under `skills/`).
+- Goal is to bootstrap skills from docs/source (output under `skills/`).
 
 ## Prerequisites
 
 - User has given: `<repo-url>` (e.g. `https://github.com/org/repo`) and `<skills-name>` (kebab-case, e.g. `my-framework`).
-- Workspace is the skills generator repo (contains `meta.ts`, `skills/`).
+- Workspace has (or will have) `skills/` and `sources/` directories.
 
 ## Workflow
 
@@ -28,31 +27,28 @@ Copy this checklist and track progress:
 
 ```
 Task Progress:
-- [ ] Step 1: Add submodule to meta.ts and clone to sources/
+- [ ] Step 1: Clone repo to sources/
 - [ ] Step 2: Identify docs/source in clone
 - [ ] Step 3: Generate initial skill set (SKILL.md + references)
 - [ ] Step 4: Loop — review coverage, add missing major modules
 - [ ] Step 5: Add generated skills to user's AGENTS.md (create file if missing)
 ```
 
-### Step 1: Add submodule to meta.ts and clone to sources/
+### Step 1: Clone repo to sources/
 
-1. Add an entry to `meta.ts` in the `submodules` object:
-   ```ts
-   export const submodules = {
-     // ... existing entries
-     '<skills-name>': '<repo-url>',
-   }
-   ```
-   Use `<skills-name>` as the key so that `sources/<skills-name>/` matches `skills/<skills-name>/` (Type 1 convention).
+1. Ensure `sources/` exists. Create it if needed: `mkdir -p sources`.
 
-2. Run the init script to clone the submodule:
-   ```bash
-   nr start init -y
-   ```
-   This clones the repository to `sources/<skills-name>/` via `git submodule add`.
+2. Clone the repository to `sources/<skills-name>/`:
+   - **With git submodules:**
+     ```bash
+     git submodule add <repo-url> sources/<skills-name>
+     ```
+   - **Plain clone (no submodule):**
+     ```bash
+     git clone <repo-url> sources/<skills-name>
+     ```
 
-3. If the submodule already exists in `.gitmodules` (e.g. from a previous run) but the folder is empty, run:
+3. If the submodule was already added (folder exists but empty), run:
    ```bash
    git submodule update --init sources/<skills-name>
    ```
@@ -60,8 +56,8 @@ Task Progress:
 ### Step 2: Identify docs/source in clone
 
 1. Locate documentation in `sources/<skills-name>/`. Common paths: `docs/`, `documentation/`, `packages/*/docs/`, or repo root with README + MD files.
-2. Treat this path as the **source root** for reading (equivalent to `sources/{project}/docs/` in a Type 1 workflow).
-3. If the skills repo has `instructions/<skills-name>.md` for this project, follow it; otherwise focus on agent capabilities and practical usage; categorize references as `core`, `features`, `best-practices`, `advanced` and prefix filenames accordingly; skip user-facing guides, get-started, and content agents already know.
+2. Treat this path as the **source root** for reading.
+3. If the workspace has `instructions/<skills-name>.md`, follow it; otherwise focus on agent capabilities and practical usage; categorize references as `core`, `features`, `best-practices`, `advanced` and prefix filenames accordingly; skip user-facing guides, get-started, and content agents already know.
 
 ### Step 3: Generate initial skill set
 
@@ -99,11 +95,11 @@ Review, identify missing modules, supplement, update SKILL.md (and GENERATION.md
    - Optionally: a one-line description or when to use it (from `skills/<skills-name>/SKILL.md` frontmatter).
 3. Place the addition in a clear section (e.g. "Generated skills", "Agent skills", "Skills from repo"). If the file already lists skills, append or merge in the same format; do not remove existing content.
 
-4. Tell the user that the skill set is ready: output is under `skills/<skills-name>/`, source is under `sources/<skills-name>/`, the user's `AGENTS.md` has been updated. Optionally summarize what was created (SKILL.md + N references). Future updates follow "Updating Generated Skills" in AGENTS.md.
+4. Tell the user that the skill set is ready: output is under `skills/<skills-name>/`, source is under `sources/<skills-name>/`, the user's `AGENTS.md` has been updated. Optionally summarize what was created (SKILL.md + N references). For future updates: run `git diff` in `sources/<skills-name>` to see doc changes, then update affected reference files and GENERATION.md.
 
 ## Key Points
 
-- **Sources as submodule:** The repo is cloned to `sources/<skills-name>/` as a git submodule (same as Type 1); it is added to `meta.ts` and stays for future updates.
+- **Sources as clone:** The repo is cloned to `sources/<skills-name>/` (submodule or plain clone) and stays for future updates.
 - **One skill set per run:** One `<repo-url>` + `<skills-name>` produces `sources/<skills-name>/` and `skills/<skills-name>/`.
 - **User's AGENTS.md:** Always add the generated skill to the user's project root `AGENTS.md` (create the file if it does not exist). We only register our output there; we do not require the user to follow any other project's rules.
 - **Naming:** Use kebab-case for `<skills-name>` and for reference filenames (e.g. `core-syntax.md`, `features-routing.md`).
