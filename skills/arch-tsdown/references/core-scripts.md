@@ -11,6 +11,7 @@ description: npm scripts and release workflow — build, dev, release, npm Trust
 |-----------------|----------------|---------|
 | `build`         | `tsdown`       | One-off build to `dist/`. |
 | `dev`           | `tsdown --watch` | Watch mode; rebuild on file changes. |
+| `start`         | `tsx src/index.ts` | Run source directly without building (via tsx). |
 | `typecheck`     | `tsc`          | Type-check only (tsconfig has `noEmit: true`). |
 | `test`          | `vitest`       | Run tests (can use vitest-package-exports for dist tests). |
 | `lint`          | `eslint`       | Lint with @antfu/eslint-config. |
@@ -31,8 +32,11 @@ The starter recommends **npm Trusted Publisher** so publishing is done in CI, no
 2. Push tag → GitHub Actions runs `sxzz/workflows` release workflow with `publish: true`.
 3. CI publishes to npm; no need to run `pnpm publish` on your machine again.
 
+See [core-release](core-release.md) for the Release workflow details.
+
 ## Hooks
 
+- **prepare** — Runs after `pnpm install`; installs git hooks via simple-git-hooks.
 - **simple-git-hooks** runs `pre-commit`: install + `lint-staged` (e.g. `eslint --fix` on staged files).
 
 <!--

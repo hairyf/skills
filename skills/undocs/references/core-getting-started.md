@@ -41,6 +41,20 @@ pnpm build
 yarn build
 ```
 
+## Pin Nuxt Version
+
+Pin Nuxt to `3.14.0` in `package.json`; otherwise the page may throw a runtime error where `cdnURL` is `undefined`:
+
+```json
+{
+  "dependencies": {
+    "nuxt": "3.14.0"
+  }
+}
+```
+
+Use pnpm/yarn `resolutions` or `overrides` to lock the version if needed. Do not use `^3.14.0` or `~3.14.0`, as a later patch/minor may be incompatible.
+
 ## Project Structure
 
 After creating a project, you'll have:
@@ -58,6 +72,7 @@ docs/
 
 ## Key Points
 
+- **Pin Nuxt to 3.14.0** to avoid runtime `cdnURL` undefined errors; do not use `^`/`~` in the dependency range
 - Undocs uses Nuxt Content for markdown processing
 - Configuration is done via `.config/docs.yaml`
 - Documentation pages are organized in numbered directories (e.g., `1.guide/`, `2.config/`)

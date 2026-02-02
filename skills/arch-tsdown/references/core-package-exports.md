@@ -11,6 +11,7 @@ With tsdown’s `exports: true`, the build writes ESM and types; the starter’s
 
 ```json
 {
+  "sideEffects": false,
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
@@ -22,6 +23,7 @@ With tsdown’s `exports: true`, the build writes ESM and types; the starter’s
 }
 ```
 
+- **sideEffects: false** — Declares no side effects; enables tree-shaking for consumers.
 - **Consumers** resolve the package root to `dist/index.mjs` (ESM) and types to `dist/index.d.mts`.
 - **files** ensures only `dist/` is published.
 

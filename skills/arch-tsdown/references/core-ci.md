@@ -37,7 +37,7 @@ The starter uses a single **CI** workflow (`.github/workflows/ci.yml`) on push/P
 
 ## Release (separate workflow)
 
-Release is **not** in the CI workflow. It runs on **tag push** (e.g. `v*`) via `.github/workflows/release.yml` and uses `sxzz/workflows` with `publish: true` to publish to npm. See [core-scripts](core-scripts.md) for the release flow.
+Release is **not** in the CI workflow. It runs on **tag push** (e.g. `v*`) via `.github/workflows/release.yml` and uses `sxzz/workflows` with `publish: true` to publish to npm. See [core-scripts](core-scripts.md) and [core-release](core-release.md) for the release flow.
 
 ## Template
 

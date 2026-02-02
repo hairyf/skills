@@ -22,11 +22,13 @@ arch-tsdown is a TypeScript library starter (based on antfu/starter-ts) that use
 |-------|-------------|-----------|
 | Overview | Project purpose, structure, when to use | [core-overview](references/core-overview.md) |
 | tsdown Config | entry, dts, exports, publint | [core-tsdown-config](references/core-tsdown-config.md) |
-| Scripts & Release | build, dev, release, npm Trusted Publisher | [core-scripts](references/core-scripts.md) |
-| Package Exports | dist output, types, exports field | [core-package-exports](references/core-package-exports.md) |
+| Scripts & Release | build, dev, start, release, npm Trusted Publisher | [core-scripts](references/core-scripts.md) |
+| Package Exports | dist output, types, exports, sideEffects | [core-package-exports](references/core-package-exports.md) |
+| pnpm Workspace | catalogs, version management, workspace | [core-pnpm-workspace](references/core-pnpm-workspace.md) |
 | Tooling | ESLint, TypeScript, Vitest config | [core-tooling](references/core-tooling.md) |
 | Git Hooks | simple-git-hooks, lint-staged, pre-commit | [core-git-hooks](references/core-git-hooks.md) |
 | CI | GitHub Actions — lint, typecheck, test matrix | [core-ci](references/core-ci.md) |
+| Release | Tag push, sxzz/workflows, npm Trusted Publisher | [core-release](references/core-release.md) |
 | Testing | Vitest, vitest-package-exports, export snapshots | [core-testing](references/core-testing.md) |
 
 ## Best Practices

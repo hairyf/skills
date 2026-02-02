@@ -25,7 +25,9 @@ arch-tsdown is a TypeScript library starter template (based on [antfu/starter-ts
 ├── tsconfig.json         # TypeScript (noEmit, for typecheck only)
 ├── vitest.config.ts      # Vitest config (e.g. package-exports testing)
 ├── eslint.config.js      # ESLint (type: 'lib', pnpm: true)
-└── package.json          # Exports point to dist/
+├── pnpm-workspace.yaml   # Workspace + catalogs for version management
+├── package.json          # Exports point to dist/
+└── .github/workflows/    # CI + Release workflows
 ```
 
 ## When to Use
