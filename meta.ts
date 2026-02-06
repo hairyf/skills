@@ -94,7 +94,7 @@ export const vendors: Record<string, VendorSkillMeta> = {
   'anthropics': {
     source: 'https://github.com/anthropics/skills',
     skills: {
-      'skill-creator': 'create-skill',
+      'create-skill': 'skill-creator',
     },
   },
 
