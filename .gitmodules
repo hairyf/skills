@@ -154,3 +154,6 @@
 [submodule "sources/arch-tsdown-monorepo"]
 	path = sources/arch-tsdown-monorepo
 	url = https://github.com/hairyf/starter-monorepo
+[submodule "vendor/anthropics"]
+	path = vendor/anthropics
+	url = https://github.com/anthropics/skills

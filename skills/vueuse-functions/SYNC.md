@@ -1,5 +1,5 @@
 # Sync Info
 
 - **Source:** `vendor/vueuse/skills/vueuse-functions`
-- **Git SHA:** `2b8714473501bbdd4a2c7635db40c1b2b6b2fff1`
-- **Synced:** 2026-01-31
+- **Git SHA:** `14788c64157f9589d4c5483f5002a816a3cd9ad0`
+- **Synced:** 2026-02-06

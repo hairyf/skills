@@ -90,6 +90,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
     },
   },
 
+  'anthropics': {
+    source: 'https://github.com/anthropics/skills',
+    skills: {
+      'create-skill': 'skill-creator',
+    },
+  },
+
   'vueuse': {
     official: true,
     source: 'https://github.com/vueuse/skills',
