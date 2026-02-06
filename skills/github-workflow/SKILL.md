@@ -13,6 +13,20 @@ Standard flow from "task link or description" to "create PR (no merge)". Task so
 
 ---
 
+## Prerequisites
+
+This workflow depends on **GitHub PR creation** (Step 4). Ensure one of the following before or when the user first runs the workflow:
+
+1. **GitHub skill** is available in the user’s skills directory (e.g. `~/.bonfire/skills/github/` or your agent’s equivalent). The user can install it via:
+   - `npx skills add awesome-copilot/gh-cli` (or your environment’s skill discovery), then install the suggested skill.
+2. **`gh` CLI** is installed and authenticated:
+   - Install: [GitHub CLI](https://cli.github.com/)
+   - Then run: `gh auth login`
+
+**When to check**: At the start of the workflow (e.g. after the user provides the task), optionally run `gh auth status`. If it fails or the user has no GitHub skill, prompt: *"To create the PR in Step 4, the GitHub skill or `gh` CLI is required. Install the GitHub skill (e.g. `npx skills add awesome-copilot/gh-cli`) or install and log in with `gh auth login`. You can continue with Steps 1–3 now and set this up before Step 4."* Then continue; if Step 4 is reached and `gh` is still missing, use the edge case handling below.
+
+---
+
 ## Global Data Source Config (Persistent)
 
 - **Path**: `~/.bonfire/source.json` (user-level, applies across projects)
@@ -144,7 +158,7 @@ Agent does not change business code; the user completes the fix, self-test, and 
 | Branch `fix/<name>` already exists | Ask whether to continue on existing branch or use a new name (e.g. `fix/<name>-v2`). |
 | `origin` is archived or read-only | Do not add another remote; report error and suggest updating `origin` or creating PR on the repo’s web UI. |
 | User asks for PR before saying "fix done" | If there are new commits and user explicitly requests, run Step 4; otherwise remind to finish fix and commit first. |
-| `gh` not installed or not logged in | Prompt to install and run `gh auth login`, or give steps to create PR from branch on GitHub web. |
+| `gh` not installed or not logged in | See **Prerequisites**. Prompt to install GitHub skill (e.g. `npx skills add awesome-copilot/gh-cli`) or install and run `gh auth login`; or give steps to create PR from branch on GitHub web. |
 
 ---
 

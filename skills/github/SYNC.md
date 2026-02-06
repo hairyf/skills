@@ -1,5 +1,5 @@
 # Sync Info
 
-- **Source:** `vendor/agent-skills/skills/github`
-- **Git SHA:** `898b17c62283fe519b8e14537df126a24a84cb54`
+- **Source:** `vendor/awesome-copilot/skills/gh-cli`
+- **Git SHA:** `4f9e20b13ae9c1259bde3831e72e3af5b6661337`
 - **Synced:** 2026-02-06

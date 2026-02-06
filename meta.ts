@@ -94,14 +94,14 @@ export const vendors: Record<string, VendorSkillMeta> = {
   'anthropics': {
     source: 'https://github.com/anthropics/skills',
     skills: {
-      'create-skill': 'skill-creator',
+      'skill-creator': 'create-skill',
     },
   },
 
-  'agent-skills': {
-    source: 'https://github.com/callstackincubator/agent-skills',
+  'awesome-copilot': {
+    source: 'https://github.com/github/awesome-copilot',
     skills: {
-      github: 'github',
+      'gh-cli': 'github',
     },
   },
 

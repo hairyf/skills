@@ -157,6 +157,6 @@
 [submodule "vendor/anthropics"]
 	path = vendor/anthropics
 	url = https://github.com/anthropics/skills
-[submodule "vendor/agent-skills"]
-	path = vendor/agent-skills
-	url = https://github.com/callstackincubator/agent-skills
+[submodule "vendor/awesome-copilot"]
+	path = vendor/awesome-copilot
+	url = https://github.com/github/awesome-copilot
