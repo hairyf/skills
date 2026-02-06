@@ -37,4 +37,4 @@ See [SKILL.md](../SKILL.md) edge cases table.
 ## Reference
 
 - Task data source: user skills dir, e.g. `~/.bonfire/skills/clickup/SKILL.md` (example), find-skills (`npx skills find <keyword>`)
-- PR tool: GitHub / `gh` CLI skill from **awesome-copilot/gh-cli** (e.g. `npx skills add awesome-copilot/gh-cli`); after install typically at user skills dir e.g. `~/.bonfire/skills/github/SKILL.md`. See [SKILL.md](../SKILL.md) Prerequisites.
+- PR tool: GitHub / `gh` CLI skill (install: see [SKILL.md](../SKILL.md) Prerequisites);

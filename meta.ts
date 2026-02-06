@@ -60,7 +60,7 @@ export const submodules = {
   'pnpm': 'https://github.com/pnpm/pnpm.io',
   'tsdown': 'https://github.com/rolldown/tsdown',
   'vitest': 'https://github.com/vitest-dev/vitest',
-
+  'github': 'https://github.com/github/awesome-copilot',
   'vitepress': 'https://github.com/vuejs/vitepress',
 
   'openapi-specification': 'https://github.com/OAI/OpenAPI-Specification',
@@ -95,13 +95,6 @@ export const vendors: Record<string, VendorSkillMeta> = {
     source: 'https://github.com/anthropics/skills',
     skills: {
       'skill-creator': 'create-skill',
-    },
-  },
-
-  'awesome-copilot': {
-    source: 'https://github.com/github/awesome-copilot',
-    skills: {
-      'gh-cli': 'github',
     },
   },
 
@@ -140,6 +133,7 @@ export const vendors: Record<string, VendorSkillMeta> = {
       tsdown: 'tsdown',
     },
   },
+
   'vuejs-ai': {
     source: 'https://github.com/vuejs-ai/skills',
     skills: {

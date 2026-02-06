@@ -157,6 +157,6 @@
 [submodule "vendor/anthropics"]
 	path = vendor/anthropics
 	url = https://github.com/anthropics/skills
-[submodule "vendor/awesome-copilot"]
-	path = vendor/awesome-copilot
+[submodule "sources/github"]
+	path = sources/github
 	url = https://github.com/github/awesome-copilot
