@@ -82,6 +82,7 @@ export const vendors: Record<string, VendorSkillMeta> = {
       'writing-humanizer': 'humanizer',
     },
   },
+
   'slidev': {
     official: true,
     source: 'https://github.com/slidevjs/slidev',
@@ -94,6 +95,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
     source: 'https://github.com/anthropics/skills',
     skills: {
       'create-skill': 'skill-creator',
+    },
+  },
+
+  'agent-skills': {
+    source: 'https://github.com/callstackincubator/agent-skills',
+    skills: {
+      github: 'github',
     },
   },
 
@@ -163,6 +171,7 @@ export const vendors: Record<string, VendorSkillMeta> = {
 export const manual = [
   'hairy',
   'antfu',
+  'github-workflow',
   'openapi-specification-v2',
   'openapi-specification-v3.2',
   'create-skill-from-repo',
