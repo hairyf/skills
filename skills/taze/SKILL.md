@@ -4,7 +4,7 @@ description: Keep JavaScript/TypeScript dependencies fresh with safety rails and
 metadata:
   author: hairy
   version: "2026.02.24"
-  source: Generated from https://github.com/antfu-collective/taze, scripts located at https://github.com/antfu/skills
+  source: Generated from https://github.com/antfu-collective/taze, scripts located at https://github.com/hairyf/skills
 ---
 
 > The skill is based on `taze` (latest README on GitHub) as of 2026-02-24.
