@@ -163,12 +163,20 @@ tsdown --no-treeshake
 
 ## Dependencies
 
-### `--external <module>`
+### `--deps.never-bundle <module>`
 
 Mark module as external (not bundled):
 
 ```bash
-tsdown --external react --external react-dom
+tsdown --deps.never-bundle react --deps.never-bundle react-dom
+```
+
+### `--deps.skip-node-modules-bundle`
+
+Skip resolving and bundling all node_modules:
+
+```bash
+tsdown --deps.skip-node-modules-bundle
 ```
 
 ### `--shims`
@@ -245,6 +253,22 @@ Copy directory to output:
 tsdown --copy public
 tsdown --copy assets --copy static
 ```
+
+## Executable
+
+### `--exe`
+
+**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications). Requires Node.js >= 25.5.0, not supported in Bun or Deno.
+
+```bash
+tsdown --exe
+```
+
+When enabled:
+- Default format changes to `cjs` (unless ESM SEA is supported)
+- Declaration file generation (`dts`) is disabled by default
+- Code splitting is disabled
+- Only single entry points are supported
 
 ## Package Management
 
@@ -356,6 +380,12 @@ tsdown --format iife --platform browser --minify
 
 ```bash
 tsdown --format esm --platform node --shims
+```
+
+### Node.js Executable (SEA)
+
+```bash
+tsdown src/cli.ts --exe
 ```
 
 ### Monorepo Package

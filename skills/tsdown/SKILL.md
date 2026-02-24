@@ -83,8 +83,10 @@ export default defineConfig({
 
 | Feature | Usage | Reference |
 |---------|-------|-----------|
-| External deps | `external: ['react', /^@myorg\//]` | [option-dependencies](references/option-dependencies.md) |
-| Inline deps | `noExternal: ['dep-to-bundle']` | [option-dependencies](references/option-dependencies.md) |
+| Never bundle | `deps: { neverBundle: ['react', /^@myorg\//] }` | [option-dependencies](references/option-dependencies.md) |
+| Always bundle | `deps: { alwaysBundle: ['dep-to-bundle'] }` | [option-dependencies](references/option-dependencies.md) |
+| Only allow bundle | `deps: { onlyAllowBundle: ['cac', 'bumpp'] }` - Whitelist | [option-dependencies](references/option-dependencies.md) |
+| Skip node_modules | `deps: { skipNodeModulesBundle: true }` | [option-dependencies](references/option-dependencies.md) |
 | Auto external | Automatic peer/dependency externalization | [option-dependencies](references/option-dependencies.md) |
 
 ## Output Enhancement
@@ -96,6 +98,7 @@ export default defineConfig({
 | Package exports | `exports: true` - Auto-generate exports field | [option-package-exports](references/option-package-exports.md) |
 | CSS handling | **[experimental]** Still in development | [option-css](references/option-css.md) |
 | Unbundle mode | `unbundle: true` - Preserve directory structure | [option-unbundle](references/option-unbundle.md) |
+| Executable (SEA) | **[experimental]** `exe: true` - Bundle as Node.js SEA executable | [option-exe](references/option-exe.md) |
 | Package validation | `publint: true`, `attw: true` - Validate package | [option-lint](references/option-lint.md) |
 
 ## Framework & Runtime Support
@@ -152,7 +155,9 @@ export default defineConfig({
   entry: ['src/index.tsx'],
   format: ['esm', 'cjs'],
   dts: true,
-  external: ['react', 'react-dom'],
+  deps: {
+    neverBundle: ['react', 'react-dom'],
+  },
   plugins: [
     // React Fast Refresh support
   ],
@@ -192,6 +197,15 @@ import { defineConfig } from 'tsdown'
 export default defineConfig({
   entry: ['src/index.ts'],
   plugins: [wasm()],
+})
+```
+
+### Node.js Executable (SEA)
+
+```ts
+export default defineConfig({
+  entry: ['src/cli.ts'],
+  exe: true,
 })
 ```
 
@@ -277,6 +291,7 @@ tsdown --format esm,cjs        # Multiple formats
 tsdown --outDir lib            # Custom output directory
 tsdown --minify                # Enable minification
 tsdown --dts                   # Generate declarations
+tsdown --exe                   # Bundle as executable (SEA)
 
 # Entry options
 tsdown src/index.ts            # Single entry
@@ -298,7 +313,7 @@ tsdown --clean                 # Clean output directory
 
 2. **Externalize dependencies** to avoid bundling unnecessary code:
    ```ts
-   { external: [/^react/, /^@myorg\//] }
+   { deps: { neverBundle: [/^react/, /^@myorg\//] } }
    ```
 
 3. **Use tree shaking** for optimal bundle size:

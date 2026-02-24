@@ -160,3 +160,9 @@
 [submodule "sources/github"]
 	path = sources/github
 	url = https://github.com/github/awesome-copilot
+[submodule "sources/taze"]
+	path = sources/taze
+	url = https://github.com/antfu-collective/taze
+[submodule "vendor/e2e-testing"]
+	path = vendor/e2e-testing
+	url = https://github.com/hieutrtr/ai1-skills
