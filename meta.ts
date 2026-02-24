@@ -159,6 +159,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
       'web-design-guidelines': 'web-design-guidelines',
     },
   },
+
+  'e2e-testing': {
+    source: 'https://github.com/hieutrtr/ai1-skills',
+    skills: {
+      'e2e-testing': 'e2e-testing',
+    },
+  },
 }
 
 /**

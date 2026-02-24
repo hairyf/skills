@@ -24,6 +24,57 @@ This skill covers Hairyf's preferred tooling, configurations, and best practices
 
 ---
 
+## Global Preferences
+
+High-level cross-cutting preferences that should be respected whenever possible:
+
+### "specify" keyword
+
+When a task is marked with **"specify"** (for example: "specify this repo according to hairy"):
+
+- Treat it as a request to **inspect the current project** and **optimize it until it matches these preferences as much as reasonably possible**.
+- Concretely, this should trigger:
+  - Architecture detection and upgrade planning via `@skills/arch-upkeep` and the relevant `arch-*` skills.
+  - Preference-aware stack choices (prefer unjs ecosystem via `@skills/unjs`).
+  - Dependency freshness checks and upgrades via `@skills/taze`.
+  - A final pass of `lint` + `typecheck` (and tests if present) before considering the "specify" task done.
+
+### Prefer unjs ecosystem frameworks
+
+- When choosing frameworks or runtimes (SSR, API, tooling, dev server, etc.), **prefer unjs ecosystem projects** first (for example Nuxt, Nitro, h3, unstorage, unplugin, unocss, ofetch, and other unjs-maintained tools).
+- Only fall back to non-unjs options when there is a clear, justified reason (missing feature, ecosystem constraint, or legacy requirements).
+- For concrete choices, recipes, and defaults, **delegate to `@skills/unjs`** and follow its recommendations.
+
+### Architecture must map to `arch-*` skills
+
+- A project’s architecture should always map to one of the canonical `arch-*` stacks (tsdown library, CLI, monorepo, unplugin, webext, vscode, etc.).
+- When the current shape does not match any target cleanly, **treat it as an upgrade opportunity** and plan a migration instead of adding more ad‑hoc structure.
+- Use **`@skills/arch-upkeep`** to:
+  - Detect the current architecture.
+  - Choose the best target `arch-*` skill(s).
+  - Orchestrate an incremental migration to that architecture.
+
+### Keep dependencies fresh with `taze`
+
+- Dependencies should be kept **continuously fresh**, not only during big refactors.
+- Prefer using **`taze`** (see `@skills/taze`) to:
+  - Audit outdated dependencies.
+  - Perform controlled upgrades (minor/patch regularly; majors with explicit review).
+  - Align versions across a monorepo using pnpm workspaces and catalogs.
+- Avoid hand-editing versions in `package.json` unless there is a specific reason not to follow `taze`’s suggestions.
+
+### Always finish with lint + typecheck
+
+- After implementing any non-trivial change (feature, refactor, config change, dependency upgrade, CI change, etc.), **always run lint and typecheck** before considering the task done.
+- Standard scripts:
+  - `nr lint` → ESLint via `@antfu/eslint-config`.
+  - `nr typecheck` → TypeScript in strict mode (project-wide).
+- For CI and Git hooks:
+  - Ensure pre-commit hooks at least run `lint` on staged files.
+  - Ensure GitHub Actions (or other CI) run both `lint` and `typecheck` on PRs and `main` pushes.
+
+---
+
 ## Core Stack
 
 ### Package Manager (pnpm)
@@ -204,13 +255,20 @@ Add script to `package.json`:
 
 ## References
 
+### Global Preferences
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Prefer unjs ecosystem | Prefer unjs ecosystem frameworks and tooling; delegate to `@skills/unjs` | [core-unjs-preferences](references/core-unjs-preferences.md) |
+| Architecture via arch-* | Map repo shape to canonical `arch-*` skills and upgrade via `arch-upkeep` | [core-arch-upkeep-routing](references/core-arch-upkeep-routing.md) |
+| Fresh dependencies with taze | Keep dependencies continuously fresh using `taze` and controlled upgrades | [core-deps-taze](references/core-deps-taze.md) |
+| Lint + typecheck as gate | Always finish with lint + typecheck locally and in CI | [core-lint-typecheck](references/core-lint-typecheck.md) |
+
 ### Project Setup
 
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | @antfu/eslint-config | ESLint flat config for formatting and linting | [antfu-eslint-config](references/antfu-eslint-config.md) |
-| GitHub Actions | Preferred workflows using sxzz/workflows | [github-actions](references/github-actions.md) |
-| .gitignore | Preferred .gitignore for JS/TS projects | [gitignore](references/gitignore.md) |
 | VS Code Extensions | Recommended extensions for development | [vscode-extensions](references/vscode-extensions.md) |
 
 ### Development
@@ -218,5 +276,3 @@ Add script to `package.json`:
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | App Development | Preferences for Vue/Vite/Nuxt/UnoCSS web applications | [app-development](references/app-development.md) |
-| Library Development | Preferences for bundling and publishing TypeScript libraries | [library-development](references/library-development.md) |
-| Monorepo | pnpm workspaces, centralized alias, Turborepo | [monorepo](references/monorepo.md) |
