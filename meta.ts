@@ -63,6 +63,8 @@ export const submodules = {
   'github': 'https://github.com/github/awesome-copilot',
   'vitepress': 'https://github.com/vuejs/vitepress',
 
+  'taze': 'https://github.com/antfu-collective/taze',
+
   'openapi-specification': 'https://github.com/OAI/OpenAPI-Specification',
 }
 
