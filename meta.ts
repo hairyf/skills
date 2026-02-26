@@ -13,6 +13,7 @@ export const submodules = {
   'react-use': 'https://github.com/streamich/react-use',
 
   'tailwindcss': 'https://github.com/tailwindlabs/tailwindcss.com',
+  'nativewind': 'https://github.com/nativewind/website',
 
   'valtio': 'https://github.com/pmndrs/valtio',
 
@@ -36,6 +37,8 @@ export const submodules = {
   'electron': 'https://github.com/electron/electron',
   'electron-forge': 'https://github.com/electron-forge/electron-forge-docs',
   'react-native': 'https://github.com/facebook/react-native-website',
+  'react-native-expo': 'https://github.com/expo/expo',
+  'react-native-reusables': 'https://github.com/founded-labs/react-native-reusables',
 
   'unplugin': 'https://github.com/unjs/unplugin',
   'unjs': 'https://github.com/unjs/website',

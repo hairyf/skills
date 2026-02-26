@@ -166,3 +166,12 @@
 [submodule "vendor/e2e-testing"]
 	path = vendor/e2e-testing
 	url = https://github.com/hieutrtr/ai1-skills
+[submodule "sources/nativewind"]
+	path = sources/nativewind
+	url = https://github.com/nativewind/website
+[submodule "sources/react-native-expo"]
+	path = sources/react-native-expo
+	url = https://github.com/expo/expo
+[submodule "sources/react-native-reusables"]
+	path = sources/react-native-reusables
+	url = https://github.com/founded-labs/react-native-reusables
