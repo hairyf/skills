@@ -36,6 +36,10 @@ Manually maintained skills reflecting personal preferences and best practices.
 |-------|-------------|------------|
 | [hairy](skills/hairy) | Hairyf's preferences and best practices for web development (TypeScript, ESLint, pnpm, Vitest, etc.) | Hairyf |
 | [antfu](skills/antfu) | Anthony Fu's preferences and best practices for app/library projects (eslint, pnpm, vitest, vue, etc.) | Anthony Fu |
+| [github-workflow](skills/github-workflow) | Standard flow from task source (link or description) to creating a PR: resolve task, create branch and TODO.md, create PR against origin only | Hairyf |
+| [openapi-specification-v2](skills/openapi-specification-v2) | OpenAPI (Swagger) 2.0 — describe REST APIs (path, operation, parameter, response, schema). Use when writing, validating, or interpreting Swagger 2.0 specs | Hairyf |
+| [openapi-specification-v3.2](skills/openapi-specification-v3.2) | OpenAPI 3.2 — OAD format, paths, operations, JSON Schema 2020-12, security. Use when authoring or validating OpenAPI 3.2 documents | Hairyf |
+| [create-skill-from-repo](skills/create-skill-from-repo) | Bootstrap modular Agent Skills from any repository: clone to sources/, extract docs into references/, register in AGENTS.md | Hairyf |
 
 ### Skills Generated from Official Documentation
 
@@ -47,28 +51,41 @@ Generated from official documentation and fine-tuned for agent usage.
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [vue](skills/vue) | Vue.js core - reactivity, components, composition API | [vuejs/docs](https://github.com/vuejs/docs) |
-| [nuxt](skills/nuxt) | Nuxt framework - file-based routing, server routes, modules | [nuxt/nuxt](https://github.com/nuxt/nuxt) |
-| [pinia](skills/pinia) | Pinia - intuitive, type-safe state management for Vue | [vuejs/pinia](https://github.com/vuejs/pinia) |
-| [vite](skills/vite) | Vite build tool - config, plugins, SSR, library mode | [vitejs/vite](https://github.com/vitejs/vite) |
-| [vitepress](skills/vitepress) | VitePress - static site generator powered by Vite | [vuejs/vitepress](https://github.com/vuejs/vitepress) |
-| [vitest](skills/vitest) | Vitest - unit testing framework powered by Vite | [vitest-dev/vitest](https://github.com/vitest-dev/vitest) |
-| [unocss](skills/unocss) | UnoCSS - atomic CSS engine, presets, transformers | [unocss/unocss](https://github.com/unocss/unocss) |
+| [vue](skills/vue) | Vue.js core — reactivity, components, composition API | [vuejs/docs](https://github.com/vuejs/docs) |
+| [vue-router](skills/vue-router) | Vue Router — official router for Vue.js; routing, navigation guards, nested routes, programmatic navigation | [vuejs/router](https://github.com/vuejs/router) |
+| [nuxt](skills/nuxt) | Nuxt framework — file-based routing, server routes, modules | [nuxt/nuxt](https://github.com/nuxt/nuxt) |
+| [pinia](skills/pinia) | Pinia — intuitive, type-safe state management for Vue | [vuejs/pinia](https://github.com/vuejs/pinia) |
+| [vite](skills/vite) | Vite build tool — config, plugins, SSR, library mode | [vitejs/vite](https://github.com/vitejs/vite) |
+| [vitepress](skills/vitepress) | VitePress — static site generator powered by Vite | [vuejs/vitepress](https://github.com/vuejs/vitepress) |
+| [vitest](skills/vitest) | Vitest — unit testing framework powered by Vite | [vitest-dev/vitest](https://github.com/vitest-dev/vitest) |
+| [unocss](skills/unocss) | UnoCSS — atomic CSS engine, presets, transformers | [unocss/unocss](https://github.com/unocss/unocss) |
 
 #### Cross-Platform (uni-app)
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [uniapp](skills/uniapp) | uni-app - cross-platform app framework (Vue syntax, App/H5/mini-programs) | [dcloud/unidocs-zh](https://gitcode.com/dcloud/unidocs-zh) |
-| [uniapp-x](skills/uniapp-x) | uni-app x - next-gen cross-platform engine (UTS/uvue/Vue, Android/iOS/HarmonyOS/Web/mini-programs) | [dcloud/unidocs-uni-app-x-zh](https://gitcode.com/dcloud/unidocs-uni-app-x-zh) |
+| [uniapp](skills/uniapp) | uni-app — cross-platform app framework (Vue syntax, App/H5/mini-programs) | [dcloud/unidocs-zh](https://gitcode.com/dcloud/unidocs-zh) |
+| [uniapp-x](skills/uniapp-x) | uni-app x — next-gen cross-platform engine (UTS/uvue/Vue, Android/iOS/HarmonyOS/Web/mini-programs) | [dcloud/unidocs-uni-app-x-zh](https://gitcode.com/dcloud/unidocs-uni-app-x-zh) |
 
 #### React Ecosystem
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [react-use](skills/react-use) | React Use - collection of essential React Hooks | [streamich/react-use](https://github.com/streamich/react-use) |
-| [next](skills/next) | Next.js - React framework for production | [vercel/next.js](https://github.com/vercel/next.js) |
-| [tailwindcss](skills/tailwindcss) | Tailwind CSS - utility-first CSS framework | [tailwindlabs/tailwindcss.com](https://github.com/tailwindlabs/tailwindcss.com) |
+| [react](skills/react) | React — library for building user interfaces; components, state, side effects, performance | [reactjs/react.dev](https://github.com/reactjs/react.dev) |
+| [react-router](skills/react-router) | React Router — multi-strategy router for React (Framework/Data/Declarative modes, loaders, actions) | [remix-run/react-router](https://github.com/remix-run/react-router) |
+| [react-use](skills/react-use) | React Use — collection of essential React Hooks (sensors, UI, animations, side-effects, state) | [streamich/react-use](https://github.com/streamich/react-use) |
+| [next](skills/next) | Next.js — React framework with App Router, Server Components, data fetching, caching | [vercel/next.js](https://github.com/vercel/next.js) |
+| [tailwindcss](skills/tailwindcss) | Tailwind CSS — utility-first CSS framework | [tailwindlabs/tailwindcss.com](https://github.com/tailwindlabs/tailwindcss.com) |
+| [nativewind](skills/nativewind) | NativeWind — use Tailwind CSS to style React Native components across web and native | [nativewind/website](https://github.com/nativewind/website) |
+
+#### Mobile (React Native & Flutter)
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [react-native](skills/react-native) | React Native — build native mobile apps with React (iOS/Android, native components, platform APIs) | [facebook/react-native-website](https://github.com/facebook/react-native-website) |
+| [react-native-expo](skills/react-native-expo) | Expo SDK — EAS Build, EAS Update, Continuous Native Generation; configure Expo projects, native modules, OTA updates | [expo/expo](https://github.com/expo/expo) |
+| [react-native-reusables](skills/react-native-reusables) | React Native Reusables — shadcn-style components for React Native (Expo) with Nativewind/Uniwind, RN Primitives, CLI | [founded-labs/react-native-reusables](https://github.com/founded-labs/react-native-reusables) |
+| [flutter](skills/flutter) | Flutter — build mobile, web, and desktop apps from one codebase; widgets, state, navigation, Material Design | [flutter/flutter](https://github.com/flutter/flutter) |
 
 #### Desktop Apps
 
@@ -82,10 +99,12 @@ Generated from official documentation and fine-tuned for agent usage.
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [nest](skills/nest) | NestJS - progressive Node.js framework | [nestjs/docs.nestjs.com](https://github.com/nestjs/docs.nestjs.com) |
-| [pnpm](skills/pnpm) | pnpm - fast, disk space efficient package manager | [pnpm/pnpm.io](https://github.com/pnpm/pnpm.io) |
-| [tsdown](skills/tsdown) | tsdown - TypeScript library bundler powered by Rolldown | [rolldown/tsdown](https://github.com/rolldown/tsdown) |
-| [unplugin](skills/unplugin) | unplugin - unified plugin system for Vite, Rollup, webpack, esbuild, etc. | [unjs/unplugin](https://github.com/unjs/unplugin) |
+| [nest](skills/nest) | NestJS — progressive Node.js framework | [nestjs/docs.nestjs.com](https://github.com/nestjs/docs.nestjs.com) |
+| [pnpm](skills/pnpm) | pnpm — fast, disk-efficient package manager; workspaces, catalogs, patches, overrides | [pnpm/pnpm.io](https://github.com/pnpm/pnpm.io) |
+| [unplugin](skills/unplugin) | unplugin — unified plugin system for Vite, Rollup, webpack, esbuild, Rspack, Farm, Rolldown, Bun | [unjs/unplugin](https://github.com/unjs/unplugin) |
+| [unjs](skills/unjs) | UnJS ecosystem — agnostic JavaScript libraries (h3, nitro, ofetch, unstorage) and universal JS apps | [unjs/website](https://github.com/unjs/website) |
+| [undocs](skills/undocs) | undocs — minimal documentation theme and CLI for UnJS projects (Nuxt, Nuxt Content, Nuxt UI) | [unjs/undocs](https://github.com/unjs/undocs) |
+| [taze](skills/taze) | taze — keep JavaScript/TypeScript dependencies fresh with safety rails and monorepo support | [antfu-collective/taze](https://github.com/antfu-collective/taze) |
 
 #### Animation Libraries
 
@@ -100,25 +119,27 @@ Generated from official documentation and fine-tuned for agent usage.
 |-------|-------------|--------|
 | [valtio](skills/valtio) | Valtio - proxy-state library for React and Vanilla | [pmndrs/valtio](https://github.com/pmndrs/valtio) |
 
-#### API Specification
-
-| Skill | Description | Source |
-|-------|-------------|--------|
-| [openapi-specification-v2](skills/openapi-specification-v2) | OpenAPI (Swagger) 2.0 - describe REST APIs, path/operation/parameter/response/schema | [OAI/OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification) |
-| [openapi-specification-v3.2](skills/openapi-specification-v3.2) | OpenAPI 3.2 - OAD format, paths, operations, JSON Schema 2020-12, security | [OAI/OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification) |
-
 #### Architecture & Starters
 
 | Skill | Description | Source |
 |-------|-------------|--------|
+| [arch-upkeep](skills/arch-upkeep) | Architecture health-check and upgrade orchestrator — detect repo shape and migrate to canonical tsdown-based starters | Internal |
 | [arch-nuxt](skills/arch-nuxt) | Vitesse-style Nuxt 4 starter (Vite, UnoCSS, Pinia, VueUse, PWA) | [antfu/vitesse-nuxt](https://github.com/antfu/vitesse-nuxt) |
-| [arch-nuxt-lite](skills/arch-nuxt-lite) | Vitesse Lite - lightweight Vite + Vue 3 SPA with file-based routing | [antfu-collective/vitesse-lite](https://github.com/antfu-collective/vitesse-lite) |
+| [arch-nuxt-lite](skills/arch-nuxt-lite) | Vitesse Lite — lightweight Vite + Vue 3 SPA with file-based routing | [antfu-collective/vitesse-lite](https://github.com/antfu-collective/vitesse-lite) |
 | [arch-nuxt-module-builder](skills/arch-nuxt-module-builder) | Build and ship Nuxt modules with @nuxt/module-builder | [nuxt/module-builder](https://github.com/nuxt/module-builder) |
 | [arch-tsdown](skills/arch-tsdown) | TypeScript library starter using tsdown, pnpm, Vitest | [antfu/starter-ts](https://github.com/antfu/starter-ts) |
 | [arch-tsdown-cli](skills/arch-tsdown-cli) | TypeScript CLI starter using tsdown (library + bin) | [hairyf/starter-cli](https://github.com/hairyf/starter-cli) |
+| [arch-tsdown-monorepo](skills/arch-tsdown-monorepo) | pnpm monorepo starter for TypeScript libraries with tsdown per package | [hairyf/starter-monorepo](https://github.com/hairyf/starter-monorepo) |
 | [arch-unplugin](skills/arch-unplugin) | Build universal build-tool plugins with unplugin-starter | [unplugin/unplugin-starter](https://github.com/unplugin/unplugin-starter) |
 | [arch-vscode](skills/arch-vscode) | VSCode extension starter (reactive-vscode, tsdown) | [antfu/starter-vscode](https://github.com/antfu/starter-vscode) |
 | [arch-webext-vue](skills/arch-webext-vue) | Browser extension with Vue 3 and Vite (popup, options, sidepanel, content script) | [antfu-collective/vitesse-webext](https://github.com/antfu-collective/vitesse-webext) |
+
+#### Writing & Workflow
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [github-cli](skills/github-cli) | GitHub CLI (gh) — repositories, issues, pull requests, Actions, projects, releases, gists, codespaces | [github/awesome-copilot](https://github.com/github/awesome-copilot) |
+| [writing-styles-juejin](skills/writing-styles-juejin) | Juejin-style technical article writing — structure, headlines, openings, and best practices for Simplified Chinese tech content | [hairyf/juejin-excellent-article](https://github.com/hairyf/juejin-excellent-article) |
 
 ### Vendored Skills
 
@@ -128,9 +149,10 @@ Synced from external repositories that maintain their own skills.
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [slidev](skills/slidev) | Slidev - presentation slides for developers | [slidevjs/slidev](https://github.com/slidevjs/slidev) |
-| [vueuse-functions](skills/vueuse-functions) | VueUse - 200+ Vue composition utilities | [vueuse/skills](https://github.com/vueuse/skills) |
-| [turborepo](skills/turborepo) | Turborepo - high-performance build system for monorepos | [vercel/turborepo](https://github.com/vercel/turborepo) |
+| [slidev](skills/slidev) | Slidev — presentation slides for developers (Markdown, Vue components, code highlighting, animations) | [slidevjs/slidev](https://github.com/slidevjs/slidev) |
+| [vueuse-functions](skills/vueuse-functions) | VueUse — 200+ Vue composition utilities | [vueuse/skills](https://github.com/vueuse/skills) |
+| [turborepo](skills/turborepo) | Turborepo — high-performance build system for monorepos | [vercel/turborepo](https://github.com/vercel/turborepo) |
+| [tsdown](skills/tsdown) | tsdown — TypeScript library bundler powered by Rolldown | [rolldown/tsdown](https://github.com/rolldown/tsdown) |
 
 #### Hairyf's Projects
 
@@ -141,18 +163,18 @@ Synced from external repositories that maintain their own skills.
 | [valtio-define](skills/valtio-define) | Valtio Define - type-safe state management for Valtio | [hairyf/valtio-define](https://github.com/hairyf/valtio-define) |
 | [overlastic](skills/overlastic) | Overlastic - overlay management library | [hairyf/overlastic](https://github.com/hairyf/overlastic) |
 
-#### Community Skills
+#### Community & Third-Party
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| [slidev](skills/slidev) (Official) | Slidev - presentation slides for developers | [slidevjs/slidev](https://github.com/slidevjs/slidev) |
-| [tsdown](skills/tsdown) (Official) | tsdown - TypeScript library bundler powered by Rolldown | [rolldown/tsdown](https://github.com/rolldown/tsdown) |
-| [turborepo](skills/turborepo) (Official) | Turborepo - high-performance build system for monorepos | [vercel/turborepo](https://github.com/vercel/turborepo) |
-| [vueuse-functions](skills/vueuse-functions) (Official) | VueUse - 200+ Vue composition utilities | [vueuse/skills](https://github.com/vueuse/skills) |
-| [vue-best-practices](skills/vue-best-practices) | Vue 3 + TypeScript best practices | [vuejs-ai/skills](https://github.com/vuejs-ai/skills) |
+| [create-skill](skills/create-skill) | Guide for creating effective skills that extend Claude's capabilities with specialized knowledge, workflows, or tool integrations | [anthropics/skills](https://github.com/anthropics/skills) |
+| [vue-best-practices](skills/vue-best-practices) | Vue 3 + TypeScript best practices — Composition API, `<script setup>`, Volar, vue-tsc | [vuejs-ai/skills](https://github.com/vuejs-ai/skills) |
 | [vue-router-best-practices](skills/vue-router-best-practices) | Vue Router best practices | [vuejs-ai/skills](https://github.com/vuejs-ai/skills) |
-| [vue-testing-best-practices](skills/vue-testing-best-practices) | Vue testing best practices | [vuejs-ai/skills](https://github.com/vuejs-ai/skills) |
-| [web-design-guidelines](skills/web-design-guidelines) | Web design guidelines for building beautiful interfaces | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) |
+| [vue-testing-best-practices](skills/vue-testing-best-practices) | Vue testing best practices — Vitest, Vue Test Utils, component testing, mocking, Playwright E2E | [vuejs-ai/skills](https://github.com/vuejs-ai/skills) |
+| [web-design-guidelines](skills/web-design-guidelines) | Web design guidelines for building accessible, compliant interfaces; use when reviewing UI, accessibility, or UX | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) |
+| [e2e-testing](skills/e2e-testing) | E2E testing patterns with Playwright for full-stack apps — test structure, page objects, selectors, auth reuse, CI | [hieutrtr/ai1-skills](https://github.com/hieutrtr/ai1-skills) |
+| [writing-humanizer](skills/writing-humanizer) | Remove signs of AI-generated writing from text; make copy sound more natural and human-written (English) | [blader/humanizer](https://github.com/blader/humanizer) |
+| [writing-humanizer-zh](skills/writing-humanizer-zh) | Remove signs of AI-generated writing from text; make copy sound more natural and human-written (Simplified Chinese) | [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) |
 
 ## FAQ
 
