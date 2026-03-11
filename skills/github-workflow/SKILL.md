@@ -1,9 +1,9 @@
 ---
 name: github-workflow
-description: "Standard flow from any task source (link or description) to creating a PR: resolve task, create branch and TODO.md, wait for fixes, create PR against origin only. Use find-skills to discover data-source query methods; after confirmation save to global config so the discovery step can be skipped next time. Use when the user provides a task link/description, asks to 'follow GitHub workflow', or 'create PR from task'."
+description: "Standard flow from any task source (link or description) to creating a PR: resolve task, create branch and TODO.md, delegate fix to SubAgent (TODO.md), then commit and create PR against origin only. Use find-skills to discover data-source query methods; after confirmation save to global config so the discovery step can be skipped next time. Use when the user provides a task link/description, asks to 'follow GitHub workflow', or 'create PR from task'."
 metadata:
   author: hairy
-  version: "2026.2.6"
+  version: "2026.3.12"
 ---
 
 # GitHub Workflow (Task → Environment Setup → Fix → PR)
@@ -12,7 +12,7 @@ metadata:
 
 Standard flow from "task link or description" to "create PR (no merge)". Task source is **any data source**: first determine the query method via global config or find-skills, write to global config after confirmation, then use it directly next time.
 
-**Output**: Branch created, `TODO.md` written, PR link targeting `dev` (origin only).
+**Output**: Branch created, `TODO.md` written, PR link targeting the base branch (default `dev`, else main; origin only).
 
 ---
 
@@ -98,8 +98,9 @@ This workflow depends on **GitHub PR creation** (Step 4). Ensure one of the foll
 
 ## Step 2: Prepare Environment (Create Branch, Write TODO.md)
 
+- **Base branch**: Prefer `dev`; if `dev` does not exist (local or on `origin`), use the repo’s default branch (e.g. `main`). You can run `git branch -a` and/or `git remote show origin` to determine.
 - **Branch**:
-  - `git checkout dev` → `git pull origin dev` → `git checkout -b fix/<short-desc-kebab-case>` (or `feature/...` depending on task type).
+  - `git checkout <base>` → `git pull origin <base>` → `git checkout -b fix/<short-desc-kebab-case>` (or `feature/...` depending on task type).
 - **TODO.md**: Create `TODO.md` at project root with this structure:
 
 ```markdown
@@ -118,7 +119,7 @@ This workflow depends on **GitHub PR creation** (Step 4). Ensure one of the foll
 - [ ] Plan fix
 - [ ] Implement fix
 - [ ] Run checks (typecheck/test/lint)
-- [ ] Commit
+- [ ] Complete (main agent will then commit and remove this file)
 
 ## Related files
 <fill after analysis>
@@ -134,18 +135,25 @@ This workflow depends on **GitHub PR creation** (Step 4). Ensure one of the foll
 
 ---
 
-## Step 3: Wait for User to Finish Fixes
+## Step 3: Delegate to SubAgent (TODO.md) to Handle the Fix Task
 
-Agent does not change business code; the user completes the fix, self-test, and commit. After the user says "fix done", proceed to Step 4.
+Do not implement the fix in the current agent. **Delegate the fix task to a SubAgent**, using **TODO.md** at the project root as the task specification.
+
+- **Task spec**: Point the SubAgent to `TODO.md`. Its contents (Problem description, Todo checklist, Related files, Approach) define the work: analyze root cause, locate relevant code, plan and implement fix, run checks (typecheck/test/lint).
+- **When the SubAgent completes** (or the user confirms **"fix done"** if the user did the fix manually):
+  1. **Get user confirmation**: Before committing, **ask the user to confirm** that the fix is ready (e.g. "Fix is done. Confirm to commit and create PR?"). Do not run `git commit` until the user confirms.
+  2. **Delete TODO.md**: Remove `TODO.md` from the project root.
+  3. **Help commit**: After confirmation, stage changed files and create a commit (e.g. `git add` for relevant paths, `git commit -m "<message>"`). Use a clear message derived from the task title or TODO.
+  4. Proceed to Step 4 (push and create PR).
 
 ---
 
 ## Step 4: Create PR with GitHub Skill (Origin Only)
 
-- **Precondition**: Confirm current branch has the fix commits and will be pushed to **origin**.
+- **Precondition**: Confirm current branch has the fix commit(s) and will be pushed to **origin**. Base branch is the same one used in Step 2 (default `dev`, else main).
 - **Actions**:
   1. `git push -u origin <branch>` (push to origin only).
-  2. `gh pr create --base dev --head <branch> --title "<title>" --body "<body with task link etc>"` (do not pass `--repo`; use current repo = origin).
+  2. `gh pr create --base <base-branch> --head <branch> --title "<title>" --body "<body with task link etc>"` (do not pass `--repo`; use current repo = origin).
 - **Constraint**: Do not use `--repo <other-org/repo>` or any other remote for the PR. If `origin` is read-only or archived, output an error and suggest updating `origin` or creating the PR manually on the repo’s web UI.
 - **End**: Output the PR link; do not merge.
 
@@ -157,10 +165,10 @@ Agent does not change business code; the user completes the fix, self-test, and 
 |------|----------|
 | No global config and find-skills has no result | Ask user to provide task title, description, and short branch description; still create branch and TODO.md. |
 | Data source .env not set or token invalid | Prompt to configure (e.g. .env at `envCheck` path), or ask user to provide task info directly. |
-| `git pull origin dev` fails | Suggest checking network and `origin` access; or create branch from current local `dev` and note "latest not pulled". |
+| `git pull origin <base>` fails | Suggest checking network and `origin` access; or create branch from current local `<base>` and note "latest not pulled". |
 | Branch `fix/<name>` already exists | Ask whether to continue on existing branch or use a new name (e.g. `fix/<name>-v2`). |
 | `origin` is archived or read-only | Do not add another remote; report error and suggest updating `origin` or creating PR on the repo’s web UI. |
-| User asks for PR before saying "fix done" | If there are new commits and user explicitly requests, run Step 4; otherwise remind to finish fix and commit first. |
+| User asks for PR before SubAgent completes | If there are new commits and user explicitly requests, run Step 4; otherwise remind to let the SubAgent finish (or say "fix done" if done manually), then the agent will commit, remove TODO.md, and create the PR. |
 | `gh` not installed or not logged in | See **Prerequisites**. Prompt to install the GitHub skill or run `gh auth login`; or give steps to create PR from branch on GitHub web. |
 
 ---
