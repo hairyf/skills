@@ -9,6 +9,7 @@ Standard flow from "task link" to "create PR" (no merge).
 
 ## Prerequisites
 - **GitHub Skill** or **`gh` CLI** installed and authenticated (`gh auth login`).
+- **Security**: Only use trusted skills and tools. For `gh` extensions or related skills, verify the provider and repository integrity.
 - Check at workflow start; prompt if missing.
 
 ## Workflow Steps
