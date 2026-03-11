@@ -1,6 +1,6 @@
 ---
 name: github-workflow
-description: Standard flow from any task source (link or description) to creating a PR: resolve task, create branch and TODO.md, delegate fix to SubAgent (TODO.md), then commit and create PR against origin only. Use find-skills to discover data-source query methods; after confirmation save to global config so the discovery step can be skipped next time. Use when the user provides a task link/description, asks to 'follow GitHub workflow', or 'create PR from task'.
+description: "Standard flow from any task source (link or description) to creating a PR: resolve task, create branch and TODO.md, delegate fix to SubAgent (TODO.md), then commit and create PR against origin only. Use find-skills to discover data-source query methods; after confirmation save to global config so the discovery step can be skipped next time. Use when the user provides a task link/description, asks to 'follow GitHub workflow', or 'create PR from task'."
 metadata:
   author: hairy
   version: "2026.3.12"
