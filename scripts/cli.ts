@@ -34,12 +34,14 @@ function submoduleExists(path: string): boolean {
   return content.includes(`path = ${path}`)
 }
 
+const RE_SUBMODULE_PATH = /path\s*=\s*(.+)/g
+
 function getExistingSubmodulePaths(): string[] {
   const gitmodules = join(root, '.gitmodules')
   if (!existsSync(gitmodules))
     return []
   const content = readFileSync(gitmodules, 'utf-8')
-  const matches = content.matchAll(/path\s*=\s*(.+)/g)
+  const matches = content.matchAll(RE_SUBMODULE_PATH)
   return Array.from(matches, match => match[1].trim())
 }
 
