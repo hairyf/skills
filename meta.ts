@@ -148,6 +148,14 @@ export const vendors: Record<string, VendorSkillMeta> = {
     },
   },
 
+  'uniwind': {
+    source: 'https://github.com/uni-stack/uniwind',
+    skills: {
+      'migrate-nativewind-to-uniwind': 'migrate-nativewind-to-uniwind',
+      'uniwind': 'uniwind',
+    },
+  },
+
   'turborepo': {
     official: true,
     source: 'https://github.com/vercel/turborepo',

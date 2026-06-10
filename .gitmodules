@@ -175,3 +175,6 @@
 [submodule "sources/react-native-reusables"]
 	path = sources/react-native-reusables
 	url = https://github.com/founded-labs/react-native-reusables
+[submodule "vendor/uniwind"]
+	path = vendor/uniwind
+	url = https://github.com/uni-stack/uniwind
