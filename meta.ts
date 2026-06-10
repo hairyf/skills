@@ -78,13 +78,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
   'writing-humanizer-zh': {
     source: 'https://github.com/op7418/Humanizer-zh',
     skills: {
-      'writing-humanizer-zh': 'humanizer',
+      'writing-humanizer-zh': 'writing-humanizer-zh',
     },
   },
   'writing-humanizer': {
     source: 'https://github.com/blader/humanizer',
     skills: {
-      'writing-humanizer': 'humanizer',
+      'writing-humanizer': 'writing-humanizer',
     },
   },
 
@@ -99,7 +99,7 @@ export const vendors: Record<string, VendorSkillMeta> = {
   'anthropics': {
     source: 'https://github.com/anthropics/skills',
     skills: {
-      'create-skill': 'skill-creator',
+      'skill-creator': 'create-skill',
     },
   },
 
@@ -178,6 +178,7 @@ export const manual = [
   'hairy',
   'antfu',
   'github-workflow',
+  'arch-upkeep',
   'openapi-specification-v2',
   'openapi-specification-v3.2',
   'create-skill-from-repo',
