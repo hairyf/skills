@@ -25,7 +25,7 @@ node scripts/vision.js --url "<image url>" "[question]"
 
 ## Setup
 
-Requires an API key for an OpenAI-compatible vision service (DashScope/Qwen recommended — see [core-setup](references/core-setup.md)). Once configured, the user simply sends images and the agent recognizes them automatically.
+Requires an API key for an OpenAI-compatible vision service (DashScope/Qwen recommended). On first run, follow the setup steps in [core-setup](references/core-setup.md) — including the required AGENTS.md merge. Once configured, the user simply sends images and the agent recognizes them automatically.
 
 ## References
 
@@ -34,5 +34,5 @@ Requires an API key for an OpenAI-compatible vision service (DashScope/Qwen reco
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | Usage | CLI arguments, local files vs remote URLs, prompts, exit codes | [core-usage](references/core-usage.md) |
-| Setup | Service selection, API keys, `.env` configuration, project integration | [core-setup](references/core-setup.md) |
+| Setup | Service selection, API keys, `.env` configuration, required AGENTS.md merge, verification | [core-setup](references/core-setup.md) |
 | How it works | Internals of vision.js for patching and debugging | [core-script](references/core-script.md) |

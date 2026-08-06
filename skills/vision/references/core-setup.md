@@ -29,14 +29,25 @@ DASHSCOPE_API_KEY=sk-xxx
 # DASHSCOPE_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 ```
 
-## 4. Integrate into a project
+## 4. Merge AGENTS.md into the project (required)
 
-When the user wants to use this capability inside their own project:
+To make the project agent use vision.js automatically, **merge the content of `AGENTS.md` (in this skill directory) into the host project's `AGENTS.md` / `CLAUDE.md`**. Do not skip this step.
 
-1. Merge the content of `AGENTS.md` (in this skill directory) into the project's `AGENTS.md` / `CLAUDE.md` (create one if missing).
-2. Tell the user the configuration is done — from now on they can just send images and the agent will recognize them automatically.
+1. Read the skill's `AGENTS.md` (the "Vision Capability" section).
+2. If the project has an `AGENTS.md` / `CLAUDE.md`, check whether the vision section is already present — if so, skip the merge (idempotent).
+3. Otherwise, append the section to the existing file, or create a new `AGENTS.md` / `CLAUDE.md` at the project root.
+4. Tell the user the configuration is done — from now on they can just send images and the agent will recognize them automatically.
+
+## 5. Verify
+
+Run the script against a sample image to confirm the API key and base URL work before reporting success:
+
+```bash
+node scripts/vision.js "path/to/sample.png" "Describe this image"
+```
 
 ## Key points
 
 - DashScope's free tier makes it the default recommendation; any OpenAI-compatible vision API works.
 - The model key is not tied to a specific vendor — the script speaks the OpenAI-compatible format.
+- The AGENTS.md merge is what enables automatic image recognition in the host project — the `.env` config alone is not enough.
