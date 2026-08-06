@@ -40,6 +40,7 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [openapi-specification-v2](skills/openapi-specification-v2) | OpenAPI (Swagger) 2.0 — describe REST APIs (path, operation, parameter, response, schema). Use when writing, validating, or interpreting Swagger 2.0 specs | Hairyf |
 | [openapi-specification-v3.2](skills/openapi-specification-v3.2) | OpenAPI 3.2 — OAD format, paths, operations, JSON Schema 2020-12, security. Use when authoring or validating OpenAPI 3.2 documents | Hairyf |
 | [create-skill-from-repo](skills/create-skill-from-repo) | Bootstrap modular Agent Skills from any repository: clone to sources/, extract docs into references/, register in AGENTS.md | Hairyf |
+| [vision](skills/vision) | Image recognition for agents without native vision support — send local images or remote URLs to an OpenAI-compatible vision model | Hairyf |
 
 ### Skills Generated from Official Documentation
 
@@ -175,6 +176,8 @@ Synced from external repositories that maintain their own skills.
 | [e2e-testing](skills/e2e-testing) | E2E testing patterns with Playwright for full-stack apps — test structure, page objects, selectors, auth reuse, CI | [hieutrtr/ai1-skills](https://github.com/hieutrtr/ai1-skills) |
 | [writing-humanizer](skills/writing-humanizer) | Remove signs of AI-generated writing from text; make copy sound more natural and human-written (English) | [blader/humanizer](https://github.com/blader/humanizer) |
 | [writing-humanizer-zh](skills/writing-humanizer-zh) | Remove signs of AI-generated writing from text; make copy sound more natural and human-written (Simplified Chinese) | [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) |
+| [uniwind](skills/uniwind) | Uniwind — Tailwind CSS v4 styling for React Native (classNames, theming, platform/data/state/responsive variants, custom utilities) | [uni-stack/uniwind](https://github.com/uni-stack/uniwind) |
+| [migrate-nativewind-to-uniwind](skills/migrate-nativewind-to-uniwind) | Migrate a React Native project from NativeWind to Uniwind — package removal, config migration, Tailwind 4 upgrade, cssInterop removal, theme conversion | [uni-stack/uniwind](https://github.com/uni-stack/uniwind) |
 
 ## FAQ
 
