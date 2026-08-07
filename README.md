@@ -42,6 +42,7 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [create-skill-from-repo](skills/create-skill-from-repo) | Bootstrap modular Agent Skills from any repository: clone to sources/, extract docs into references/, register in AGENTS.md | Hairyf |
 | [vision](skills/vision) | Image recognition for agents without native vision support — send local images or remote URLs to an OpenAI-compatible vision model | Hairyf |
 | [imagine](skills/imagine) | Image, sticker, icon, and seamless-texture generation — GPT Image 2 / Nano Banana / SiliconFlow Qwen-Image / GPT Image via a zero-dependency script | Hairyf |
+| [sonic](skills/sonic) | Voice (TTS), music, lyrics, and sound-effect generation — SiliconFlow / MiniMax / OpenAI / ElevenLabs TTS, MiniMax music, local Sony Woosh SFX | Hairyf |
 
 ### Skills Generated from Official Documentation
 

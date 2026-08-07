@@ -192,4 +192,5 @@ export const manual = [
   'create-skill-from-repo',
   'vision',
   'imagine',
+  'sonic',
 ]

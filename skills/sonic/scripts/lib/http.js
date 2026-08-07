@@ -99,32 +99,6 @@ export async function request(url, { method = "POST", headers = {}, body } = {})
 }
 
 /**
- * Build a multipart/form-data body as a Buffer (works with fetch and proxy tunnel).
- */
-export function buildMultipart(fields, files) {
-  const boundary = `----imagine-${Date.now().toString(36)}`;
-  const chunks = [];
-  const push = (str) => chunks.push(Buffer.from(str));
-
-  for (const [key, value] of Object.entries(fields)) {
-    push(`--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`);
-  }
-  for (const [name, { filename, data, type }] of Object.entries(files)) {
-    push(
-      `--${boundary}\r\nContent-Disposition: form-data; name="${name}"; filename="${filename}"\r\nContent-Type: ${type}\r\n\r\n`,
-    );
-    chunks.push(data);
-    push("\r\n");
-  }
-  push(`--${boundary}--\r\n`);
-
-  return {
-    body: Buffer.concat(chunks),
-    contentType: `multipart/form-data; boundary=${boundary}`,
-  };
-}
-
-/**
  * POST a JSON payload and return the parsed response.
  */
 export async function postJson(url, headers, body) {
@@ -135,7 +109,13 @@ export async function postJson(url, headers, body) {
   });
   const rawText = res.buffer.toString("utf-8");
   if (!res.ok) {
-    throw new Error(`API error [${res.status}]: ${rawText.slice(0, 300)}`);
+    let detail = rawText;
+    try {
+      detail = JSON.parse(rawText)?.error?.message || JSON.parse(rawText)?.message || rawText;
+    } catch {
+      // keep raw text
+    }
+    throw new Error(`API error [${res.status}]: ${String(detail).slice(0, 300)}`);
   }
   try {
     return JSON.parse(rawText);
