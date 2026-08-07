@@ -191,4 +191,5 @@ export const manual = [
   'openapi-specification-v3.2',
   'create-skill-from-repo',
   'vision',
+  'imagine',
 ]
