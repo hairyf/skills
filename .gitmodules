@@ -178,3 +178,12 @@
 [submodule "vendor/uniwind"]
 	path = vendor/uniwind
 	url = https://github.com/uni-stack/uniwind
+[submodule "sources/fabric"]
+	path = sources/fabric
+	url = https://github.com/FabricMC/fabric-docs
+[submodule "sources/veil"]
+	path = sources/veil
+	url = https://github.com/FoundryMC/Veil
+[submodule "sources/geckolib"]
+	path = sources/geckolib
+	url = https://github.com/bernie-g/geckolib

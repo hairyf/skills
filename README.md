@@ -122,6 +122,13 @@ Generated from official documentation and fine-tuned for agent usage.
 |-------|-------------|--------|
 | [valtio](skills/valtio) | Valtio - proxy-state library for React and Vanilla | [pmndrs/valtio](https://github.com/pmndrs/valtio) |
 
+#### Minecraft Modding
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [veil](skills/veil) | Veil — advanced rendering for Minecraft mods (shaders, post-processing, framebuffers, deferred lights, Quasar particles, Flare effects, Necromancer animations) | [FoundryMC/Veil](https://github.com/FoundryMC/Veil) |
+| [geckolib](skills/geckolib) | GeckoLib 5 — keyframe animations for Minecraft mods (entities, blocks, items, armor, replaced entities, Molang, render states) | [bernie-g/geckolib](https://github.com/bernie-g/geckolib) |
+
 #### Architecture & Starters
 
 | Skill | Description | Source |

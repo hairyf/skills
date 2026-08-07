@@ -69,6 +69,12 @@ export const submodules = {
   'taze': 'https://github.com/antfu-collective/taze',
 
   'openapi-specification': 'https://github.com/OAI/OpenAPI-Specification',
+
+  'fabric': 'https://github.com/FabricMC/fabric-docs',
+
+  'geckolib': 'https://github.com/bernie-g/geckolib',
+
+  'veil': 'https://github.com/FoundryMC/Veil',
 }
 
 /**
