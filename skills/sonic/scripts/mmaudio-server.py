@@ -12,6 +12,9 @@ Usage:
 Env:
     MMAUDIO_VARIANT   model variant (default: large_44k_v2)
                       options: small_16k, small_44k, medium_44k, large_44k, large_44k_v2
+    MMAUDIO_IDLE_TIMEOUT
+                      auto-exit after N minutes without a /generate request
+                      (default: 15, 0 = keep running forever)
 
 Endpoints:
     GET  /ping
@@ -26,12 +29,14 @@ import io
 import os
 import tempfile
 import threading
+import time
 import urllib.request
 from pathlib import Path
 from typing import Optional
 
 import torch
 import torchaudio
+import soundfile as sf
 from fastapi import FastAPI
 from fastapi.responses import Response
 from pydantic import BaseModel
@@ -47,7 +52,32 @@ torch.backends.cudnn.allow_tf32 = True
 VARIANT = os.environ.get("MMAUDIO_VARIANT", "large_44k_v2")
 FORMATS = {"flac": "audio/flac", "wav": "audio/wav"}
 _lock = threading.Lock()
+_last_activity = time.monotonic()
+_idle_timeout_min = float(os.environ.get("MMAUDIO_IDLE_TIMEOUT", "15"))
+_idle_timeout_sec = _idle_timeout_min * 60 if _idle_timeout_min > 0 else 0
 app = FastAPI()
+
+
+def _touch() -> None:
+    """Record a generate request so the idle watchdog does not fire."""
+    global _last_activity
+    _last_activity = time.monotonic()
+
+
+def _idle_watchdog() -> None:
+    """Exit the process after MMAUDIO_IDLE_TIMEOUT without any /generate call."""
+    while True:
+        time.sleep(min(30, _idle_timeout_sec / 2))
+        if not _lock.acquire(blocking=False):
+            continue  # a request is in flight
+        try:
+            idle_sec = time.monotonic() - _last_activity
+            if idle_sec >= _idle_timeout_sec:
+                print(f"[mmaudio-server] idle for {idle_sec:.0f}s "
+                      f"(limit {_idle_timeout_sec:.0f}s) — shutting down")
+                os._exit(0)
+        finally:
+            _lock.release()
 
 
 class GenerateRequest(BaseModel):
@@ -89,6 +119,10 @@ def startup() -> None:
     feature_utils = feature_utils.to(device, dtype).eval()
     rng = torch.Generator(device=device)
     print(f"[mmaudio-server] variant={VARIANT} device={device} ready")
+    if _idle_timeout_sec > 0:
+        threading.Thread(target=_idle_watchdog, daemon=True).start()
+        print(f"[mmaudio-server] idle watchdog armed "
+              f"({_idle_timeout_min:g} min, /generate refreshes it)")
 
 
 @app.get("/ping")
@@ -98,6 +132,7 @@ def ping() -> dict:
 
 @app.post("/generate")
 def generate_endpoint(req: GenerateRequest) -> Response:
+    _touch()
     with _lock:
         video_path: Optional[Path] = None
         if req.video_url:
@@ -128,21 +163,30 @@ def generate_endpoint(req: GenerateRequest) -> Response:
             rng.manual_seed(req.seed)
             fm = FlowMatching(min_sigma=0, inference_mode="euler", num_steps=req.num_steps)
 
-            audios = generate(
-                clip_frames,
-                sync_frames,
-                [req.prompt],
-                negative_text=[req.negative_prompt],
-                feature_utils=feature_utils,
-                net=net,
-                fm=fm,
-                rng=rng,
-                cfg_strength=req.cfg_strength,
-            )
-            audio = audios.float().cpu()[0]
+            # eval_utils.generate() is not autograd-safe: it mixes inference-mode
+            # feature tensors with grad-tracked linear ops. Run it under
+            # inference_mode like the official demo.py does.
+            with torch.inference_mode():
+                audios = generate(
+                    clip_frames,
+                    sync_frames,
+                    [req.prompt],
+                    negative_text=[req.negative_prompt],
+                    feature_utils=feature_utils,
+                    net=net,
+                    fm=fm,
+                    rng=rng,
+                    cfg_strength=req.cfg_strength,
+                )
+            # generate() returns (B, C, T); drop batch and the singleton
+            # channel dim so soundfile sees plain mono frames (it treats
+            # dim0 as frames, unlike torchaudio which treats it as channels).
+            audio = audios.float().cpu()[0].squeeze()
             fmt = req.format if req.format in FORMATS else "flac"
             buf = io.BytesIO()
-            torchaudio.save(buf, audio, model_cfg.seq_cfg.sampling_rate, format=fmt)
+            # torchaudio.save routes through torchcodec on Windows, whose DLLs
+            # often fail to load; soundfile bundles libsndfile and is dependency-free.
+            sf.write(buf, audio.numpy(), model_cfg.seq_cfg.sampling_rate, format=fmt.upper())
             return Response(content=buf.getvalue(), media_type=FORMATS[fmt])
         finally:
             if req.video_url and video_path is not None:

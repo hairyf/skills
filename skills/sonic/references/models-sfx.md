@@ -13,7 +13,8 @@ The popular open-source MMAudio model runs locally on an NVIDIA GPU (6GB+ VRAM) 
 
 - **`scripts/setup-mmaudio.ps1` / `.sh`** — auto-install: clone `hkchengrex/MMAudio`, install torch CUDA + `pip install -e .`, start the server.
 - **`scripts/mmaudio-server.py`** — FastAPI server at `http://127.0.0.1:8001` wrapping the official `generate()` pipeline (text-to-audio + video-to-audio, auto-downloads weights from HuggingFace on first start).
-- **Usage** — `node sonic.js sfx "雨声敲打木屋顶" -o rain.flac --provider mmaudio-local --duration 10`; local video path or URL via `--video`.
+- **Idle auto-exit** — the server shuts itself down after 15 minutes without a generation (`MMAUDIO_IDLE_TIMEOUT=0` disables, every `/generate` refreshes the timer); restart it with `setup-mmaudio.* -Start` when needed.
+- **Usage** — `node sonic.js sfx "rain falling on a wooden roof" -o rain.flac --provider mmaudio-local --duration 10`; local video path or URL via `--video`.
 - Variants: `MMAUDIO_VARIANT=large_44k_v2` (default), `small_16k`/`small_44k` (lighter/faster), `medium_44k`, `large_44k`.
 - Licensing: MIT code, CC-BY-NC 4.0 weights (non-commercial).
 - Note: official repo is Ubuntu-tested; on Windows use the setup script (or WSL2 if the native install hits dependency issues).
@@ -37,18 +38,19 @@ MMAudio (the popular open-source model) is also offered as a **hosted cloud API*
 Sony Research open-source sound effect models (MIT code, CC-BY-NC weights — non-commercial).
 
 - Four models: **Woosh-Flow** (quality), **Woosh-DFlow** (distilled, ~10× faster), **Woosh-VFlow / Woosh-DVFlow** (video → synchronized SFX, up to 8s clips).
-- Official FastAPI server: `uv run uvicorn api.api_server:app --port 8000` → `POST /generate` returns `audio/flac`.
+- Official FastAPI server: `uv run --extra cuda uvicorn woosh-server:app --port 8000` → `POST /generate` returns `audio/flac`. `woosh-server.py` (copied into the repo by the setup script) wraps the official app and adds an idle auto-exit (`WOOSH_IDLE_TIMEOUT`, default 15 min, `0` = keep running); the `--extra cuda` matters because a plain `uv run` re-syncs the env and swaps torch back to the CPU build.
   ```json
   { "version": "0.1", "token": "local", "args": { "prompt": "footsteps on snow", "model": "Woosh-DFlow", "num_steps": 8, "cfg": 1 } }
   ```
+- **Prompt in English only** — Woosh's SFXCLAP text conditioner (roberta-large) is English-trained; non-English prompts become garbled tokens and produce voice-like artifacts or weak output (verified: a Chinese footsteps prompt produced voice-like mid-band content, while "footsteps crunching on snow" produced clean low-frequency thumps; a Chinese rain prompt yielded faint muffled sound, while "heavy rain hammering a wooden roof with distant thunder" produced proper broadband rain noise).
 - **The API server currently serves `Woosh-DFlow` only**; quality/V2A modes run through the Gradio web UI.
 - Requirements: NVIDIA GPU (8GB+ recommended for V2A), CUDA 12.8. `sonic.js sfx` targets this server.
-- Chinese UI bundlet ("懒人包") versions exist for convenience; the API server needs the official repo.
+- One-click bundle versions exist for convenience; the API server needs the official repo.
 
 ## MMAudio (most popular open source)
 
 - Video-aware sound effect generation (video → matched SFX, text → SFX); GitHub 2.2k★, big in Chinese tutorial circles.
-- **Local self-host** — the same model is served locally via `scripts/setup-mmaudio.*` + `mmaudio-server.py` (`--provider mmaudio-local`); ComfyUI nodes and 整合包 also exist.
+- **Local self-host** — the same model is served locally via `scripts/setup-mmaudio.*` + `mmaudio-server.py` (`--provider mmaudio-local`); ComfyUI nodes and ready-made bundles also exist.
 - Related: AudioX, ThinkSound (multimodal audio comparison models).
 
 ## ElevenLabs SFX (international mainstream)

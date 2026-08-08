@@ -11,16 +11,16 @@ Structure: `{genre/style} + {instruments} + {mood/emotion} + {tempo/rhythm} + {s
 
 | Goal | Prompt seed |
 |------|-------------|
-| Jazz | "欢快的 1940 年代大乐队摇摆爵士，铜管组、Walking Bass、镲片律动，适合咖啡馆" |
+| Jazz | "upbeat 1940s big-band swing jazz with brass section, walking bass, cymbal grooves, café atmosphere" |
 | Chill BGM | "lofi hip-hop, warm vinyl crackle, soft piano chords, 70 BPM, study background" |
-| Epic | "史诗电影配乐，管弦乐，渐强，定音鼓，80 BPM" |
-| Game loop | "轻快像素游戏背景音乐，8-bit chiptune, cheerful, looping 30s" |
-| Vocal pop | "流行情歌，钢琴主奏，副歌高亢，适合夜晚" |
+| Epic | "epic movie score, orchestral, crescendo, timpani, 80 BPM" |
+| Game loop | "light pixel-game background music, 8-bit chiptune, cheerful, looping 30s" |
+| Vocal pop | "pop ballad, piano-led, soaring chorus, night mood" |
 
 - For vocals: use `--lyrics-optimizer` or provide lyrics with structure tags (`[Verse]`, `[Chorus]`, `[Bridge]`, `[Outro]`).
 - For pure music: `--instrumental`; describe instruments explicitly (models won't invent them reliably).
 - Specify BPM and duration when you need a loop or a specific length.
-- Mention a concrete scene ("咖啡馆", "游戏关卡", "雨天开车") — it anchors the mood better than abstract adjectives.
+- Mention a concrete scene ("a café", "a game level", "driving in the rain") — it anchors the mood better than abstract adjectives.
 
 ## Sound effect prompts
 
@@ -37,6 +37,7 @@ Structure: `{object/action} + {material/context} + {perspective/distance} + {dur
 - One effect per prompt; keep it 1–15s (ElevenLabs `--duration 2-3`; Woosh generates ~5s clips).
 - State perspective ("close" vs "distant") and style ("game-style", "cinematic", "UI").
 - For video sync, Woosh-VFlow/MMAudio analyze the video — describe the on-screen action instead of a mood.
+- **MMAudio (local/cloud) and local Woosh both use English CLIP/CLAP text encoders — always prompt them in English.** Non-English prompts become garbled tokens and the model hallucinates speech-like artifacts (a Chinese ocean-wave prompt produced voice-like harmonics; a Chinese footsteps/rain prompt produced voice-like mid-frequency content or weak output, while the English equivalent was clean). Use `--negative "speech, voice, human talking, vocals, singing"` to suppress artifacts.
 
 ## Voice / TTS settings
 

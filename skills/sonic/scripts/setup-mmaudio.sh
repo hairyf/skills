@@ -17,7 +17,15 @@ else
 fi
 
 command -v git >/dev/null 2>&1 || { echo "缺少 git"; exit 1; }
-command -v python3 >/dev/null 2>&1 || { echo "缺少 python3"; exit 1; }
+
+PY=""
+for c in python3.13 python3.12 python3.11 python3 python; do
+  if command -v "$c" >/dev/null 2>&1 && "$c" -c "import sys;exit(0 if (3,9)<=sys.version_info<(3,14) else 1)" >/dev/null 2>&1; then
+    PY="$c"; break
+  fi
+done
+[ -n "$PY" ] || { echo "缺少兼容的 Python 3.9-3.13"; exit 1; }
+echo "使用 Python: $PY"
 
 echo "==> 克隆 MMAudio 仓库 -> $DEST"
 if [ ! -d "$DEST/.git" ]; then
@@ -29,8 +37,11 @@ fi
 
 cd "$DEST"
 
+echo "==> 复制 mmaudio-server.py 到仓库目录"
+cp "$(dirname "$0")/mmaudio-server.py" "$DEST/mmaudio-server.py"
+
 echo "==> 创建虚拟环境"
-[ -d ".venv" ] || python3 -m venv .venv
+[ -d ".venv" ] || "$PY" -m venv .venv
 PY=".venv/bin/python"
 
 echo "==> 安装 PyTorch (CUDA，较大，首次较慢)"

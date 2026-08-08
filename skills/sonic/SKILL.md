@@ -17,32 +17,32 @@ Picked for a China-based workflow (Alipay/WeChat top-up, no foreign card require
 | Asset | Recommended (priority order) | Notes |
 |-------|------------------------------|-------|
 | Voice / TTS | SiliconFlow CosyVoice2 → MiniMax Speech → OpenAI TTS / ElevenLabs | SiliconFlow is OpenAI-compatible and already has a key |
-| Music | MiniMax Music 3.0 → 阿里百炼 Fun-Music → Suno (third-party relays) | MiniMax has an official API + China payment |
+| Music | MiniMax Music 3.0 → Alibaba Bailian Fun-Music → Suno (third-party relays) | MiniMax has an official API + China payment |
 | Sound effects | Local MMAudio → Local Sony Woosh → MMAudio cloud → ElevenLabs SFX | Local MMAudio/Woosh run on your NVIDIA GPU for free (auto-installed via `scripts/setup-mmaudio.*` / `scripts/setup-woosh.*`); MMAudio cloud is zero-install (key); ElevenLabs needs a key + proxy |
 
 ## Quick start
 
 ```bash
 # TTS (defaults to SiliconFlow CosyVoice2)
-node scripts/sonic.js tts "你好，世界" -o hi.mp3
+node scripts/sonic.js tts "Hello, world" -o hi.mp3
 
 # Music with auto-written lyrics
-node scripts/sonic.js music "欢快的爵士，铜管与低音提琴，适合咖啡馆" -o song.mp3 --lyrics-optimizer
+node scripts/sonic.js music "cheerful jazz with brass and double bass, café style" -o song.mp3 --lyrics-optimizer
 
 # Instrumental only
-node scripts/sonic.js music "史诗电影配乐，管弦乐" -o bgm.mp3 --instrumental
+node scripts/sonic.js music "epic movie soundtrack, orchestral" -o bgm.mp3 --instrumental
 
 # Lyrics
-node scripts/sonic.js lyrics "夏日的海边"
+node scripts/sonic.js lyrics "a summer day at the beach"
 
 # Sound effect (cloud MMAudio, zero install — needs key)
-node scripts/sonic.js sfx "雨声敲打木屋顶" -o rain.wav --provider mmaudio
+node scripts/sonic.js sfx "rain falling on a wooden roof" -o rain.wav --provider mmaudio
 
 # Sound effect (local MMAudio on your GPU — free, auto-installed by the agent)
-node scripts/sonic.js sfx "雨声敲打木屋顶" -o rain.flac --provider mmaudio-local
+node scripts/sonic.js sfx "rain falling on a wooden roof" -o rain.flac --provider mmaudio-local
 
 # Sound effect (local Sony Woosh — auto-installed by the agent)
-node scripts/sonic.js sfx "脚步声踩在雪地上" -o steps.flac
+node scripts/sonic.js sfx "footsteps crunching in the snow" -o steps.flac
 ```
 
 ## Setup
@@ -64,7 +64,7 @@ Requires at least one API key (`SILICONFLOW_API_KEY`, `MINIMAX_API_KEY`, `OPENAI
 | Topic | Description | Reference |
 |-------|-------------|-----------|
 | Voice / TTS | CosyVoice2, Fish-Speech, Qwen-Audio-TTS, MiniMax Speech, OpenAI/ElevenLabs | [models-voice](references/models-voice.md) |
-| Music | MiniMax Music 3.0, 百炼 Fun-Music, Suno, Udio, Stable Audio, MusicGen | [models-music](references/models-music.md) |
+| Music | MiniMax Music 3.0, Bailian Fun-Music, Suno, Udio, Stable Audio, MusicGen | [models-music](references/models-music.md) |
 | Sound effects | Sony Woosh (local API), MMAudio, ElevenLabs SFX, Stable Audio SFX | [models-sfx](references/models-sfx.md) |
 
 ### Best Practices

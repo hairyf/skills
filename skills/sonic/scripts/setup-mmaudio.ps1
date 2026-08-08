@@ -21,6 +21,18 @@ $ErrorActionPreference = "Stop"
 function Step($msg) { Write-Host "`n==> $msg" -ForegroundColor Cyan }
 function Warn($msg) { Write-Host "WARN: $msg" -ForegroundColor Yellow }
 
+function Find-Python {
+  # MMAudio's dependency wheels may lag the newest Python release;
+  # prefer a stable 3.9-3.13 interpreter when one is available.
+  foreach ($c in 'python3.13','python3.12','python3.11','python3','python') {
+    $cmd = Get-Command $c -ErrorAction SilentlyContinue
+    if (-not $cmd) { continue }
+    $ver = & $cmd.Source -c "import sys;print('%d.%d'%sys.version_info[:2])" 2>$null
+    if ($ver -match '^3\.(9|10|11|12|13)$') { return $cmd.Source }
+  }
+  throw "未找到兼容的 Python 3.9-3.13，请先安装 https://www.python.org/ (勾选 Add to PATH)"
+}
+
 Step "检查 NVIDIA GPU"
 $smi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if (-not $smi) {
@@ -33,10 +45,8 @@ Step "检查 git / python"
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
   throw "未安装 git，请先安装 https://git-scm.com/"
 }
-$py = Get-Command python -ErrorAction SilentlyContinue
-if (-not $py) {
-  throw "未安装 Python，请先安装 https://www.python.org/ (勾选 Add to PATH)"
-}
+$py = Find-Python
+Write-Host "使用 Python: $py"
 
 Step "克隆 MMAudio 仓库 -> $Dest"
 if (-not (Test-Path (Join-Path $Dest ".git"))) {
@@ -46,10 +56,13 @@ if (-not (Test-Path (Join-Path $Dest ".git"))) {
   Write-Host "已存在，跳过克隆"
 }
 
+Step "复制 mmaudio-server.py 到仓库目录"
+Copy-Item (Join-Path $PSScriptRoot "mmaudio-server.py") (Join-Path $Dest "mmaudio-server.py") -Force
+
 Push-Location $Dest
 try {
   Step "创建虚拟环境"
-  if (-not (Test-Path ".venv")) { python -m venv .venv }
+  if (-not (Test-Path ".venv")) { & $py -m venv .venv }
   $venvPy = Join-Path $Dest ".venv\Scripts\python.exe"
 
   Step "安装 PyTorch (CUDA，较大，首次较慢)"

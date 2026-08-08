@@ -273,6 +273,12 @@ async function main() {
     } else if (command === "sfx") {
       const provider = opts.provider || "woosh";
       const model = opts.model || (provider === "elevenlabs" ? "eleven_text_to_sound_v3" : DEFAULT_SFX_MODEL);
+      if (/[\u4e00-\u9fff]/.test(opts.text) && ["woosh", "mmaudio", "mmaudio-local"].includes(provider)) {
+        console.warn(
+          "提示: Woosh/MMAudio 使用英文 CLIP/CLAP 文本编码器，中文提示词会被 tokenizer 切碎，" +
+          "结果容易出现人声/噪声或内容很弱。建议改用英文描述音效。",
+        );
+      }
       if (provider === "mmaudio") {
         requireKey("MMAUDIO_API_KEY", MMAUDIO_API_KEY);
         buffer = await sfxMmaudio(opts, model);
@@ -301,7 +307,7 @@ async function main() {
   } catch (err) {
     if (command === "sfx" && !opts.provider) {
       console.error(
-        "提示: 本地 Woosh 服务未运行或不可达。请先启动: uv run uvicorn api.api_server:app --host 0.0.0.0 --port 8000",
+        "提示: 本地 Woosh 服务未运行或不可达。请先启动: uv run --extra cuda uvicorn api.api_server:app --host 0.0.0.0 --port 8000",
       );
     }
     console.error("Audio generation failed:", err.message);

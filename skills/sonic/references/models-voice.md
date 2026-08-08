@@ -31,7 +31,7 @@ Parameters: `input` (1–128000 chars), `voice`, `response_format` (`mp3`/`opus`
 
 - Released 2026-07-20; tops the Artificial Analysis TTS leaderboard.
 - Model ids: `qwen-audio-3.0-tts-plus` (high quality), `qwen-audio-3.0-tts-flash` (realtime, ~300ms first packet).
-- Available via 阿里云百炼 (DashScope) — China-friendly, not yet wired into sonic.js (use the provider's SDK/HTTP API directly).
+- Available via Alibaba Cloud Bailian (DashScope) — China-friendly, not yet wired into sonic.js (use the provider's SDK/HTTP API directly).
 
 ## OpenAI TTS
 
@@ -43,7 +43,7 @@ Parameters: `input` (1–128000 chars), `voice`, `response_format` (`mp3`/`opus`
 - Best-in-class multilingual + emotion control; `eleven_multilingual_v2`, `eleven_turbo_v2_5`, etc.
 - TTS: `POST /v1/text-to-speech/{voice_id}`; SFX: `POST /v1/sound-generation` (see models-sfx).
 - **Default voice is "Adam"** (`pNInz6obpgDQGcFmaJgB`) — the free tier ships 21 premade voices (Adam, Sarah, Bella, Lily, ...) and cannot use library voices via the API ("Rachel" is not included and returns `402 paid_plan_required`). List your voices with `GET /v1/voices`, then pass any of them via `-v <voice_id>`. Free tier: 10k characters.
-- Multilingual TTS works for Chinese and other languages via `eleven_multilingual_v2` — e.g. `node sonic.js tts "你好世界" --provider elevenlabs`.
+- Multilingual TTS works for Chinese and other languages via `eleven_multilingual_v2` — e.g. `node sonic.js tts "Hello world" --provider elevenlabs`.
 - Needs a foreign card and a proxy from mainland China.
 
 ## Choosing
