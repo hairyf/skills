@@ -1,17 +1,17 @@
 ---
 name: geckolib
-description: GeckoLib 5 Minecraft mod animation — setup for Fabric/Forge/NeoForge, entities, blocks, items, armor, replaced entities, animation controllers, Molang, render states, and v4 migration. Use when working with GeckoLib animatables, .geo.json/.animation.json assets, or adding keyframe animations to a Minecraft mod.
+description: GeckoLib Minecraft mod animation — GeckoLib 5 (1.21+) render-state pipeline plus GeckoLib 4.4.9 (1.20.1) API for Fabric/Forge/NeoForge: setup, entities, blocks, items, armor, replaced entities, animation controllers, Molang, render layers, textures, and data syncing. Use when working with GeckoLib animatables, .geo.json/.animation.json assets, or adding keyframe animations to a Minecraft mod.
 metadata:
   author: Hairy
-  version: "2026.8.7"
+  version: "2026.8.8"
   source: Generated from https://github.com/bernie-g/geckolib, scripts at https://github.com/hairyf/skills
 ---
 
 # GeckoLib
 
-> Based on GeckoLib v5.5.3 (2026-06-27), generated 2026-08-07. Docs: https://wiki.geckolib.com
+> Based on GeckoLib v5.5.3 (2026-06-27) and GeckoLib v4.4.9 (2024-08-30, MC 1.20.1), generated 2026-08-07, v4 content added 2026-08-08. Docs: https://wiki.geckolib.com (v5) + the GeckoLib 4 wiki (v4).
 
-GeckoLib is an animation and rendering engine for Minecraft mods, available for Fabric, Forge, and NeoForge. It plays Blockbench/GeckoLib keyframe animations on entities, blocks, items, and armor, with 30+ easings, Molang math expressions, sound/particle/event keyframes, glowmasks, animated textures, and replaced-entity support. Since v5 it renders from immutable `RenderState` snapshots (Minecraft 1.21+ render pipeline).
+GeckoLib is an animation and rendering engine for Minecraft mods, available for Fabric, Forge, and NeoForge. It plays Blockbench/GeckoLib keyframe animations on entities, blocks, items, and armor, with 30+ easings, Molang math expressions, sound/particle/event keyframes, glowmasks, animated textures, and replaced-entity support. Since v5 it renders from immutable `RenderState` snapshots (Minecraft 1.21+ render pipeline); v4 (up to 4.4.9 for MC 1.20.1) renders directly from the animatable under the `software.bernie.geckolib` package with `geo/` + `animations/` asset folders.
 
 ## Preferences
 
@@ -60,6 +60,30 @@ GeckoLib is an animation and rendering engine for Minecraft mods, available for 
 |-------|-------------|-----------|
 | Updating From v4 | Package moves, RenderState pipeline, generics, bone API changes | [updating-from-v4](references/updating-from-v4.md) |
 | Examples | Official example mods by feature, copy-paste templates, real-world mod | [examples](references/examples.md) |
+
+## GeckoLib 4 (MC 1.20.1)
+
+For projects pinned to **GeckoLib 4.4.9 / Minecraft 1.20.1**, use these references — they document the `software.bernie.geckolib` API (not the v5 `com.geckolib` API) and the v4 asset layout (`geo/`, `animations/`). The official GeckoLib 5 wiki is misleading for 1.20.1 projects.
+
+| Topic | Description | Reference |
+|-------|-------------|-----------|
+| Setup | Maven (`software.bernie.geckolib` group), per-loader deps, mclib, mixin plugin, asset folders | [v4-setup](references/v4-setup.md) |
+| Animatable Pattern | `GeoAnimatable`, type interfaces, instance caches, controller registration, DataTickets | [v4-animatable-pattern](references/v4-animatable-pattern.md) |
+| Geo Models | `GeoModel` + Defaulted models, path conventions, render type, Molang hooks, head tracking | [v4-geo-models](references/v4-geo-models.md) |
+| Animation Controllers | Constructors, `PlayState`/`AnimationState`, `RawAnimation`, `DefaultAnimations`, transitions, easings, custom loop types | [v4-animation-controller](references/v4-animation-controller.md) |
+| Entities | `GeoEntity` + `GeoEntityRenderer`, registration, common issues | [v4-entities](references/v4-entities.md) |
+| Blocks | `GeoBlockEntity`, `ENTITYBLOCK_ANIMATED`, `GeoBlockRenderer`, directionality | [v4-blocks](references/v4-blocks.md) |
+| Items | `GeoItem`, item display JSON, Forge/Fabric renderer registration, perspective-aware | [v4-items](references/v4-items.md) |
+| Armor | `ArmorItem` + `GeoArmorRenderer`, `prepForRender`, bone mapping, full-set pattern | [v4-armor](references/v4-armor.md) |
+| Replaced Entities | `GeoReplacedEntity`, `GeoReplacedEntityRenderer`, per-entity render hooks | [v4-replaced-entities](references/v4-replaced-entities.md) |
+| Keyframe Triggers | Sound/particle/custom instruction keyframes, `AutoPlayingSoundKeyframeHandler` | [v4-keyframe-triggers](references/v4-keyframe-triggers.md) |
+| Render Layers & Events | `GeoRenderLayer`, built-in layers, `DynamicGeoEntityRenderer`, `GeoRenderEvent` | [v4-render-layers](references/v4-render-layers.md) |
+| Molang | Operators, functions, full query list, custom functions/queries, compound expressions | [v4-molang](references/v4-molang.md) |
+| Textures | Glowmask/emissive textures, animated `.mcmeta` textures, limitations | [v4-textures](references/v4-textures.md) |
+| Triggerable Animations | Server triggers, `SerializableDataTicket` data syncing, built-in tickets | [v4-triggerable-animations](references/v4-triggerable-animations.md) |
+| v4 vs v5 | Coordinates/packages/asset paths/class renames/rendering pipeline mapping | [v4-vs-v5](references/v4-vs-v5.md) |
+
+Note: stateless animations and the split-source `GeoRenderProvider` system did **not** exist in 4.4.9 — they arrived in 4.5/1.20.6+. Renderers must live in client source sets instead.
 
 ## Quick Reference
 
