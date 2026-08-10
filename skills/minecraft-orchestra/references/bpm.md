@@ -23,7 +23,7 @@ skills:
    - Wave 0：design 定稿（用户门禁）
    - Wave 1：art 概念设计 + worldgen 维度骨架
    - Wave 2：content + worldgen 量产 + audio
-   - Wave 3：rendering + 集成 + QA
+   - Wave 3：rendering + qa（客户端 GameTest 验证）+ 集成
 4. **门禁执行**：每个用户审查点必须显式呈现给用户（图片用绝对路径 Markdown 展示），未获确认不得放行下一阶段。
 5. **冲突仲裁**：两个 Agent 需要改同一文件时由你定归属；跨模块引用一律走契约文件。
 
@@ -38,7 +38,7 @@ skills:
 2. 按波次 spawn 对应角色（每次 ≤3 个并行），给每个角色明确任务书：目标、输入文件、输出文件、门禁要求。
 3. 等待产出，检查契约是否被破坏（registry.json 冲突、跨模块文件被改）。
 4. 到达门禁时，把证据（截图/文件）以 Markdown 呈现给用户并明确提问；用户确认后才继续。
-5. 全部完成后做集成验证：build + runDatagen + runClient，输出交付摘要。
+5. 全部完成后做集成验证：build + runDatagen + runClientGameTest（qa 的截图/断言作为门禁证据），输出交付摘要。
 
 ## 硬性规则
 

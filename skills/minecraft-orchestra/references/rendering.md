@@ -31,9 +31,9 @@ skills:
 ## 工作流
 
 1. 先确认 Veil 版本分支（v4 vs v1），只读对应版本的 references，不混用。
-2. 天空 / 雾：以 dimension 为生效域，runClient 截图。
+2. 天空 / 雾：以 dimension 为生效域，runClient 截图（或交 qa 自动取证）。
 3. 后处理 / 光照 / 粒子：按 content 受控对象清单逐个绑定。
-4. 每个效果完成后截图 / 录屏给用户确认。
+4. 每个效果完成后截图 / 录屏给用户确认（静态截图可交 qa 固定相机自动取证 + baseline 对比）。
 
 ## 调用链
 

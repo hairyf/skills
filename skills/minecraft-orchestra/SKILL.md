@@ -3,8 +3,9 @@ name: minecraft-orchestra
 description: >-
   Orchestrate a complex Minecraft mod build (e.g. a custom sub-world/dimension)
   with a team of specialized subagents — design, bpm, worldgen, content, art,
-  audio, rendering — using wave scheduling, shared contracts, and user review
-  gates. Use when planning or running multi-agent Minecraft mod development.
+  audio, rendering, qa — using wave scheduling, shared contracts, and user
+  review gates. Use when planning or running multi-agent Minecraft mod
+  development.
   Pairs with minecraft-modding, fabric, geckolib, veil, imagine,
   minecraft-model, minecraft-texture, sonic, and optionally vision (when the
   default model lacks native vision).
@@ -14,7 +15,7 @@ metadata:
   source: Hand-written from the subagents/ workflow, scripts located at https://github.com/hairyf/skills
 ---
 
-> Orchestration skill for a 7-role subagent team building complex Minecraft mods (e.g. a custom dimension/sub-world). Each reference below is a ready-to-use subagent definition in the Claude Code subagent format (YAML frontmatter + system prompt body): copy the files into `.claude/agents/` or use them as role cards when spawning subagents.
+> Orchestration skill for an 8-role subagent team building complex Minecraft mods (e.g. a custom dimension/sub-world). Each reference below is a ready-to-use subagent definition in the Claude Code subagent format (YAML frontmatter + system prompt body): copy the files into `.claude/agents/` or use them as role cards when spawning subagents.
 
 ## Prerequisite — 依赖检测与自动安装
 
@@ -54,6 +55,7 @@ npx skills add hairyf/skills -s minecraft-modding fabric geckolib veil imagine m
 | art | 概念设计、三视图、Blockbench 建模、贴图后处理（必须多模态模型） | [art](references/art.md) |
 | audio | 必选：BGM、环境音、生物/方块/UI 音效 + audio-manifest | [audio](references/audio.md) |
 | rendering | Veil 渲染专项：天空/雾/后处理/光照/粒子 | [rendering](references/rendering.md) |
+| qa | 客户端测试验证：GameTest E2E（建/进世界、移动、截图断言）、门禁证据与 CI 回归 | [qa](references/qa.md) |
 
 ## Call Chain
 
@@ -70,6 +72,10 @@ flowchart LR
   A --> RV[rendering]
   C -->|受控对象| RV
   WG -->|生效域| RV
+  WG -->|坐标/维度| Q[qa]
+  C -->|行为场景| Q
+  RV -->|特效清单| Q
+  Q -->|截图/断言| B
   C --> B
   RV --> B
   WG --> B
@@ -85,7 +91,7 @@ content 是调用链枢纽：art 的模型/贴图、audio 的音频、worldgen �
 3. **波次调度**（同时 ≤3 个 subagent）：
    - Wave 1：art 概念设计 + worldgen 维度骨架（worldgen 先用 vanilla reference 从 TheEnd/TheNether 做 DimensionType/Dimension spike，fabric skill 不覆盖这部分）
    - Wave 2：content + worldgen 量产 + audio
-   - Wave 3：rendering + 集成 + QA（build + runDatagen + runClient）
+   - Wave 3：rendering + qa（客户端 GameTest 验证）+ 集成（build + runDatagen + runClientGameTest）
 4. **门禁**：每个用户审查点必须显式呈现证据（图片用绝对路径 Markdown），未获确认不放行下一阶段。
 
 ## User Review Gates
@@ -98,6 +104,7 @@ content 是调用链枢纽：art 的模型/贴图、audio 的音频、worldgen �
 | audio | 每个音效 / BGM | 播放 + 用户确认 |
 | rendering | 每个渲染特效 | 截图 / 录屏 + 用户确认（附帧率影响） |
 | content | 实体行为 / 传送体验 | 演示 + 用户确认 |
+| qa | 自动化断言 + 截图证据 | 断言结论 + 截图 + 用户确认 |
 
 ## Model Constraint
 

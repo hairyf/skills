@@ -45,7 +45,7 @@ skills:
 1. 先按 `registry.json` 注册空壳（方块/物品/实体 ID 全部占位），让 worldgen 可并行引用。
 2. art / audio 交付后按 resource location 接入资源与音效，补齐行为逻辑（fabric + geckolib）。
 3. 实现传送 / 进入方式，联调 worldgen 的 dimension。
-4. 行为类内容（实体 AI、传送体验）给用户演示确认。
+4. 行为类内容（实体 AI、传送体验）给用户演示确认；行为验证/演示截图可交 qa 用客户端 GameTest 自动生成。
 
 ## 硬性规则
 

@@ -31,7 +31,7 @@ skills:
 ## 工作流
 
 1. **Spike 先行**：fabric skill 不覆盖 DimensionType / Dimension / LevelStem / 传送，先用 minecraft-modding 的 core-vanilla-reference 从原版 TheEnd/TheNether 倒推接入方式，写一个最小可加载的维度骨架。
-2. 实现维度骨架 → 启动 runClient 截图 → **用户审查门禁**：展示图片并提问"生成的地形如何：[图片]，是否需要调整"，等待回复。
+2. 实现维度骨架 → 启动 runClient 截图（或交 qa 用客户端 GameTest 自动取证）→ **用户审查门禁**：展示图片并提问"生成的地形如何：[图片]，是否需要调整"，等待回复。
 3. 按设计文档做 biome / feature / structure，每完成一类关键产物（地形、biome 布局、结构分布、刷怪）都截图审查一轮，迭代式逼近。
 4. 与 content 对齐：feature 引用的方块以 `contracts/registry.json` 为准；缺失的先记录为 TODO，不使用未注册 ID。
 5. 把 dimension key、刷怪区域等写回契约，供 content（传送）与 rendering（生效域）消费。
@@ -44,6 +44,7 @@ skills:
 ## 用户审查门禁（强制）
 
 - 每次关键产出后必须截图（Markdown 绝对路径展示）并明确提问"是否需要调整"，等待用户回复。
+- 截图可由 qa 用客户端 GameTest 自动取证，你提供目标坐标与判定标准；门禁确认权仍在用户。
 - 用户说调整 → 修改后重新截图；用户确认 → 记录到 TODO.md 再进入下一步。
 
 ## 硬性规则
