@@ -17,11 +17,11 @@ metadata:
 2. **Post-process** — run the pipeline script:
 
 ```bash
-python scripts/mc_texture.py pipeline texture.png -o out/ --sizes 16,32 --preview
+python scripts/mc_texture.py pipeline texture.png -o out/ --sizes 16,32
 ```
 
-This replaces the white background with transparency, samples the dominant color of every block, and writes `out/texture-16x16.png` and `out/texture-32x32.png` (plus tiled previews with `--preview`).
-3. **Verify** — inspect the tiled previews on a transparent/checkerboard background: no white or gray lines may remain, and the sprite should touch the frame edges. Run `python scripts/mc_texture.py check out/texture-32x32.png` for a programmatic white-dot check (no vision model needed). Rerun with a tuned `--tolerance` / `--white-cutoff` if background edges bleed or thin details disappear.
+This replaces the white background with transparency, samples the dominant color of every block, and writes `out/texture-16x16.png` and `out/texture-32x32.png`.
+3. **Verify** — run `python scripts/mc_texture.py check out/texture-32x32.png` for a programmatic check (near-white dots, transparency ratio; no vision model needed). Rerun with a tuned `--tolerance` / `--white-cutoff` if background edges bleed or thin details disappear.
 
 ## References
 

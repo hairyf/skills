@@ -16,14 +16,13 @@ python scripts/mc_texture.py <command> [options]
 ### pipeline (recommended)
 
 ```bash
-python scripts/mc_texture.py pipeline in.png -o out/ --sizes 16,32 --preview
+python scripts/mc_texture.py pipeline in.png -o out/ --sizes 16,32
 ```
 
 | Option | Default | Meaning |
 |--------|---------|---------|
 | `-o, --output-dir <dir>` | required | output directory (created if missing) |
 | `--sizes <n,n>` | `16,32` | output resolutions |
-| `--preview` | off | also write tiled 4x4 preview PNGs |
 | `--tolerance <n>` | `28` | background color distance (raise to remove more white, lower to keep near-white colors) |
 | `--mode <m>` | `replace` | `replace`: all background-colored pixels become transparent; `flood`: only border-connected background |
 | `--white-cutoff <n>` | `220` | pixels with mean brightness >= this are treated as white background (lower = remove more light pixels) |
@@ -56,7 +55,6 @@ Programmatic QA: prints size, opaque/transparent counts, distinct colors, and th
 ## Output
 
 - `texture-<size>x<size>.png` — RGBA, one flat color per texture pixel; transparent for background cells.
-- `texture-<size>x<size>-preview.png` — the texture tiled 4x4 and scaled for visual QA.
 
 Exit code `0` on success, `1` on missing input or invalid options.
 

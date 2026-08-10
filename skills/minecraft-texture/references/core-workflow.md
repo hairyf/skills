@@ -19,7 +19,7 @@ Use [best-practices-prompts](best-practices-prompts.md) for prompt recipes. Pref
 ## 2. Post-process with the pipeline
 
 ```bash
-python scripts/mc_texture.py pipeline texture.png -o out/ --sizes 16,32 --preview
+python scripts/mc_texture.py pipeline texture.png -o out/ --sizes 16,32
 ```
 
 The pipeline:
@@ -27,18 +27,17 @@ The pipeline:
 1. replaces every white background pixel with transparency (`--mode replace`, the default);
 2. crops to the sprite's bounding box so the content fills the frame;
 3. splits the sprite into `size` x `size` blocks and fills each output pixel with the block's dominant color;
-4. writes `out/<name>-<size>x<size>.png` for each requested size, plus tiled `-preview.png` images.
+4. writes `out/<name>-<size>x<size>.png` for each requested size.
 
 ## 3. Verify
 
-- Open the tiled previews (they have a transparent background): the sprite should touch the frame edges, every texture pixel must read as one flat color, and no white or gray lines may remain.
 - Run the programmatic check (no vision model needed):
 
 ```bash
 python scripts/mc_texture.py check out/raw-32x32.png
 ```
 
-It reports near-white dots (with positions) and exits non-zero if any are found.
+It reports near-white dots (with positions) and exits non-zero if any are found. Open the output PNGs directly (scale them up in an image viewer) to eyeball the result: the sprite should touch the frame edges and every texture pixel must read as one flat color.
 - A fully transparent cell is expected at the corners of a round sprite; a partially eaten sprite means `--tolerance` is too high (default 28).
 - If white pixels inside the sprite are being removed (e.g. white cream filling), rerun with `--mode flood` so only border-connected background becomes transparent.
 - If the subject floats with big margins, regenerate with a "fill the frame" prompt rather than cropping later.

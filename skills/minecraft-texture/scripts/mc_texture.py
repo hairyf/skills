@@ -192,17 +192,6 @@ def quantize(img: Image.Image, size: int, bg_color,
     return out
 
 
-def preview(texture: Image.Image, scale: int = 8, tiles: int = 4) -> Image.Image:
-    """Tile the texture 4x4 and scale it up for visual QA."""
-    n = texture.size[0]
-    big = texture.resize((n * scale, n * scale), Image.Resampling.NEAREST)
-    canvas = Image.new("RGBA", (n * scale * tiles, n * scale * tiles), (0, 0, 0, 0))
-    for ty in range(tiles):
-        for tx in range(tiles):
-            canvas.paste(big, (tx * n * scale, ty * n * scale))
-    return canvas
-
-
 def cmd_check(args):
     img = load_image(args.input)
     px = img.load()
@@ -263,11 +252,6 @@ def cmd_pipeline(args):
         tex_path = os.path.join(args.output_dir, f"{base}-{size}x{size}.png")
         tex.save(tex_path)
         print(f"saved {tex_path}")
-        if args.preview:
-            pv = preview(tex)
-            pv_path = os.path.join(args.output_dir, f"{base}-{size}x{size}-preview.png")
-            pv.save(pv_path)
-            print(f"saved {pv_path}")
 
 
 def main(argv=None):
@@ -311,8 +295,6 @@ def main(argv=None):
     p_pipe.add_argument("-o", "--output-dir", required=True)
     p_pipe.add_argument("--sizes", type=lambda s: [int(x) for x in s.split(",")],
                         default=[16, 32], help="comma-separated output sizes (default 16,32)")
-    p_pipe.add_argument("--preview", action="store_true",
-                        help="also write tiled preview images for visual QA")
     p_pipe.add_argument("--tolerance", type=int, default=BG_TOL)
     p_pipe.add_argument("--mode", choices=["replace", "flood"], default="replace")
     p_pipe.add_argument("--white-cutoff", type=int, default=WHITE_BRIGHT)
