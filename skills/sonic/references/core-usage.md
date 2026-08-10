@@ -6,6 +6,7 @@ description: How to invoke sonic.js — the tts / music / lyrics / sfx commands,
 # Usage
 
 Run the script with Node.js (18+). Four commands cover the audio surface:
+Run `node scripts/sonic.js --help` for the full flag list.
 
 ```bash
 node sonic.js tts "text" -o out.mp3
@@ -16,32 +17,20 @@ node sonic.js sfx "sound description" -o out.flac
 
 ## tts — text to speech
 
+Provider is inferred from the model id (`FunAudioLLM/`, `fishaudio/`, `fnlp/` → siliconflow; `speech-*` → minimax; `tts-1`/`gpt-*` → openai; `eleven_*` → elevenlabs), or forced with `--provider`. Default: siliconflow `FunAudioLLM/CosyVoice2-0.5B`.
+
 ```bash
-node sonic.js tts "Hello, world" -o hi.mp3
 node sonic.js tts "hello" -m FunAudioLLM/CosyVoice2-0.5B --voice fishaudio/fish-speech-1.5:alex
 node sonic.js tts "good morning" -m tts-1 --provider openai --speed 1.2
 node sonic.js tts "Hello" --provider minimax -v female-shaonv
 ```
 
-Provider is inferred from the model id (`FunAudioLLM/`, `fishaudio/`, `fnlp/` → siliconflow; `speech-*` → minimax; `tts-1`/`gpt-*` → openai; `eleven_*` → elevenlabs), or forced with `--provider`. Default: siliconflow `FunAudioLLM/CosyVoice2-0.5B`.
-
 ## music — songs and instrumentals (MiniMax)
 
 ```bash
-# Full song with auto-written lyrics
 node sonic.js music "upbeat 1940s big-band swing jazz" -o song.mp3 --lyrics-optimizer
-
-# Song with provided lyrics
 node sonic.js music "healing folk ballad" -o song.mp3 --lyrics "by the sea in summer..."
-
-# Song with lyrics from a file (long lyrics / from the lyrics command)
-node sonic.js lyrics "graduation season on campus" > lyrics.txt
-node sonic.js music "youthful folk ballad" -o song.mp3 --lyrics-file lyrics.txt
-
-# Instrumental
 node sonic.js music "epic orchestral, crescendo" -o bgm.mp3 --instrumental
-
-# Cover version from a reference audio URL
 node sonic.js music "lazy jazz lounge vibe" -o cover.mp3 --cover https://example.com/original.mp3
 ```
 
@@ -53,13 +42,13 @@ Music generation is slow (tens of seconds to minutes) — set a generous timeout
 node sonic.js lyrics "summer seaside" --mode write_full_song
 ```
 
-Prints the lyrics (with `[Verse]`/`[Chorus]` structure tags) to stdout.
+Prints the lyrics (with `[Verse]` / `[Chorus]` structure tags) to stdout.
 
 ## sfx — sound effects
 
 ```bash
-# Local Sony Woosh (default, needs the server running)
-node sonic.js sfx "footsteps crunching in the snow" -o steps.flac --steps 8
+# Local Sony Woosh (default, server auto-installed by the agent)
+node sonic.js sfx "footsteps crunching in the snow" -o steps.flac
 
 # MMAudio cloud (zero install, needs MMAUDIO_API_KEY)
 node sonic.js sfx "rain falling on a wooden roof" -o rain.wav --provider mmaudio --duration 10
@@ -67,13 +56,12 @@ node sonic.js sfx "forest birdsong" -o forest.wav --provider mmaudio --video htt
 
 # Local MMAudio (your GPU, free — auto-installed by the agent)
 node sonic.js sfx "rain falling on a wooden roof" -o rain.flac --provider mmaudio-local --duration 10
-node sonic.js sfx "forest birdsong" -o forest.flac --provider mmaudio-local --video C:\clips\forest.mp4
 
 # ElevenLabs (needs key + proxy)
 node sonic.js sfx "laser gun firing" -o laser.mp3 --provider elevenlabs --duration 3
 ```
 
-The local servers are auto-installed by the agent (`scripts/setup-woosh.*` / `scripts/setup-mmaudio.*`) — the user never installs them by hand.
+Local SFX prompts must be in English (see SKILL.md); add `--negative "speech, voice"` to suppress artifacts.
 
 ## Options
 
@@ -85,9 +73,7 @@ The local servers are auto-installed by the agent (`scripts/setup-woosh.*` / `sc
 | `-v, --voice <voice>` | tts | Voice id (e.g. `fishaudio/fish-speech-1.5:alex`, MiniMax voice ids) |
 | `-f, --format <fmt>` | tts/music | `mp3`/`wav`/`opus`/`pcm` (tts), `mp3`/`wav` (music) |
 | `--speed <0.25-4>` | tts | Speech speed (default 1) |
-| `--sample-rate <hz>` | tts/music | Output sample rate |
 | `--duration <sec>` | sfx (elevenlabs/mmaudio) | Effect length |
-| `--prompt-influence <0-1>` | sfx (elevenlabs) | Prompt adherence |
 | `--video <url>` | sfx (mmaudio) | Video URL for video-to-audio |
 | `--negative <text>` | sfx (mmaudio) | Negative prompt |
 | `--lyrics <text>` | music | Song lyrics |
@@ -95,8 +81,6 @@ The local servers are auto-installed by the agent (`scripts/setup-woosh.*` / `sc
 | `--instrumental` | music | Instrumental only |
 | `--lyrics-optimizer` | music | Auto-write lyrics from prompt |
 | `--cover <url>` | music | Reference audio for a cover |
-| `--steps <n>` | sfx (woosh) | Inference steps (default 8) |
-| `--cfg <float>` | sfx (woosh) | Guidance (default 1) |
 | `--seed <n>` | sfx (woosh) | Reproducibility |
 
 ## Exit codes

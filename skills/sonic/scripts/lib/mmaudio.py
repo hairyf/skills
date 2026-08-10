@@ -4,7 +4,7 @@ Serves text-to-audio and video-to-audio through a tiny HTTP API, so
 `sonic.js sfx --provider mmaudio-local` can generate sound effects on your
 own NVIDIA GPU at zero per-call cost.
 
-Requires the MMAudio repo installed (see setup-mmaudio.ps1 / setup-mmaudio.sh).
+Requires the MMAudio repo installed (see scripts/install/mmaudio.ps1 / mmaudio.sh).
 
 Usage:
     uvicorn mmaudio-server:app --host 0.0.0.0 --port 8001

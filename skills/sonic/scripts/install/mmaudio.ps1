@@ -5,8 +5,8 @@
 .DESCRIPTION
   Requirements: Windows 10/11, NVIDIA GPU (6GB+ VRAM recommended), git, Python 3.10+.
   Usage:
-    pwsh setup-mmaudio.ps1           # install only
-    pwsh setup-mmaudio.ps1 -Start    # install and start the API server (port 8001)
+    pwsh mmaudio.ps1           # install only
+    pwsh mmaudio.ps1 -Start    # install and start the API server (port 8001)
 .PARAMETER Dest
   Install directory (default: $HOME\.sonic\mmaudio)
 .PARAMETER Start
@@ -56,8 +56,8 @@ if (-not (Test-Path (Join-Path $Dest ".git"))) {
   Write-Host "已存在，跳过克隆"
 }
 
-Step "复制 mmaudio-server.py 到仓库目录"
-Copy-Item (Join-Path $PSScriptRoot "mmaudio-server.py") (Join-Path $Dest "mmaudio-server.py") -Force
+Step "复制 lib/mmaudio.py 到仓库目录（目标名保持 mmaudio-server.py，避免与仓库内 mmaudio 包同名）"
+Copy-Item (Join-Path $PSScriptRoot "..\lib\mmaudio.py") (Join-Path $Dest "mmaudio-server.py") -Force
 
 Push-Location $Dest
 try {

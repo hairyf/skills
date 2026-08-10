@@ -262,7 +262,7 @@ export async function sfxMmaudio(opts, model) {
 
 /**
  * Local MMAudio server (own GPU) — POST {MMAUDIO_LOCAL_URL}/generate, returns audio bytes.
- * Started by scripts/setup-mmaudio.ps1 / setup-mmaudio.sh (zero per-call cost).
+ * Started by scripts/install/mmaudio.ps1 / mmaudio.sh (zero per-call cost).
  */
 export async function sfxMmaudioLocal(opts, model) {
   const base = MMAUDIO_LOCAL_URL.replace(/\/+$/, "");

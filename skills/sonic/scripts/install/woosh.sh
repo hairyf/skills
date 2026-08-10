@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Auto-install Sony Woosh (local sound effects) for the sonic skill.
 # Usage:
-#   ./setup-woosh.sh            # install only
-#   ./setup-woosh.sh --start    # install and start the API server
+#   ./woosh.sh            # install only
+#   ./woosh.sh --start    # install and start the API server
 set -euo pipefail
 
 DEST="${WOOSH_HOME:-$HOME/.sonic/woosh}"
@@ -36,8 +36,8 @@ fi
 
 cd "$DEST"
 
-echo "==> 复制 woosh-server.py（空闲 15 分钟自动退出）到仓库目录"
-cp "$(dirname "$0")/woosh-server.py" "$DEST/woosh-server.py"
+echo "==> 复制 lib/woosh.py（空闲 15 分钟自动退出）到仓库目录（目标名保持 woosh-server.py）"
+cp "$(dirname "$0")/../lib/woosh.py" "$DEST/woosh-server.py"
 
 echo "==> 安装 Python 依赖 (uv sync，首次较慢)"
 uv sync --extra "$GPU_EXTRA"

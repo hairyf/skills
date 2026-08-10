@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Auto-install local MMAudio (sound effects on your own GPU) for the sonic skill.
 # Usage:
-#   ./setup-mmaudio.sh            # install only
-#   ./setup-mmaudio.sh --start    # install and start the API server (port 8001)
+#   ./mmaudio.sh            # install only
+#   ./mmaudio.sh --start    # install and start the API server (port 8001)
 set -euo pipefail
 
 DEST="${MMAUDIO_HOME:-$HOME/.sonic/mmaudio}"
@@ -37,8 +37,8 @@ fi
 
 cd "$DEST"
 
-echo "==> 复制 mmaudio-server.py 到仓库目录"
-cp "$(dirname "$0")/mmaudio-server.py" "$DEST/mmaudio-server.py"
+echo "==> 复制 lib/mmaudio.py 到仓库目录（目标名保持 mmaudio-server.py，避免与仓库内 mmaudio 包同名）"
+cp "$(dirname "$0")/../lib/mmaudio.py" "$DEST/mmaudio-server.py"
 
 echo "==> 创建虚拟环境"
 [ -d ".venv" ] || "$PY" -m venv .venv

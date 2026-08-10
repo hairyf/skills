@@ -2,7 +2,7 @@
 
 Serves the official Woosh FastAPI app (``api.api_server`` from the cloned
 SonyResearch/Woosh repo) and adds an idle auto-exit, mirroring
-``mmaudio-server.py``: after ``WOOSH_IDLE_TIMEOUT`` minutes without a
+``mmaudio.py``: after ``WOOSH_IDLE_TIMEOUT`` minutes without a
 ``/generate`` request the process shuts itself down to free GPU memory.
 
 The setup scripts copy this file into the Woosh repo root, so it can run

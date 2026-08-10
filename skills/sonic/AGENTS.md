@@ -24,7 +24,7 @@ node scripts/sonic.js sfx "<sound description>" -o <out.flac> [--provider woosh|
 
 ## Auto-install (never ask the user to install manually)
 
-- When local **Woosh / MMAudio** is needed but not installed, the agent runs `scripts/setup-woosh.ps1` / `scripts/setup-mmaudio.ps1` automatically (Windows) or the matching `.sh` (macOS/Linux), adding `-Start` / `--start` to start the API server directly; never make the user install it by hand.
+- When local **Woosh / MMAudio** is needed but not installed, the agent runs `scripts/install/woosh.ps1` / `scripts/install/mmaudio.ps1` automatically (Windows) or the matching `.sh` (macOS/Linux), adding `-Start` / `--start` to start the API server directly; never make the user install it by hand.
 - Cloud channels (SiliconFlow / MiniMax / OpenAI / ElevenLabs / MMAudio) only need an API key: once the user provides the key, the agent writes it to `scripts/.env` (git-ignored).
 - The local MMAudio server exits by itself after 15 idle minutes (`MMAUDIO_IDLE_TIMEOUT=0` disables). If a request fails to connect, restart it with the setup script before retrying.
 

@@ -6,8 +6,8 @@
 .DESCRIPTION
   Requirements: Windows 10/11, NVIDIA GPU (8GB+ VRAM recommended), git.
   Usage:
-    pwsh setup-woosh.ps1           # install only
-    pwsh setup-woosh.ps1 -Start    # install and start the API server
+    pwsh woosh.ps1           # install only
+    pwsh woosh.ps1 -Start    # install and start the API server
 .PARAMETER Dest
   Install directory (default: $HOME\.sonic\woosh)
 .PARAMETER Start
@@ -58,8 +58,8 @@ if (-not (Test-Path (Join-Path $Dest ".git"))) {
   Write-Host "已存在，跳过克隆"
 }
 
-Step "复制 woosh-server.py（空闲 15 分钟自动退出）到仓库目录"
-Copy-Item (Join-Path $PSScriptRoot "woosh-server.py") (Join-Path $Dest "woosh-server.py") -Force
+Step "复制 lib/woosh.py（空闲 15 分钟自动退出）到仓库目录（目标名保持 woosh-server.py）"
+Copy-Item (Join-Path $PSScriptRoot "..\lib\woosh.py") (Join-Path $Dest "woosh-server.py") -Force
 
 Push-Location $Dest
 try {

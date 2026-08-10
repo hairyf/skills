@@ -1,28 +1,28 @@
 ---
 name: core-setup
-description: First-time setup — choosing providers, obtaining API keys, starting the local Woosh server, and integrating into a project.
+description: First-time setup — choosing providers, API keys, local SFX servers, AGENTS.md merge, and verification.
 ---
 
 # Setup
 
-Follow these steps when the skill is not yet configured (no API key detected).
+Follow these steps when no API key is configured.
 
 ## 1. Choose providers
 
-| Provider | Env vars | What it powers | Where to get the key |
-|----------|----------|----------------|----------------------|
+| Provider | Env vars | Powers | Key source |
+|----------|----------|--------|------------|
 | SiliconFlow | `SILICONFLOW_API_KEY` | TTS (CosyVoice2 / Fish-Speech) | https://cloud.siliconflow.cn/account/ak |
 | MiniMax | `MINIMAX_API_KEY` | Music + TTS (China payment) | https://platform.minimaxi.com |
 | OpenAI | `OPENAI_API_KEY` | TTS (`tts-1`) | https://platform.openai.com/api-keys |
-| ElevenLabs | `ELEVENLABS_API_KEY` | TTS + SFX (foreign payment + proxy) | https://elevenlabs.io |
-| MMAudio | `MMAUDIO_API_KEY` | Cloud SFX (text/video → audio, zero install) | https://mmaudio.net/dashboard/api-keys |
+| ElevenLabs | `ELEVENLABS_API_KEY` | TTS + SFX (foreign card + proxy) | https://elevenlabs.io |
+| MMAudio cloud | `MMAUDIO_API_KEY` | SFX (text/video → audio, zero install) | https://mmaudio.net/dashboard/api-keys |
 | Relay (e.g. Ofox) | `RELAY_API_KEY` + `RELAY_BASE_URL` | OpenAI-compatible TTS relays | platform of your choice |
-| Woosh (local) | `WOOSH_URL` | Sound effects on your NVIDIA GPU — **no key** | https://github.com/SonyResearch/Woosh |
-| MMAudio (local) | `MMAUDIO_LOCAL_URL` | Local MMAudio SFX on your NVIDIA GPU — **no key** | https://github.com/hkchengrex/MMAudio |
+| Woosh (local) | `WOOSH_URL` | GPU SFX — **no key** | https://github.com/SonyResearch/Woosh |
+| MMAudio (local) | `MMAUDIO_LOCAL_URL` | Local GPU SFX — **no key** | https://github.com/hkchengrex/MMAudio |
 
 ## 2. Configure .env
 
-Write the key(s) to `scripts/.env` (next to sonic.js):
+Write the key(s) to `scripts/.env` (also loaded from cwd; existing env vars always win):
 
 ```bash
 SILICONFLOW_API_KEY=sk-xxx
@@ -32,65 +32,38 @@ MINIMAX_API_KEY=sk-xxx
 # MMAUDIO_API_KEY=sk-xxx
 # RELAY_BASE_URL=https://api.ofox.ai/v1
 # RELAY_API_KEY=sk-xxx
-# WOOSH_URL=http://127.0.0.1:8000
-# WOOSH_IDLE_TIMEOUT=15             # local Woosh: auto-exit after N idle minutes (0 = keep running)
-# MMAUDIO_IDLE_TIMEOUT=15           # local MMAudio: auto-exit after N idle minutes (0 = keep running)
-# HTTPS_PROXY=http://127.0.0.1:7890   # required for blocked endpoints (e.g. ElevenLabs)
-# NO_PROXY=api.minimaxi.com           # hosts that bypass the proxy (long connections, direct domains)
+# HTTPS_PROXY=http://127.0.0.1:7890   # blocked endpoints (e.g. ElevenLabs)
+# NO_PROXY=api.minimaxi.com           # bypass the proxy for long music calls
 ```
 
-`.env` is loaded from the current working directory and the script directory, and never overrides already-set environment variables.
+## 3. Local MMAudio / Woosh — auto-installed by the agent
 
-## 3. Local Woosh / MMAudio — installed automatically by the agent
-
-When a local channel is needed and not installed, the **agent runs the setup script automatically** (do not ask the user to install manually):
+When a local channel is needed and not installed, the **agent runs the setup script itself** — never ask the user to install by hand:
 
 ```powershell
-# Windows (NVIDIA GPU machine) — Woosh (text/video → SFX)
-pwsh scripts/setup-woosh.ps1 -Start
-
-# Windows — MMAudio (text/video → SFX, ~6GB VRAM)
-pwsh scripts/setup-mmaudio.ps1 -Start
+pwsh scripts/install/mmaudio.ps1 -Start    # Windows — MMAudio (~6GB VRAM)
+pwsh scripts/install/woosh.ps1 -Start      # Windows — Sony Woosh (text/video → SFX)
 ```
 
 ```bash
-# macOS / Linux
-./scripts/setup-woosh.sh --start
-./scripts/setup-mmaudio.sh --start
+./scripts/install/mmaudio.sh --start
+./scripts/install/woosh.sh --start       # macOS / Linux
 ```
 
-Woosh: clones the repo, sets up `uv`, downloads ~5GB of weights, starts at `http://127.0.0.1:8000` (serves `Woosh-DFlow` fast mode). The server exits automatically after 15 idle minutes to free the GPU (`WOOSH_IDLE_TIMEOUT=0` disables; every `/generate` refreshes the timer).
-
-MMAudio: clones the repo, installs torch CUDA + `mmaudio-server.py`, auto-downloads weights on first start, runs at `http://127.0.0.1:8001` (`--provider mmaudio-local`). The server exits automatically after 15 idle minutes to free the GPU (`MMAUDIO_IDLE_TIMEOUT=0` disables; every `/generate` refreshes the timer).
-
-No local install is needed for the **MMAudio cloud** channel — just an API key: `node scripts/sonic.js sfx "..." --provider mmaudio`.
+Both clone the repo, install dependencies and weights, and start a server (`http://127.0.0.1:8000` Woosh, `:8001` MMAudio). Servers auto-exit after 15 idle minutes (`*_IDLE_TIMEOUT=0` disables); restart with the setup script before retrying a failed request. MMAudio cloud needs no install — just `MMAUDIO_API_KEY`.
 
 ## 4. Merge AGENTS.md into the project (required)
 
-To make the project agent generate audio automatically, **merge the content of `AGENTS.md` (in this skill directory) into the host project's `AGENTS.md` / `CLAUDE.md`**. Do not skip this step.
-
-1. Read the skill's `AGENTS.md` (the "Audio Generation Capability" section).
-2. If the project already has that section, skip (idempotent).
-3. Otherwise append it to the existing `AGENTS.md` / `CLAUDE.md`, or create one at the project root.
+Append this skill's `AGENTS.md` (the "Audio Generation Capability" section) to the host project's `AGENTS.md` / `CLAUDE.md` if not already present. This enables automatic audio generation in the project.
 
 ## 5. Verify
 
 ```bash
-# TTS with the cheapest configured provider
 node scripts/sonic.js tts "Hello" -o verify.mp3
 ```
 
 ## Key points
 
-- Only keys that are present are usable; the script falls back down the priority order.
-- MiniMax only needs `MINIMAX_API_KEY`.
+- Only configured providers are usable — the script falls back down the priority order.
 - ElevenLabs requires a foreign card and a proxy from mainland China — configure `HTTPS_PROXY`.
-- The AGENTS.md merge is what enables automatic generation in the host project.
-
-<!--
-Source references:
-- https://docs.siliconflow.com/en/api-reference/audio/create-speech
-- https://platform.minimaxi.com/docs/guides/music-generation
-- https://github.com/SonyResearch/Woosh
-- https://elevenlabs.io/docs
--->
+- The AGENTS.md merge enables automatic generation; `.env` alone is not enough.

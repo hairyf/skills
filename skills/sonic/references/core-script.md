@@ -33,7 +33,7 @@ A zero-dependency ESM script that generates voice, music, lyrics, and sound effe
 
 ### SFX
 
-- **MMAudio (local)** — `POST {MMAUDIO_LOCAL_URL}/generate` (default `http://127.0.0.1:8001`), body `{ prompt, negative_prompt, duration, cfg_strength, num_steps, seed, format, video_url?|video_path? }`; returns FLAC/WAV bytes. Backed by `scripts/mmaudio-server.py`, installed by `scripts/setup-mmaudio.*`.
+- **MMAudio (local)** — `POST {MMAUDIO_LOCAL_URL}/generate` (default `http://127.0.0.1:8001`), body `{ prompt, negative_prompt, duration, cfg_strength, num_steps, seed, format, video_url?|video_path? }`; returns FLAC/WAV bytes. Backed by `scripts/lib/mmaudio.py`, installed by `scripts/install/mmaudio.*`.
 - **MMAudio (cloud)** — `POST {base}/api/text-to-audio` or `/api/video-to-audio`, body `{ prompt, duration, num_steps, cfg_strength, negative_prompt?, seed?, video_url? }`; `data.audio.url` (or `data.video.url`) is downloaded. Zero local install.
 - **Woosh (local)** — `POST {WOOSH_URL}/generate`, body `{ version: "0.1", token: "local", args: { prompt, model, num_steps, cfg, seed? } }`; returns `audio/flac`. The server (`uvicorn api.api_server:app`) only serves `Woosh-DFlow`.
 - **ElevenLabs** — `POST {base}/v1/sound-generation`, body `{ text, model_id (default eleven_text_to_sound_v3), duration_seconds?, prompt_influence? }`; returns MP3 binary.
@@ -60,7 +60,7 @@ A zero-dependency ESM script that generates voice, music, lyrics, and sound effe
 - Uses native `fetch` (or a built-in CONNECT tunnel when `HTTPS_PROXY` is set) — no npm dependencies; requires Node 18+.
 - MiniMax returns hex/base64 audio for TTS and URLs for music; both are normalized to buffers.
 - Woosh is a local-only channel (NVIDIA GPU) — it never touches the network.
-- Local setup is automated: `scripts/setup-woosh.*` and `scripts/setup-mmaudio.*` install and start the servers; the agent runs them on demand.
+- Local setup is automated: `scripts/install/woosh.*` and `scripts/install/mmaudio.*` install and start the servers; the agent runs them on demand.
 
 <!--
 Source references:
