@@ -198,5 +198,8 @@ export const manual = [
   'create-skill-from-repo',
   'vision',
   'imagine',
+  'minecraft-modding',
+  'minecraft-texture',
+  'minecraft-model',
   'sonic',
 ]

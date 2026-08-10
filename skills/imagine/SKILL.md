@@ -45,18 +45,10 @@ node scripts/imagine.js "a serene mountain lake at sunset" -m gemini-2.5-flash-i
 # Edit an existing image
 node scripts/imagine.js "add a red balloon in the sky" -e photo.png -o edited.png
 
-# Small texture sizes (16x/32x) — pass-through on OpenAI, ffmpeg downscale elsewhere
-node scripts/imagine.js "a tiny pixel heart icon" -s 16x16 -o heart16.png
-
-# Generic audio -> .ogg export (universal, not tied to any game)
-node scripts/imagine.js ogg voice.mp3 -o voice.ogg
+# Two-step design in one conversation (design -> three views), e.g. Minecraft model design
+node scripts/imagine.js "生成一格Minecraft蜗牛，蜗牛壳是一个立方体，不要堆叠。蜗牛身体结构简单，有触角。蜗牛足够将整个身体缩回到蜗牛壳内部。请绘制 将宽高比设为 1:1" --session snail -o design.png
+node scripts/imagine.js "非常好，画出它的三视图" --session snail -o views.png
 ```
-
-## Generic asset export
-
-- `-s 16x16` / `-s 32x32` generate small texture-friendly images (OpenAI passes through; other providers downscale via ffmpeg when available).
-- `ogg` subcommand (or `scripts/ogg.js`) converts any audio (mp3/wav/flac) to `.ogg` Vorbis 44100Hz via ffmpeg.
-- Both are generic capabilities — usable for any game/UI/asset pipeline, with no Minecraft-specific behavior.
 
 ## Setup
 

@@ -43,6 +43,8 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [vision](skills/vision) | Image recognition for agents without native vision support — send local images or remote URLs to an OpenAI-compatible vision model | Hairyf |
 | [imagine](skills/imagine) | Image, sticker, icon, and seamless-texture generation — GPT Image 2 / Nano Banana / SiliconFlow Qwen-Image / GPT Image via a zero-dependency script | Hairyf |
 | [sonic](skills/sonic) | Voice (TTS), music, lyrics, and sound-effect generation — SiliconFlow / MiniMax / OpenAI / ElevenLabs TTS, MiniMax music, local Sony Woosh SFX | Hairyf |
+| [minecraft-texture](skills/minecraft-texture) | Minecraft texture generation and post-processing — image-model generation prompts, background removal, pixel-grid detection, and color-block sampling to 16x16/32x32 PNGs via a local Python script | Hairyf |
+| [minecraft-model](skills/minecraft-model) | Minecraft 3D model creation — vanilla-style design and three-view generation with an image model, then Blockbench MCP modeling, texturing, and animation | Hairyf |
 
 ### Skills Generated from Official Documentation
 

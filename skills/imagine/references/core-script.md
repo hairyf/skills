@@ -26,6 +26,26 @@ A zero-dependency ESM script that generates images through multiple provider cha
 4. **Extract images** — normalize provider responses into `{ buffer, ext }` items.
 5. **Save** — write each image to disk (creating parent directories), print absolute paths.
 
+## Session continuity (`--session`)
+
+`scripts/lib/session.js` manages conversation state at `.imagine-sessions/<name>.json` (or `IMAGINE_SESSION_DIR`):
+
+```json
+{
+  "provider": "gemini",
+  "model": "gemini-2.5-flash-image",
+  "turns": [
+    { "role": "user", "text": "生成一格Minecraft蜗牛…", "images": [] },
+    { "role": "model", "text": "", "images": ["/abs/path/design.png"] }
+  ]
+}
+```
+
+- `loadSession` / `saveSession` / `clearSession` read, write, and delete the state file; `latestImage` returns the most recent generated image path; `mimeOf` guesses MIME types.
+- On a session call the provider receives `opts.sessionHistory` (the loaded state). After saving images, `imagine.js` appends the user turn and the model turn with the new absolute image paths, then persists the state.
+- `--session-reset` deletes the state file first; a provider/model mismatch between calls also resets the session with a warning.
+- Per-provider continuity: Gemini replays all turns as `contents` (native conversation); OpenAI/relay and SiliconFlow pass the latest image as the edit input (`image` field). Session calls without `--session` are untouched — stateless single generation remains the default.
+
 ## Provider channels
 
 ### OpenAI (`/v1/images/generations`, `/v1/images/edits`)

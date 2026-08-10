@@ -12,6 +12,7 @@ import {
   SILICONFLOW_BASE_URL,
 } from "./config.js";
 import { buildMultipart, postJson, request } from "./http.js";
+import { latestImage } from "./session.js";
 
 /**
  * Resolve a local file into a base64 data URL.
@@ -60,7 +61,10 @@ export function resolveProvider(opts) {
 export async function openaiCompatibleGenerate(opts, model, baseUrl, apiKey) {
   const base = baseUrl.replace(/\/+$/, "");
 
-  if (opts.edit) {
+  // Session continuity reuses the latest generated image as the edit input.
+  const editImage = opts.edit || latestImage(opts.sessionHistory);
+
+  if (editImage) {
     const fields = { model, prompt };
     if (opts.size) fields.size = opts.size;
     if (opts.quality) fields.quality = opts.quality;
@@ -68,11 +72,11 @@ export async function openaiCompatibleGenerate(opts, model, baseUrl, apiKey) {
     if (opts.format) fields.output_format = opts.format;
     if (opts.numImages > 1) fields.n = String(opts.numImages);
 
-    const imageExt = path.extname(opts.edit).toLowerCase().replace(".", "");
+    const imageExt = path.extname(editImage).toLowerCase().replace(".", "");
     const files = {
       image: {
-        filename: path.basename(opts.edit),
-        data: fs.readFileSync(path.resolve(opts.edit)),
+        filename: path.basename(editImage),
+        data: fs.readFileSync(path.resolve(editImage)),
         type: `image/${MIME_MAP[imageExt] || "png"}`,
       },
     };
@@ -137,7 +141,10 @@ export async function siliconflowGenerate(opts, model) {
   };
   if (model.includes("Kolors")) body.batch_size = opts.numImages;
   if (opts.seed) body.seed = Number(opts.seed);
-  if (opts.edit) body.image = toDataUrl(opts.edit);
+
+  // Session continuity reuses the latest generated image as the edit input.
+  const editImage = opts.edit || latestImage(opts.sessionHistory);
+  if (editImage) body.image = toDataUrl(editImage);
 
   return postJson(`${base}/images/generations`, {
     Authorization: `Bearer ${SILICONFLOW_API_KEY}`,
@@ -148,6 +155,31 @@ export async function siliconflowGenerate(opts, model) {
  * Gemini / Nano Banana provider — native :generateContent endpoint.
  */
 export async function geminiGenerate(opts, model) {
+  const contents = [];
+
+  // Session continuity: replay prior turns as a native Gemini conversation,
+  // then append the current user turn with the new prompt.
+  if (opts.sessionHistory?.turns?.length) {
+    for (const turn of opts.sessionHistory.turns) {
+      const parts = [];
+      for (const img of turn.images || []) {
+        const resolvedPath = path.resolve(img);
+        if (!fs.existsSync(resolvedPath)) continue;
+        const ext = path.extname(resolvedPath).toLowerCase().replace(".", "");
+        const mimeType = MIME_MAP[ext] || "png";
+        parts.push({
+          inline_data: {
+            mime_type: `image/${mimeType}`,
+            data: fs.readFileSync(resolvedPath).toString("base64"),
+          },
+        });
+      }
+      if (turn.text) parts.push({ text: turn.text });
+      if (!parts.length) parts.push({ text: "Generated image" });
+      contents.push({ role: turn.role === "model" ? "model" : "user", parts });
+    }
+  }
+
   const parts = [];
   if (opts.edit) {
     const resolvedPath = path.resolve(opts.edit);
@@ -161,6 +193,7 @@ export async function geminiGenerate(opts, model) {
     });
   }
   parts.push({ text: opts.prompt });
+  contents.push({ role: "user", parts });
 
   const generationConfig = { response_modalities: ["IMAGE"] };
   if (opts.aspect) generationConfig.imageConfig = { aspectRatio: opts.aspect };
@@ -168,7 +201,7 @@ export async function geminiGenerate(opts, model) {
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
   return postJson(url, {}, {
-    contents: [{ parts }],
+    contents,
     generationConfig,
   });
 }
