@@ -6,7 +6,8 @@ description: >-
   audio, rendering — using wave scheduling, shared contracts, and user review
   gates. Use when planning or running multi-agent Minecraft mod development.
   Pairs with minecraft-modding, fabric, geckolib, veil, imagine,
-  minecraft-model, minecraft-texture, sonic, and vision.
+  minecraft-model, minecraft-texture, sonic, and optionally vision (when the
+  default model lacks native vision).
 metadata:
   author: Hairy
   version: "2026.8.10"
@@ -17,24 +18,22 @@ metadata:
 
 ## Prerequisite — 依赖检测与自动安装
 
-使用本 skill 前，先检测配套 skills 是否已安装：
+使用本 skill 前，先确认默认模型是否支持多模态，再检测配套 skills 是否已安装：
+
+- **默认模型是多模态**（能直接看图）：需要 `minecraft-modding`、`fabric`、`geckolib`、`veil`、`imagine`、`minecraft-model`、`minecraft-texture`、`sonic` 共 8 个
+- **默认模型不是多模态**：额外安装可选项 `vision`，用于把图片转成文本描述供主模型处理
 
 ```bash
 npx skills list        # 或 npx skills ls -g（查全局）
-```
-
-需要检测的配套 skills：`minecraft-modding`、`fabric`、`geckolib`、`veil`、`imagine`、`minecraft-model`、`minecraft-texture`、`sonic`、`vision`。
-
-有缺失时自动安装（按需调整 `-s` 列表）：
-
-```bash
-npx skills add hairyf/skills -s minecraft-modding fabric geckolib veil imagine minecraft-model minecraft-texture sonic vision -y
+npx skills add hairyf/skills -s minecraft-modding fabric geckolib veil imagine minecraft-model minecraft-texture sonic -y
+# 非多模态时追加：npx skills add hairyf/skills -s vision -y
 # 或全部：npx skills add hairyf/skills --all
 ```
 
 安装后按各 skill 的 `core-setup` 完成配置：
 
-- `imagine` / `vision` / `sonic`：配置对应 API key（OpenAI / SiliconFlow / Google 等）并合并 AGENTS.md
+- `imagine` / `sonic`：配置对应 API key（OpenAI / SiliconFlow / Google 等）并合并 AGENTS.md
+- `vision`（仅非多模态时）：配置对应 vision API key 并合并 AGENTS.md
 - `minecraft-model`：确认 Blockbench MCP 已安装并运行
 - `minecraft-texture`：确认 Python 环境可用
 
@@ -102,7 +101,8 @@ content 是调用链枢纽：art 的模型/贴图、audio 的音频、worldgen �
 
 ## Model Constraint
 
-art 必须运行在支持图像输入的多模态模型上；若当前模型无视觉能力，立即停止并回报，禁止用文本描述代替看图建模（会显著降低准确率）。vision skill 仅作兜底。
+- art 必须运行在支持图像输入的多模态模型上；若运行模型无视觉能力，立即停止并回报，禁止用文本描述代替看图建模（会显著降低准确率）。
+- `vision` 是可选项：仅当默认模型不是多模态时按需加载，用于把图片转成文本描述（其他 Agent 的看图场景）；默认模型是多模态时无需安装。
 
 ## Subagent File Format（规范速查）
 
