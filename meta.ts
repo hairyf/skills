@@ -193,4 +193,7 @@ export const manual = [
   'vision',
   'imagine',
   'sonic',
+  'fabric',
+  'veil',
+  'geckolib',
 ]

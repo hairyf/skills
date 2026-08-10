@@ -43,6 +43,9 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [vision](skills/vision) | Image recognition for agents without native vision support — send local images or remote URLs to an OpenAI-compatible vision model | Hairyf |
 | [imagine](skills/imagine) | Image, sticker, icon, and seamless-texture generation — GPT Image 2 / Nano Banana / SiliconFlow Qwen-Image / GPT Image via a zero-dependency script | Hairyf |
 | [sonic](skills/sonic) | Voice (TTS), music, lyrics, and sound-effect generation — SiliconFlow / MiniMax / OpenAI / ElevenLabs TTS, MiniMax music, local Sony Woosh SFX | Hairyf |
+| [fabric](skills/fabric) | Minecraft Fabric mod development — Loom, Yarn mappings, registries, data generation, mixins, events, client/server separation (1.20.1 stack) | Hairyf |
+| [veil](skills/veil) | Foundry Veil — GLSL shaders, post-processing pipelines, framebuffers, VHS/CRT/film effects for Minecraft Fabric/NeoForge mods | Hairyf |
+| [geckolib](skills/geckolib) | GeckoLib 4.x — animated entities/blocks/items/armor for Minecraft mods using Blockbench JSON models and keyframe animations | Hairyf |
 
 ### Skills Generated from Official Documentation
 

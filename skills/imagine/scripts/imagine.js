@@ -40,6 +40,7 @@ import {
   siliconflowGenerate,
 } from "./lib/providers.js";
 import { extractImages, resolveOutputPath } from "./lib/output.js";
+import { convertToOgg, hasFfmpeg, printFfmpegHint, resizeImage } from "./lib/ffmpeg.js";
 
 /**
  * Parse CLI arguments
@@ -47,6 +48,7 @@ import { extractImages, resolveOutputPath } from "./lib/output.js";
 function parseArgs() {
   const argv = process.argv.slice(2);
   const opts = {
+    command: "",
     prompt: "",
     output: "",
     model: "",
@@ -61,6 +63,7 @@ function parseArgs() {
     seed: "",
     steps: 0,
     aspect: "",
+    sampleRate: 0,
     help: false,
   };
   const positional = [];
@@ -114,6 +117,9 @@ function parseArgs() {
       case "--aspect":
         opts.aspect = argv[++i] || "";
         break;
+      case "--sample-rate":
+        opts.sampleRate = parseInt(argv[++i], 10) || 0;
+        break;
       case "-h":
       case "--help":
         opts.help = true;
@@ -127,7 +133,8 @@ function parseArgs() {
     }
   }
 
-  opts.prompt = positional.join(" ");
+  opts.command = positional[0] || "";
+  opts.prompt = (opts.command === "ogg" ? positional.slice(1) : positional).join(" ");
   return opts;
 }
 
@@ -135,12 +142,15 @@ function printHelp() {
   console.log(`Usage:
   node imagine.js "<prompt>" [options]
   node imagine.js "<prompt>" -e <image> [options]   (edit an image)
+  node imagine.js ogg <audio.mp3|wav|flac> -o out.ogg [--sample-rate 44100]
 
 Options:
   -o, --output <path>    Output file or directory (default: image-<timestamp>.<ext>)
   -m, --model <id>       Model id (default: gpt-image-2, Qwen/Qwen-Image, gemini-2.5-flash-image)
       --provider <name>  Force provider: openai | siliconflow | gemini | relay
   -s, --size <WxH>       Image size, e.g. 1024x1024 / 1536x1024 / 1328x1328
+                         Small texture sizes like 16x16 / 32x32 are passed through
+                         (OpenAI) or downscaled via ffmpeg (other providers)
   -q, --quality <lvl>    low | medium | high (OpenAI)
       --background <bg>  auto | transparent | opaque (OpenAI; transparent needs png/webp)
   -f, --format <fmt>     png | jpeg | webp
@@ -150,6 +160,7 @@ Options:
       --seed <n>         Seed for reproducible output
       --steps <n>        Inference steps (SiliconFlow, default 20)
       --aspect <ratio>   Aspect ratio for Gemini: 1:1, 16:9, 9:16, 4:3, 3:4
+      --sample-rate <hz> Output sample rate for ogg export (default 44100)
   -h, --help             Show this help
 
 Env vars (or .env next to the script / in cwd):
@@ -167,6 +178,26 @@ async function main() {
   if (opts.help) {
     printHelp();
     process.exit(0);
+  }
+
+  if (opts.command === "ogg") {
+    const input = opts.prompt;
+    if (!input) {
+      console.error("错误: 缺少输入音频文件。用法: node imagine.js ogg <input.mp3|wav|flac> -o out.ogg [--sample-rate 44100]");
+      process.exit(1);
+    }
+    const out = opts.output || input.replace(/\.[^.]+$/, "") + ".ogg";
+    if (!hasFfmpeg()) {
+      printFfmpegHint();
+      process.exit(1);
+    }
+    const code = convertToOgg(input, out, opts.sampleRate || 44100);
+    if (code !== 0) {
+      console.error(`转换失败（ffmpeg 退出码 ${code}）`);
+      process.exit(1);
+    }
+    console.log(path.resolve(out));
+    return;
   }
 
   if (!opts.prompt) {
@@ -224,10 +255,32 @@ async function main() {
     }
 
     const saved = [];
+    const sizeMatch = /^(\d+)x(\d+)$/.exec(opts.size || "");
+    const smallSize =
+      sizeMatch && Number(sizeMatch[1]) <= 64 && Number(sizeMatch[2]) <= 64
+        ? { w: Number(sizeMatch[1]), h: Number(sizeMatch[2]) }
+        : null;
+    let warnedNoFfmpeg = false;
     for (let i = 0; i < images.length; i++) {
       const outputPath = resolveOutputPath(opts, i, images[i].ext);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, images[i].buffer);
+      if (smallSize) {
+        if (hasFfmpeg()) {
+          const tmpPath = outputPath + ".tmp";
+          fs.renameSync(outputPath, tmpPath);
+          const resizeCode = resizeImage(tmpPath, outputPath, smallSize.w, smallSize.h);
+          fs.unlinkSync(tmpPath);
+          if (resizeCode !== 0) {
+            throw new Error(`缩放图片失败（ffmpeg 退出码 ${resizeCode}）`);
+          }
+        } else if (!warnedNoFfmpeg) {
+          warnedNoFfmpeg = true;
+          console.error(
+            `提示: 目标尺寸 ${opts.size} 过小，当前输出为 provider 原生尺寸；安装 ffmpeg 后可自动缩放到 ${opts.size}（winget install ffmpeg）。`,
+          );
+        }
+      }
       saved.push(outputPath);
     }
 
