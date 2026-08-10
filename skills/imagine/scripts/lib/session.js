@@ -39,14 +39,6 @@ export function saveSession(name, state) {
 }
 
 /**
- * Delete a session state file.
- */
-export function clearSession(name) {
-  const file = sessionPath(name);
-  if (fs.existsSync(file)) fs.unlinkSync(file);
-}
-
-/**
  * Return the most recent generated image path in the session history.
  */
 export function latestImage(state) {

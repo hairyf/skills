@@ -13,6 +13,14 @@ node vision.js --base64 "<data URL>" "Describe this image"
 node vision.js --base64 - < shot.b64 "Describe this image" --coords center
 ```
 
+Multi-turn conversations (e.g. "compare with the previous image"): pass the
+same `-S <name>` to each call so earlier images and replies are replayed:
+
+```
+node vision.js "shot1.png" "Describe this screenshot" -S ui
+node vision.js "shot2.png" "Compare with the previous screenshot" -S ui
+```
+
 Keep vision replies concise (no filler). For UI/debug inspection — locating elements, click targets, layout — pass `--coords` to get precise pixel element coordinates.
 
 ## Trigger scenarios

@@ -72,6 +72,7 @@ Unknown models fall back to a conservative 1568px / 1.15MP limit. Tune via env v
 | `--coords [center]` | Debug mode: append the `## Coordinates` section (bbox by default; center points with `--coords center`) in original pixels |
 | `--detail [n]` | Fuller detail output; optional token cap `n` (default 1600; compact mode caps at 1000) |
 | `--rounds N` | 1 = single locate, 2 = coarse-to-fine (default), 3 = + verification round |
+| `-S, --session <name>` | Session continuity — replay this session's previous turns (images + text) together with the current question (default: stateless, no continuity) |
 | `-h, --help` | Print usage and exit |
 
 Supported local formats: jpg, jpeg, png, gif, webp, bmp.
@@ -89,9 +90,41 @@ node vision.js "ui.png" "find the login button and its position" --coords
 node vision.js "chart.png" "extract all labels and values" --detail 2500
 ```
 
+## Session continuity (`--session`)
+
+Some workflows need a follow-up question that builds on images seen earlier in
+the same conversation (e.g. "describe this screenshot", then "where is the
+search bar compared to the previous one?"). Pass the same `-S <name>` to both
+calls; omit it to keep the existing stateless behavior.
+
+```bash
+# First call: recognize the first screenshot
+node vision.js "shot1.png" "Describe this screenshot" -S ui
+
+# Second call: same session replays shot1 + its answer alongside shot2
+node vision.js "shot2.png" "Compare the layout with the previous screenshot" -S ui
+```
+
+Session state is stored in `.vision/<name>.json` (cwd), or
+`VISION_SESSION_DIR/<name>.json` when that env var is set. Each call appends a
+user turn (question + image source) and an assistant turn (the reply) to the
+state.
+
+How history is replayed:
+
+- Every previous user turn's image is sent again (local files are re-read at
+  call time; missing files degrade that turn to text-only instead of failing).
+- Only the most recent turns are replayed (default 10, override with
+  `VISION_SESSION_MAX_TURNS`), so image-heavy histories don't overflow the
+  model's context window. Stored turns are never deleted.
+- If the model changes between calls of the same session name, the session is
+  reset with a warning (same behavior as imagine's provider/model check).
+- `--coords` rounds replay the same history; the final coordinates reply is
+  stored as the assistant turn.
+
 ## Exit codes
 
 | Code | Meaning |
 |------|---------|
-| `0` | Success, description printed to stdout |
+| `0` | Success, description printed to stdout (and session saved when `--session` was passed) |
 | `1` | Missing API key, missing image argument, or API failure (error printed to stderr) |

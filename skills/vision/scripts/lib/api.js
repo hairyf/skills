@@ -15,23 +15,42 @@ import {
  * Build the API payload. Instructions are embedded in the user text part so
  * strict OpenAI-compatible endpoints that only accept user messages still work.
  */
-export function buildPayload(imageUrl, prompt, { contract, format, detail, maxTokens, size }) {
+export function buildPayload(imageUrl, prompt, { contract, format, detail, maxTokens, size, history }) {
   const system = detail ? SYSTEM_DETAIL : SYSTEM_BRIEF;
   let instruction = system;
   if (contract === "locate") instruction += `\n${coordInstruction(size, format)}`;
   else if (contract === "propose") instruction += `\n${proposeInstruction(size)}`;
   else if (contract === "verify") instruction += `\n${verifyInstruction(size)}`;
+
+  // Replay prior turns first (session continuity); the current image+task is
+  // always the last message so per-round instructions only apply to it.
+  const messages = [];
+  for (const turn of history || []) {
+    const text = turn.text || "";
+    const images = Array.isArray(turn.images) ? turn.images.filter(Boolean) : [];
+    if (turn.role === "assistant") {
+      if (text) messages.push({ role: "assistant", content: text });
+    } else if (turn.role === "user" && (images.length || text)) {
+      const content = images.map((image) => ({
+        type: "image_url",
+        image_url: { url: image },
+      }));
+      if (text) content.push({ type: "text", text });
+      messages.push({ role: "user", content });
+    }
+  }
+
+  messages.push({
+    role: "user",
+    content: [
+      { type: "image_url", image_url: { url: imageUrl } },
+      { type: "text", text: `${instruction}\n\nTask: ${prompt}` },
+    ],
+  });
+
   return {
     model: config.model,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "image_url", image_url: { url: imageUrl } },
-          { type: "text", text: `${instruction}\n\nTask: ${prompt}` },
-        ],
-      },
-    ],
+    messages,
     stream: false,
     max_tokens: maxTokens,
   };

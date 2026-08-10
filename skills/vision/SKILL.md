@@ -3,13 +3,14 @@ name: vision
 description: Image recognition for agents without native vision support. Use when the user shares an image path or URL, the message contains saved image attachments, or the user asks to analyze, describe, or identify image content. Sends local images or remote URLs to an OpenAI-compatible vision model; --coords returns pixel element coordinates for UI/debug inspection.
 metadata:
   author: Hairy
-  version: "2026.8.10"
-compatibility: Requires Node.js 18+ (native fetch) and network access to an OpenAI-compatible vision API.
+  version: "2026.8.11"
 ---
 
 # Vision
 
 The underlying model has no native image understanding. When an image arrives, **do not use the Read tool** — run `scripts/vision.js` to get a text description back.
+
+Requires Node.js 18+ (native fetch) and network access to an OpenAI-compatible vision API.
 
 ## When to use
 
@@ -25,9 +26,19 @@ node scripts/vision.js --url "<image url>" "[question]"
 node scripts/vision.js "<image path>" "find the search button" --coords
 node scripts/vision.js --base64 "<base64 or data:image/...;base64,... URL>" "[question]"
 node scripts/vision.js --base64 - < shot.b64 "[question]" --coords center
+node scripts/vision.js "<image path>" "[question]" -S ui    # multi-turn conversation
+node scripts/vision.js "<image 2>" "compare with the previous image" -S ui
 ```
 
 Run `node scripts/vision.js --help` for the full flag list.
+
+## Session continuity
+
+Pass the same `-S, --session <name>` to several calls to keep the conversation
+history — previous images and replies are replayed alongside the current
+question on every call. State is stored in `.vision/<name>.json` (cwd), or
+`VISION_SESSION_DIR/<name>.json` when that env var is set. See
+[core-usage](references/core-usage.md).
 
 ## Output contract
 

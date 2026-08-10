@@ -40,7 +40,7 @@ import {
   siliconflowGenerate,
 } from "./lib/providers.js";
 import { extractImages, resolveOutputPath } from "./lib/output.js";
-import { clearSession, loadSession, saveSession } from "./lib/session.js";
+import { loadSession, saveSession } from "./lib/session.js";
 
 /**
  * Parse CLI arguments
@@ -63,7 +63,6 @@ function parseArgs() {
     steps: 0,
     aspect: "",
     session: "",
-    sessionReset: false,
     help: false,
   };
   const positional = [];
@@ -121,9 +120,6 @@ function parseArgs() {
       case "--session":
         opts.session = argv[++i] || "";
         break;
-      case "--session-reset":
-        opts.sessionReset = true;
-        break;
       case "-h":
       case "--help":
         opts.help = true;
@@ -160,12 +156,10 @@ Options:
       --seed <n>         Seed for reproducible output
       --steps <n>        Inference steps (SiliconFlow, default 20)
       --aspect <ratio>   Aspect ratio for Gemini: 1:1, 16:9, 9:16, 4:3, 3:4
-  -S, --session <name>  Conversation continuity: reuse the previous generation in
-                        this session as the edit input / conversation context.
-                        State is stored in .imagine/<name>.json
-                        (IMAGINE_SESSION_DIR overrides the directory). Omit to keep
-                        the default stateless behavior.
-      --session-reset   Clear the session state before this run
+  -S, --session <name>  Session continuity: keep context across calls so later
+                        prompts can build on earlier results. State is stored in
+                        .imagine/<name>.json (IMAGINE_SESSION_DIR overrides the
+                        directory). Omit to keep the default stateless behavior.
   -h, --help             Show this help
 
 Env vars (or .env next to the script / in cwd):
@@ -225,10 +219,6 @@ async function main() {
   // Session continuity — load prior state (or start fresh) and attach it to opts.
   let sessionState = null;
   if (opts.session) {
-    if (opts.sessionReset) {
-      clearSession(opts.session);
-      console.error(`提示: 已重置会话 "${opts.session}"。`);
-    }
     sessionState = loadSession(opts.session);
     if (sessionState && (sessionState.provider !== provider || sessionState.model !== model)) {
       console.error(

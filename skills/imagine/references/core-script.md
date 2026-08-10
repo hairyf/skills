@@ -1,30 +1,34 @@
 ---
 name: core-script
-description: How imagine.js works internally — provider routing, API payloads, response handling, and configuration variables.
+description: How imagine.js works internally — module layout, pipeline, session state, provider channels, and configuration.
 ---
 
 # How imagine.js works
 
-A zero-dependency ESM script that generates images through multiple provider channels. The entry point is `scripts/imagine.js`; the implementation is split into small modules under `scripts/lib/`.
+A zero-dependency ESM script that generates images through multiple provider channels. The CLI entry is thin; provider logic and HTTP live in `scripts/lib/*.js` so each concern can be patched independently.
 
-## Module layout
+## File layout
 
-| File | Responsibility |
-|------|----------------|
-| `scripts/imagine.js` | Entry point — CLI parsing, provider/key checks, main flow, help |
-| `scripts/lib/env.js` | Zero-dependency `.env` loader (cwd + script dir) |
-| `scripts/lib/config.js` | Reads env into constants (keys, base URLs, proxy, model defaults, MIME maps) |
-| `scripts/lib/http.js` | Unified HTTP — native fetch or zero-dependency CONNECT proxy tunnel, JSON POST, multipart, downloads |
-| `scripts/lib/providers.js` | Provider routing + request builders (OpenAI, SiliconFlow, Gemini, relay) |
-| `scripts/lib/output.js` | Response normalization (`extractImages`) and output path resolution |
+```
+scripts/
+├── imagine.js          # CLI entry: arg parsing, provider/key checks, main flow, help
+└── lib/
+    ├── env.js          # Zero-dependency .env loader (cwd + script dir)
+    ├── config.js       # Reads env into constants (keys, base URLs, proxy, model defaults, MIME maps)
+    ├── http.js         # Unified HTTP — native fetch or zero-dependency CONNECT proxy tunnel, JSON POST, multipart, downloads
+    ├── providers.js    # Provider routing + request builders (OpenAI, SiliconFlow, Gemini, relay)
+    ├── output.js       # Response normalization (extractImages) and output path resolution
+    └── session.js      # Conversation state (--session): load/save/clear, latestImage, MIME sniffing
+```
 
 ## Pipeline
 
-1. **Parse args** — prompt, model, size, quality, background, format, edit/mask, seed, steps, aspect.
+1. **Parse args** — prompt, model, size, quality, background, format, edit/mask, seed, steps, aspect, session.
 2. **Route provider** — inferred from the model id (`gemini-*` → gemini; `Qwen/*`, `Kolors/*`, `Z-Image*`, `FLUX*` → siliconflow; `gpt-image-*` → openai), overridable with `--provider`.
-3. **Call the API** — one of three request builders below.
-4. **Extract images** — normalize provider responses into `{ buffer, ext }` items.
-5. **Save** — write each image to disk (creating parent directories), print absolute paths.
+3. **Load session** — when `--session` is passed, load prior state (or start fresh) and attach it as `opts.sessionHistory`; a provider/model mismatch resets the session with a warning.
+4. **Call the API** — one of three request builders; the session history is replayed per provider (see below).
+5. **Extract images** — normalize provider responses into `{ buffer, ext }` items.
+6. **Save & persist** — write each image to disk (creating parent directories), print absolute paths, then append the user turn + model turn (with image paths) to the session state.
 
 ## Session continuity (`--session`)
 
@@ -35,38 +39,34 @@ A zero-dependency ESM script that generates images through multiple provider cha
   "provider": "gemini",
   "model": "gemini-2.5-flash-image",
   "turns": [
-    { "role": "user", "text": "生成一格Minecraft蜗牛…", "images": [] },
+    { "role": "user", "text": "a cute robot mascot, front view…", "images": [] },
     { "role": "model", "text": "", "images": ["/abs/path/design.png"] }
   ]
 }
 ```
 
-- `loadSession` / `saveSession` / `clearSession` read, write, and delete the state file; `latestImage` returns the most recent generated image path; `mimeOf` guesses MIME types.
-- On a session call the provider receives `opts.sessionHistory` (the loaded state). After saving images, `imagine.js` appends the user turn and the model turn with the new absolute image paths, then persists the state.
-- `--session-reset` deletes the state file first; a provider/model mismatch between calls also resets the session with a warning.
-- Per-provider continuity: Gemini replays all turns as `contents` (native conversation); OpenAI/relay and SiliconFlow pass the latest image as the edit input (`image` field). Session calls without `--session` are untouched — stateless single generation remains the default.
+- `loadSession` / `saveSession` read and write the state file; `latestImage` returns the most recent generated image path; `mimeOf` guesses MIME types.
+- On a session call the provider receives `opts.sessionHistory`. After saving images, `imagine.js` appends the user turn and the model turn with the new absolute image paths, then persists the state.
+- A provider/model mismatch between calls resets the session with a warning.
+- Per-provider replay: Gemini replays all turns as `contents` (native conversation); OpenAI/relay and SiliconFlow pass the latest image as the edit input (`image` field). Without `--session`, behavior is stateless.
 
 ## Provider channels
 
 ### OpenAI (`/v1/images/generations`, `/v1/images/edits`)
 
-- Create: JSON body `{ model, prompt, size?, quality?, background?, output_format?, n? }`.
-- Edit: `multipart/form-data` with `image` (+ optional `mask`), `prompt`, and the same option fields.
-- Response: `data[].b64_json` or `data[].url`.
+Create sends `{ model, prompt, size?, quality?, background?, output_format?, n? }`; edits are multipart with `image` (+ optional `mask`) and the same option fields. Responses are `data[].b64_json` or `data[].url`.
 
 ### SiliconFlow (`/v1/images/generations`, OpenAI-compatible)
 
-- Body: `{ model, prompt, image_size, num_inference_steps, seed?, image? }`.
-- `batch_size` is only sent for Kolors models (the docs mark it Kolors-only).
-- Editing uses `Qwen/Qwen-Image-Edit-2509` with the `image` field as a base64 data URL.
-- Response: `images[].url` — **expires in one hour**, downloaded immediately.
+Body: `{ model, prompt, image_size, num_inference_steps, seed?, image? }`; `batch_size` is sent only for Kolors models. Editing uses `Qwen/Qwen-Image-Edit-2509` with the `image` field as a base64 data URL. Responses are `images[].url` — **expire in one hour**, downloaded immediately.
 
 ### Gemini / Nano Banana (`:generateContent`)
 
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key=...`.
-- Body: `{ contents: [{ parts }], generationConfig: { response_modalities: ["IMAGE"], imageConfig: { aspectRatio? }, seed? } }`.
-- Editing passes the input image as an `inline_data` part before the text part.
-- Response: `candidates[].content.parts[].inlineData.data` (base64) or `fileData.fileUri` (downloaded with the API key header).
+Body: `{ contents: [{ parts }], generationConfig: { response_modalities: ["IMAGE"], imageConfig: { aspectRatio? }, seed? } }`. Editing passes the input image as an `inline_data` part before the text part. Responses are `candidates[].content.parts[].inlineData.data` (base64) or `fileData.fileUri` (downloaded with the API key header).
+
+### Relay channel
+
+Relays expose Nano Banana (and other models) through OpenAI-compatible `/v1/images/generations` with prefixed model names such as `google/gemini-2.5-flash-image` or `openai/gpt-image-2`. Prefixed names auto-route to the relay; `--provider relay` forces it.
 
 ## Configuration (env vars or .env)
 
@@ -81,21 +81,12 @@ A zero-dependency ESM script that generates images through multiple provider cha
 | `RELAY_API_KEY` | — | API key for the relay |
 | `HTTPS_PROXY` | — | Optional HTTP proxy (CONNECT tunnel) for blocked relay domains |
 
-### Relay channel
-
-Relays expose Nano Banana (and other models) through OpenAI-compatible `/v1/images/generations` with prefixed model names such as `google/gemini-2.5-flash-image` or `openai/gpt-image-2`. Requests go to `RELAY_BASE_URL` with `RELAY_API_KEY`. Prefixed model names auto-route to the relay; `--provider relay` forces it.
-
-## Default models
-
-| Provider | Default model |
-|----------|---------------|
-| openai | `gpt-image-2` |
-| siliconflow | `Qwen/Qwen-Image` |
-| gemini | `gemini-2.5-flash-image` |
-| relay | `google/gemini-2.5-flash-image` |
+`.env` files are loaded from the current working directory and the script's directory, and never override already-set environment variables.
 
 ## Key points
 
 - Uses native `fetch` (or a built-in CONNECT tunnel when `HTTPS_PROXY` is set) — no npm dependencies; requires Node 18+.
 - Not bound to a single vendor; the same CLI covers all providers.
 - Multi-image responses (`data[]`, `images[]`, multiple Gemini candidates) are all saved.
+- Provider/model changes reset a session with a warning — keep the same model across a session.
+- SiliconFlow image URLs expire after one hour — downloads happen immediately.

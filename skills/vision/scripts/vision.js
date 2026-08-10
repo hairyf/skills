@@ -46,6 +46,13 @@ import { config } from "./lib/env.js";
 import { detectMime, resolveImage } from "./lib/image.js";
 import { buildPayload, requestVisionApi } from "./lib/api.js";
 import {
+  imageUrlFor,
+  isValidSessionName,
+  loadSession,
+  saveSession,
+  trimTurns,
+} from "./lib/session.js";
+import {
   clampRegion,
   extractCoordinates,
   formatElement,
@@ -73,6 +80,14 @@ export {
   scaleRegion,
   windowAround,
 } from "./lib/coords.js";
+export {
+  imageUrlFor,
+  isValidSessionName,
+  loadSession,
+  saveSession,
+  sessionPath,
+  trimTurns,
+} from "./lib/session.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -92,10 +107,17 @@ Flags:
   --detail [n]            Fuller detail output; token cap n (default 1600).
   --rounds N              1 = single locate, 2 = coarse-to-fine (default),
                           3 = + verification round.
+  -S, --session <name>    Session continuity: keep context across calls so later
+                          questions can build on earlier images and replies.
+                          State is stored in .vision/<name>.json
+                          (VISION_SESSION_DIR overrides the directory). Omit to
+                          keep the default stateless behavior.
   -h, --help              Show this help.
 
 Examples:
   node vision.js shot.png "Describe this image"
+  node vision.js shot.png "Describe this image" -S ui
+  node vision.js shot2.png "Compare with the previous image" -S ui
   node vision.js ui.png "find the login button" --coords center
   node vision.js --base64 - "find the login button" --coords center`;
 }
@@ -114,6 +136,7 @@ function parseArgs() {
     detail: false,
     maxTokens: 1000,
     rounds: 2,
+    session: "",
     help: false,
     promptParts: [],
   };
@@ -144,6 +167,8 @@ function parseArgs() {
     } else if (arg === "--rounds" && argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
       opts.rounds = Math.max(1, Math.min(3, parseInt(argv[i + 1], 10)));
       i++;
+    } else if (arg === "-S" || arg === "--session") {
+      opts.session = argv[++i] || "";
     } else if (arg === "--help" || arg === "-h") {
       opts.help = true;
     } else if (arg.startsWith("--")) {
@@ -203,7 +228,7 @@ function readStdin() {
 /**
  * Decode a raw base64 string or data:image/...;base64,... URL into a temp
  * image file so the rest of the pipeline can treat it as a local file.
- * Returns the temp path.
+ * Returns the temp path and the data URL (used as the session image source).
  */
 function materializeBase64(payload) {
   let b64 = String(payload).trim();
@@ -228,7 +253,7 @@ function materializeBase64(payload) {
   }[mime] || "img";
   const tmpPath = path.join(os.tmpdir(), `vision-base64-${process.pid}-${Date.now()}.${ext}`);
   fs.writeFileSync(tmpPath, buf);
-  return tmpPath;
+  return { tmpPath, dataUrl: `data:${mime};base64,${buf.toString("base64")}` };
 }
 
 /**
@@ -257,14 +282,49 @@ async function main() {
 
   let base64TempPath = null;
   try {
+    let currentSource = "";
     if (opts.isBase64) {
       const payload = opts.imageSource === "-" ? await readStdin() : opts.imageSource;
-      base64TempPath = materializeBase64(payload);
+      const materialized = materializeBase64(payload);
+      base64TempPath = materialized.tmpPath;
+      currentSource = materialized.dataUrl;
       opts.imageSource = base64TempPath;
       opts.isUrl = false;
+    } else if (opts.isUrl) {
+      currentSource = opts.imageSource;
+    } else {
+      currentSource = path.resolve(opts.imageSource);
     }
     const prompt = opts.promptParts.join(" ") || "Describe this image concisely.";
 
+    // Session continuity — load prior state (or start fresh) and build the
+    // replay history. A model switch resets the session with a warning.
+    let sessionState = null;
+    if (opts.session) {
+      if (!isValidSessionName(opts.session)) {
+        console.error(
+          `Error: invalid session name "${opts.session}" — use letters, digits, "-" or "_".`,
+        );
+        process.exit(1);
+      }
+      sessionState = loadSession(opts.session);
+      if (sessionState && sessionState.model !== config.model) {
+        console.error(
+          `提示: 会话 "${opts.session}" 属于模型 ${sessionState.model}，本次是 ${config.model}，已重新开始会话。`,
+        );
+        sessionState = null;
+      }
+      if (sessionState) {
+        const history = [];
+        for (const turn of trimTurns(sessionState.turns || [])) {
+          const images = (turn.images || []).map(imageUrlFor).filter(Boolean);
+          history.push({ role: turn.role, text: turn.text || "", images });
+        }
+        opts.sessionHistory = history;
+      }
+    }
+
+    let output = "";
     if (opts.coords) {
       // Debug mode: coarse-to-fine localization.
       // Round 1 proposes a point or a zoom region, round 2 locates precisely
@@ -284,6 +344,7 @@ async function main() {
             detail: opts.detail,
             maxTokens: opts.maxTokens,
             size: { width: meta.scaledW, height: meta.scaledH },
+            history: opts.sessionHistory,
           }),
         );
       };
@@ -337,7 +398,8 @@ async function main() {
       }
 
       const coordsText = finalElements.map((el) => JSON.stringify(formatElement(el, opts.coordFormat))).join("\n");
-      console.log(finalHead ? `${finalHead}\n\n## Coordinates\n${coordsText}` : coordsText);
+      output = finalHead ? `${finalHead}\n\n## Coordinates\n${coordsText}` : coordsText;
+      console.log(output);
       cleanup(meta2);
     } else {
       const { dataUrl } = await resolveImage(opts.imageSource, opts.isUrl);
@@ -347,9 +409,23 @@ async function main() {
           detail: opts.detail,
           maxTokens: opts.maxTokens,
           size: null,
+          history: opts.sessionHistory,
         }),
       );
-      console.log(result);
+      output = result;
+      console.log(output);
+    }
+
+    if (opts.session) {
+      const state = sessionState || { model: config.model, turns: [] };
+      state.turns.push({
+        role: "user",
+        text: prompt,
+        images: currentSource ? [currentSource] : [],
+      });
+      state.turns.push({ role: "assistant", text: output, images: [] });
+      const sessionFile = saveSession(opts.session, state);
+      console.error(`会话 "${opts.session}" 已更新: ${sessionFile}`);
     }
   } catch (err) {
     console.error("Vision failed:", err.message);
