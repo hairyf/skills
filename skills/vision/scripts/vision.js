@@ -3,8 +3,21 @@
  * Standalone vision script — calls a Qwen VL model (ESM, zero-dependency)
  *
  * Usage:
- *   node vision.js <image path> [question]
- *   node vision.js --url <image url> [question]
+ *   node vision.js <image path> [question] [flags]
+ *   node vision.js --url <image url> [question] [flags]
+ *
+ * Flags:
+ *   --coords        Force the "## Coordinates" section (element bounding boxes)
+ *   --no-coords     Suppress coordinates even when debug intent is detected
+ *   --brief         (default) Compact, information-dense output
+ *   --detail        Allow fuller detail (raises the token cap to 1600)
+ *   --max-tokens N  Cap output size (default 1000)
+ *
+ * Output contract:
+ *   Concise by default: 1 subject line + compact bullets covering every key
+ *   element (no fixed cap; group similar elements), visible text verbatim.
+ *   Debug-related prompts automatically add a "## Coordinates" section with one
+ *   JSON line per element: {"name","text","bbox":[x,y,w,h]} (percentages, origin top-left).
  *
  * Configuration:
  *   Set the API key via the DASHSCOPE_API_KEY environment variable
@@ -77,29 +90,72 @@ const MIME_MAP = Object.freeze({
   bmp: "bmp",
 });
 
+// The reply is injected into the caller's context — keep it compact and lossless.
+const SYSTEM_BRIEF = `You are a vision assistant embedded in an AI coding agent. Your reply is injected directly into the agent's context, so be precise, concise, and information-dense. Follow the requested output format exactly.
+Default format:
+- Line 1: what the image is (type/subject) in a few words.
+- Bullets: one short bullet per key element, covering all visible text (verbatim) and spatial/layout hints. No fixed cap — completeness matters, so do not omit important elements. When several similar elements share a pattern (menu, list, grid, repeated buttons), group them into one bullet with their labels. Omit only trivial details that add no information.
+Never include greetings, filler, explanations, or disclaimers. Do not invent details that are not visible in the image. If the request explicitly asks for more detail, comply.`;
+
+const SYSTEM_DETAIL = `You are a vision assistant embedded in an AI coding agent. Reply in a structured, information-dense way: a 1-2 sentence subject summary, then a compact list of key elements with visible text (verbatim), layout, and notable details. No greetings, filler, or disclaimers. Do not invent details that are not visible in the image.`;
+
+const COORD_INSTRUCTION = `
+Additionally, append a section titled "## Coordinates" listing every key visible element (buttons, inputs, icons, text blocks, regions) as one JSON object per line:
+{"name": "<short element name>", "text": "<visible text or empty string>", "bbox": {"x": 0, "y": 0, "w": 0, "h": 0}}
+- bbox values are percentages of the image (0-100), origin at the top-left, rounded to integers.
+- Keep the section compact; do not repeat in prose what the coordinates already describe.`;
+
+// Debug / inspection intent that benefits from element coordinates (heuristic, overridable).
+const COORD_KEYWORDS = [
+  "debug", "调试", "inspect", "检查", "定位", "element", "元素", "selector",
+  "xpath", "dom", "bbox", "bounding box", "coordinate", "坐标", "click", "点击",
+  "tap", "button", "按钮", "position", "位置", "layout", "布局", "ui", "界面",
+];
+
 /**
  * Parse CLI arguments
  */
 function parseArgs() {
   const argv = process.argv.slice(2);
-  let imageSource = "";
-  let isUrl = false;
-  const promptParts = [];
+  const opts = {
+    imageSource: "",
+    isUrl: false,
+    coords: null, // null = auto-detect, true/false = forced
+    verbosity: "brief", // "brief" | "detail"
+    maxTokens: 1000,
+    maxTokensExplicit: false,
+    promptParts: [],
+  };
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
+
     if (arg === "--url" && argv[i + 1]) {
-      isUrl = true;
-      imageSource = argv[++i];
-    } else if (!imageSource && !arg.startsWith("--")) {
-      imageSource = arg;
-    } else if (imageSource && !arg.startsWith("--")) {
-      promptParts.push(arg);
+      opts.isUrl = true;
+      opts.imageSource = argv[++i];
+    } else if (arg === "--coords") {
+      opts.coords = true;
+    } else if (arg === "--no-coords") {
+      opts.coords = false;
+    } else if (arg === "--brief") {
+      opts.verbosity = "brief";
+    } else if (arg === "--detail") {
+      opts.verbosity = "detail";
+      if (!opts.maxTokensExplicit) opts.maxTokens = 1600;
+    } else if (arg === "--max-tokens" && argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
+      opts.maxTokens = parseInt(argv[i + 1], 10);
+      opts.maxTokensExplicit = true;
+      i++;
+    } else if (arg.startsWith("--")) {
+      // Ignore unknown flags
+    } else if (!opts.imageSource) {
+      opts.imageSource = arg;
+    } else {
+      opts.promptParts.push(arg);
     }
   }
 
-  const prompt = promptParts.join(" ") || "Describe the content of this image in detail.";
-  return { imageSource, prompt, isUrl };
+  return opts;
 }
 
 /**
@@ -118,6 +174,38 @@ function resolveImageUrl(source, isUrl) {
   const fileBuffer = fs.readFileSync(resolvedPath);
 
   return `data:image/${mimeType};base64,${fileBuffer.toString("base64")}`;
+}
+
+/**
+ * Decide whether to include element coordinates.
+ */
+function useCoordinates(prompt, coords) {
+  if (coords !== null) return coords;
+  const lower = prompt.toLowerCase();
+  return COORD_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
+/**
+ * Build the API payload. Instructions are embedded in the user text part so
+ * strict OpenAI-compatible endpoints that only accept user messages still work.
+ */
+function buildPayload(imageUrl, prompt, { coords, verbosity, maxTokens }) {
+  const system = verbosity === "detail" ? SYSTEM_DETAIL : SYSTEM_BRIEF;
+  const instruction = coords ? `${system}\n${COORD_INSTRUCTION}` : system;
+  return {
+    model: MODEL,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: imageUrl } },
+          { type: "text", text: `${instruction}\n\nTask: ${prompt}` },
+        ],
+      },
+    ],
+    stream: false,
+    max_tokens: maxTokens,
+  };
 }
 
 /**
@@ -161,31 +249,20 @@ async function main() {
     process.exit(1);
   }
 
-  const { imageSource, prompt, isUrl } = parseArgs();
+  const opts = parseArgs();
 
-  if (!imageSource) {
+  if (!opts.imageSource) {
     console.error("Usage:");
-    console.error("  node vision.js <image path> [question]");
+    console.error("  node vision.js <image path> [question] [--coords|--no-coords] [--brief|--detail] [--max-tokens N]");
     console.error("  node vision.js --url <image url> [question]");
     process.exit(1);
   }
 
   try {
-    const imageUrl = resolveImageUrl(imageSource, isUrl);
-    const result = await requestVisionApi({
-      model: MODEL,
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "image_url", image_url: { url: imageUrl } },
-            { type: "text", text: prompt },
-          ],
-        },
-      ],
-      stream: false,
-      max_tokens: 1024,
-    });
+    const imageUrl = resolveImageUrl(opts.imageSource, opts.isUrl);
+    const prompt = opts.promptParts.join(" ") || "Describe this image concisely.";
+    const coords = useCoordinates(prompt, opts.coords);
+    const result = await requestVisionApi(buildPayload(imageUrl, prompt, { ...opts, coords }));
 
     console.log(result);
   } catch (err) {

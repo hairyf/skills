@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vision"
+  short_description: "AI image recognition for agents"
+  default_prompt: "Use $vision to recognize this image and reply concisely, including element coordinates for UI/debug tasks."
