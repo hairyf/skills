@@ -6,6 +6,7 @@ description: How to invoke vision.js — CLI arguments, local files, remote URLs
 # Usage
 
 Run the script with Node.js. It reads the image, sends it to a vision model, and prints the text description to stdout.
+Run `node scripts/vision.js --help` for the full interface.
 
 ## Local image
 
@@ -22,8 +23,23 @@ node vision.js --url "https://example.com/image.png" "Describe this image"
 ## Output contract
 
 - Default: concise — 1 subject line + compact bullets covering every key element (no fixed cap; group similar elements), visible text verbatim, no filler.
-- Debug-related prompts automatically add a `## Coordinates` section: one JSON line per element, `{"name","text","bbox":{"x","y","w","h"}}` with percentages (0–100, origin top-left).
-- Auto-detection is a heuristic; override with `--coords` / `--no-coords` when the caller knows better.
+- With `--coords` a `## Coordinates` section is appended: one JSON line per element — bbox `{"name","text","bbox":{"x","y","w","h"}}` by default, or center point `{"name","text","center":{"x","y"}}` with `--coords center`. The other representation is derived automatically during parsing.
+- Coordinates are **pixels in the ORIGINAL image**. The image is automatically resampled to the model's input limits before sending, and coordinates are remapped back afterwards — the caller never supplies width/height or does scaling.
+- Localization is **coarse-to-fine** by default: round 1 asks the model to propose a precise point or a zoom region, round 2 re-locates in the focused crop, and `--rounds 3` adds a small-window verification round. This works on any model and removes the need for manual crop hints.
+- The first `--coords` call auto-installs a resampling dependency (sharp) into `scripts/.deps/` (gitignored, one-time download). Non-debug calls never install anything.
+- The section is normalized to canonical, valid JSON — malformed model output (stray commas, missing keys, arrays) is repaired automatically.
+- Default is non-debug: coordinates appear only when the caller passes `--coords`.
+
+## Model input limits
+
+The API does not expose a model's maximum input size, so the resampler uses a per-model table (Qwen/DashScope `max_pixels`, Claude long-edge/pixel budgets, conservative defaults for others) with two env overrides:
+
+```bash
+VISION_MAX_PIXELS=1310720      # total pixel budget (e.g. qwen-vl-max default)
+VISION_MAX_LONG_EDGE=1568      # long-edge budget in px
+```
+
+Unknown models fall back to a conservative 1568px / 1.15MP limit. Tune via env vars when switching providers.
 
 ## Arguments
 
@@ -32,11 +48,10 @@ node vision.js --url "https://example.com/image.png" "Describe this image"
 | `<image>` | Path to a local image file, or a URL when used with `--url` |
 | `--url` | Treat the first argument as a remote URL instead of a file path |
 | `[question]` | Optional prompt; defaults to a concise "describe the image" request |
-| `--coords` | Force the `## Coordinates` section even when no debug intent is detected |
-| `--no-coords` | Suppress coordinates even when debug intent is detected |
-| `--brief` | (default) Compact output |
-| `--detail` | Allow fuller detail (also raises the token cap to 1600) |
-| `--max-tokens <n>` | Cap the output size (default 1000) |
+| `--coords [center]` | Debug mode: append the `## Coordinates` section (bbox by default; center points with `--coords center`) in original pixels |
+| `--detail [n]` | Fuller detail output; optional token cap `n` (default 1600; compact mode caps at 1000) |
+| `--rounds N` | 1 = single locate, 2 = coarse-to-fine (default), 3 = + verification round |
+| `-h, --help` | Print usage and exit |
 
 Supported local formats: jpg, jpeg, png, gif, webp, bmp.
 
@@ -46,14 +61,11 @@ Supported local formats: jpg, jpeg, png, gif, webp, bmp.
 # Concise recognition (default)
 node vision.js "shot.png" "Describe this image"
 
-# UI debugging — coordinates are auto-added for "find the button"
-node vision.js "ui.png" "find the login button and its position"
+# UI debugging — element coordinates via --coords
+node vision.js "ui.png" "find the login button and its position" --coords
 
-# Force coordinates for any element
-node vision.js "ui.png" "describe the layout" --coords
-
-# Detailed analysis with a bigger budget
-node vision.js "chart.png" "extract all labels and values" --detail
+# Detailed analysis with a custom token budget
+node vision.js "chart.png" "extract all labels and values" --detail 2500
 ```
 
 ## Exit codes

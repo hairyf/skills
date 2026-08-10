@@ -6,7 +6,7 @@ The underlying model has no native image recognition. When you encounter an imag
 node vision.js "<image path>" "Describe this image in Chinese"
 ```
 
-Keep vision replies concise (no filler). For UI/debug inspection — locating elements, click targets, layout — include element coordinates via `--coords` (auto-detected for debug-like prompts).
+Keep vision replies concise (no filler). For UI/debug inspection — locating elements, click targets, layout — pass `--coords` to get precise pixel element coordinates.
 
 ## Trigger scenarios
 

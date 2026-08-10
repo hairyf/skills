@@ -48,6 +48,7 @@ node scripts/vision.js "path/to/sample.png" "Describe this image"
 
 ## Key points
 
+- Requires Node.js 18+ (native `fetch`) and network access to the vision API.
 - DashScope's free tier makes it the default recommendation; any OpenAI-compatible vision API works.
 - The model key is not tied to a specific vendor — the script speaks the OpenAI-compatible format.
 - The AGENTS.md merge is what enables automatic image recognition in the host project — the `.env` config alone is not enough.

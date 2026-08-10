@@ -1,116 +1,95 @@
 #!/usr/bin/env node
 /**
- * Standalone vision script — calls a Qwen VL model (ESM, zero-dependency)
+ * Vision CLI entry — sends an image to an OpenAI-compatible vision model.
+ * Logic lives in scripts/lib/*.js; this file only parses args and orchestrates
+ * the rounds.
  *
  * Usage:
  *   node vision.js <image path> [question] [flags]
  *   node vision.js --url <image url> [question] [flags]
  *
  * Flags:
- *   --coords        Force the "## Coordinates" section (element bounding boxes)
- *   --no-coords     Suppress coordinates even when debug intent is detected
- *   --brief         (default) Compact, information-dense output
- *   --detail        Allow fuller detail (raises the token cap to 1600)
- *   --max-tokens N  Cap output size (default 1000)
+ *   --coords [bbox|center]  Debug mode: append a "## Coordinates" section.
+ *                           Default format is bbox; "center" emits center
+ *                           points. Values are in ORIGINAL image pixels.
+ *   --detail [n]            Fuller detail output; optional token cap n
+ *                           (default 1600). Without it output stays compact.
+ *   --rounds N              1 = single locate, 2 = coarse-to-fine (default),
+ *                           3 = + verification round.
+ *   -h, --help              Print usage.
  *
  * Output contract:
  *   Concise by default: 1 subject line + compact bullets covering every key
  *   element (no fixed cap; group similar elements), visible text verbatim.
- *   Debug-related prompts automatically add a "## Coordinates" section with one
- *   JSON line per element: {"name","text","bbox":[x,y,w,h]} (percentages, origin top-left).
+ *   With --coords, localization runs coarse-to-fine: round 1 proposes a point
+ *   or a zoom region, round 2 locates in the focused crop, optional round 3
+ *   verifies. Views are resampled by vision-preprocess.js and every coordinate
+ *   is remapped back to the ORIGINAL image pixels. The first --coords call
+ *   auto-installs the resampling dependency (sharp); non-debug calls stay
+ *   zero-dependency.
  *
  * Configuration:
- *   Set the API key via the DASHSCOPE_API_KEY environment variable
- *   or a .env file in the same directory.
+ *   Set the API key via DASHSCOPE_API_KEY (env var or scripts/.env).
+ *   Overrides: VISION_MODEL, DASHSCOPE_BASE_URL.
  */
 
 import fs from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-// Current module directory in ESM
+import { config } from "./lib/env.js";
+import { resolveImage } from "./lib/image.js";
+import { buildPayload, requestVisionApi } from "./lib/api.js";
+import {
+  clampRegion,
+  extractCoordinates,
+  formatElement,
+  parseProposal,
+  parseVerify,
+  scaleCenter,
+  scaleElement,
+  scaleRegion,
+  windowAround,
+} from "./lib/coords.js";
+
+// Re-export shared utilities so external importers keep working.
+export { detectImageSize, detectMime, resolveImage } from "./lib/image.js";
+export { buildPayload, requestVisionApi } from "./lib/api.js";
+export {
+  clampRegion,
+  extractCoordinates,
+  formatElement,
+  normalizeCoordinates,
+  parseCoordinateLine,
+  parseProposal,
+  parseVerify,
+  scaleCenter,
+  scaleElement,
+  scaleRegion,
+  windowAround,
+} from "./lib/coords.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/**
- * Lightweight .env parser (replaces the dotenv dependency)
- * @param {string} filePath
- */
-function loadEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) return;
+function usage() {
+  return `Usage:
+  node vision.js <image> [question] [flags]
+  node vision.js --url <image-url> [question] [flags]
 
-  try {
-    const content = fs.readFileSync(filePath, "utf-8");
-    const lines = content.split(/\r?\n/);
+Flags:
+  --coords [bbox|center]  Debug mode: append "## Coordinates" (element boxes
+                          by default, center points with "center") in ORIGINAL
+                          image pixels.
+  --detail [n]            Fuller detail output; token cap n (default 1600).
+  --rounds N              1 = single locate, 2 = coarse-to-fine (default),
+                          3 = + verification round.
+  -h, --help              Show this help.
 
-    for (const line of lines) {
-      const trimmed = line.trim();
-      // Skip empty lines and comments
-      if (!trimmed || trimmed.startsWith("#")) continue;
-
-      const delimiterIdx = trimmed.indexOf("=");
-      if (delimiterIdx === -1) continue;
-
-      const key = trimmed.slice(0, delimiterIdx).trim();
-      let value = trimmed.slice(delimiterIdx + 1).trim();
-
-      // Strip surrounding quotes (" or ')
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1);
-      }
-
-      // Only set when the env var is not already defined (don't override system vars)
-      if (key && process.env[key] === undefined) {
-        process.env[key] = value;
-      }
-    }
-  } catch {
-    // Ignore read or parse failures
-  }
+Examples:
+  node vision.js shot.png "Describe this image"
+  node vision.js ui.png "find the login button" --coords center`;
 }
-
-// Load .env from the current working directory and the script directory
-loadEnvFile(path.resolve(process.cwd(), ".env"));
-loadEnvFile(path.resolve(__dirname, ".env"));
-
-// Configuration
-const BASE_URL = process.env.DASHSCOPE_BASE_URL || "https://dashscope.aliyuncs.com/compatible-mode/v1";
-const API_KEY = process.env.DASHSCOPE_API_KEY || "";
-const MODEL = process.env.VISION_MODEL || "qwen-vl-max";
-
-// Common image extensions -> MIME type map
-const MIME_MAP = Object.freeze({
-  jpg: "jpeg",
-  jpeg: "jpeg",
-  png: "png",
-  gif: "gif",
-  webp: "webp",
-  bmp: "bmp",
-});
-
-// The reply is injected into the caller's context — keep it compact and lossless.
-const SYSTEM_BRIEF = `You are a vision assistant embedded in an AI coding agent. Your reply is injected directly into the agent's context, so be precise, concise, and information-dense. Follow the requested output format exactly.
-Default format:
-- Line 1: what the image is (type/subject) in a few words.
-- Bullets: one short bullet per key element, covering all visible text (verbatim) and spatial/layout hints. No fixed cap — completeness matters, so do not omit important elements. When several similar elements share a pattern (menu, list, grid, repeated buttons), group them into one bullet with their labels. Omit only trivial details that add no information.
-Never include greetings, filler, explanations, or disclaimers. Do not invent details that are not visible in the image. If the request explicitly asks for more detail, comply.`;
-
-const SYSTEM_DETAIL = `You are a vision assistant embedded in an AI coding agent. Reply in a structured, information-dense way: a 1-2 sentence subject summary, then a compact list of key elements with visible text (verbatim), layout, and notable details. No greetings, filler, or disclaimers. Do not invent details that are not visible in the image.`;
-
-const COORD_INSTRUCTION = `
-Additionally, append a section titled "## Coordinates" listing every key visible element (buttons, inputs, icons, text blocks, regions) as one JSON object per line:
-{"name": "<short element name>", "text": "<visible text or empty string>", "bbox": {"x": 0, "y": 0, "w": 0, "h": 0}}
-- bbox values are percentages of the image (0-100), origin at the top-left, rounded to integers.
-- Keep the section compact; do not repeat in prose what the coordinates already describe.`;
-
-// Debug / inspection intent that benefits from element coordinates (heuristic, overridable).
-const COORD_KEYWORDS = [
-  "debug", "调试", "inspect", "检查", "定位", "element", "元素", "selector",
-  "xpath", "dom", "bbox", "bounding box", "coordinate", "坐标", "click", "点击",
-  "tap", "button", "按钮", "position", "位置", "layout", "布局", "ui", "界面",
-];
 
 /**
  * Parse CLI arguments
@@ -120,10 +99,12 @@ function parseArgs() {
   const opts = {
     imageSource: "",
     isUrl: false,
-    coords: null, // null = auto-detect, true/false = forced
-    verbosity: "brief", // "brief" | "detail"
+    coords: false, // debug mode — enabled only via --coords
+    coordFormat: "bbox", // "bbox" | "center"
+    detail: false,
     maxTokens: 1000,
-    maxTokensExplicit: false,
+    rounds: 2,
+    help: false,
     promptParts: [],
   };
 
@@ -135,17 +116,22 @@ function parseArgs() {
       opts.imageSource = argv[++i];
     } else if (arg === "--coords") {
       opts.coords = true;
-    } else if (arg === "--no-coords") {
-      opts.coords = false;
-    } else if (arg === "--brief") {
-      opts.verbosity = "brief";
+      if (argv[i + 1] === "center" || argv[i + 1] === "bbox") {
+        opts.coordFormat = argv[++i];
+      }
     } else if (arg === "--detail") {
-      opts.verbosity = "detail";
-      if (!opts.maxTokensExplicit) opts.maxTokens = 1600;
-    } else if (arg === "--max-tokens" && argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
-      opts.maxTokens = parseInt(argv[i + 1], 10);
-      opts.maxTokensExplicit = true;
+      opts.detail = true;
+      if (argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
+        opts.maxTokens = parseInt(argv[i + 1], 10);
+        i++;
+      } else {
+        opts.maxTokens = 1600;
+      }
+    } else if (arg === "--rounds" && argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
+      opts.rounds = Math.max(1, Math.min(3, parseInt(argv[i + 1], 10)));
       i++;
+    } else if (arg === "--help" || arg === "-h") {
+      opts.help = true;
     } else if (arg.startsWith("--")) {
       // Ignore unknown flags
     } else if (!opts.imageSource) {
@@ -159,81 +145,27 @@ function parseArgs() {
 }
 
 /**
- * Resolve the image source (local file to base64, or remote URL)
+ * Run a helper script with Node, passing optional stdin. Returns stdout.
  */
-function resolveImageUrl(source, isUrl) {
-  if (isUrl) return source;
-
-  const resolvedPath = path.resolve(source);
-  if (!fs.existsSync(resolvedPath)) {
-    throw new Error(`File not found: ${resolvedPath}`);
-  }
-
-  const ext = path.extname(resolvedPath).toLowerCase().replace(".", "");
-  const mimeType = MIME_MAP[ext] || "jpeg";
-  const fileBuffer = fs.readFileSync(resolvedPath);
-
-  return `data:image/${mimeType};base64,${fileBuffer.toString("base64")}`;
-}
-
-/**
- * Decide whether to include element coordinates.
- */
-function useCoordinates(prompt, coords) {
-  if (coords !== null) return coords;
-  const lower = prompt.toLowerCase();
-  return COORD_KEYWORDS.some((kw) => lower.includes(kw));
-}
-
-/**
- * Build the API payload. Instructions are embedded in the user text part so
- * strict OpenAI-compatible endpoints that only accept user messages still work.
- */
-function buildPayload(imageUrl, prompt, { coords, verbosity, maxTokens }) {
-  const system = verbosity === "detail" ? SYSTEM_DETAIL : SYSTEM_BRIEF;
-  const instruction = coords ? `${system}\n${COORD_INSTRUCTION}` : system;
-  return {
-    model: MODEL,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "image_url", image_url: { url: imageUrl } },
-          { type: "text", text: `${instruction}\n\nTask: ${prompt}` },
-        ],
-      },
-    ],
-    stream: false,
-    max_tokens: maxTokens,
-  };
-}
-
-/**
- * Send the API request using native fetch
- */
-async function requestVisionApi(payload) {
-  const endpoint = new URL("chat/completions", BASE_URL.endsWith("/") ? BASE_URL : `${BASE_URL}/`);
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+function runNode(script, args, stdin) {
+  const res = spawnSync(process.execPath, [script, ...args], {
+    input: stdin,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
   });
-
-  const rawText = await response.text();
-
-  if (!response.ok) {
-    throw new Error(`API error [${response.status}]: ${rawText.slice(0, 300)}`);
+  if (res.status !== 0) {
+    throw new Error((res.stderr || res.stdout || "").trim() || `${path.basename(script)} failed`);
   }
+  return res.stdout;
+}
 
-  try {
-    const json = JSON.parse(rawText);
-    return json?.choices?.[0]?.message?.content || rawText;
-  } catch {
-    return rawText;
+function cleanup(meta) {
+  if (meta?.resizedPath) {
+    try {
+      fs.unlinkSync(meta.resizedPath);
+    } catch {
+      // Best-effort temp file cleanup
+    }
   }
 }
 
@@ -241,34 +173,120 @@ async function requestVisionApi(payload) {
  * Main entry point
  */
 async function main() {
+  const opts = parseArgs();
+
+  if (opts.help) {
+    console.log(usage());
+    process.exit(0);
+  }
+
   // Check API key
-  if (!API_KEY || API_KEY === "sk-xxx") {
+  if (!config.apiKey || config.apiKey === "sk-xxx") {
     console.error("Error: no valid DASHSCOPE_API_KEY configured.");
     console.error("Set the DASHSCOPE_API_KEY environment variable or configure it in a .env file.");
     console.error("Get a key at: https://bailian.console.aliyun.com/");
     process.exit(1);
   }
 
-  const opts = parseArgs();
-
   if (!opts.imageSource) {
-    console.error("Usage:");
-    console.error("  node vision.js <image path> [question] [--coords|--no-coords] [--brief|--detail] [--max-tokens N]");
-    console.error("  node vision.js --url <image url> [question]");
+    console.error(usage());
     process.exit(1);
   }
 
   try {
-    const imageUrl = resolveImageUrl(opts.imageSource, opts.isUrl);
     const prompt = opts.promptParts.join(" ") || "Describe this image concisely.";
-    const coords = useCoordinates(prompt, opts.coords);
-    const result = await requestVisionApi(buildPayload(imageUrl, prompt, { ...opts, coords }));
 
-    console.log(result);
+    if (opts.coords) {
+      // Debug mode: coarse-to-fine localization.
+      // Round 1 proposes a point or a zoom region, round 2 locates precisely
+      // in the focused crop, optional round 3 verifies in a small window.
+      const preprocess = path.join(__dirname, "vision-preprocess.js");
+      const prepare = async (crop) => {
+        const args = ["prepare", opts.imageSource, ...(opts.isUrl ? ["--url"] : []), "--model", config.model];
+        if (crop) args.push("--crop", `${crop.x},${crop.y},${crop.w},${crop.h}`);
+        return JSON.parse(runNode(preprocess, args));
+      };
+      const ask = async (meta, contract, extraPrompt = "") => {
+        const dataUrl = `data:image/png;base64,${fs.readFileSync(meta.resizedPath).toString("base64")}`;
+        return requestVisionApi(
+          buildPayload(dataUrl, extraPrompt ? `${prompt}\n${extraPrompt}` : prompt, {
+            contract,
+            format: opts.coordFormat,
+            detail: opts.detail,
+            maxTokens: opts.maxTokens,
+            size: { width: meta.scaledW, height: meta.scaledH },
+          }),
+        );
+      };
+
+      let cropBox = null;
+      if (opts.rounds >= 2) {
+        // Round 1: propose a point or a zoom region on the full image
+        const meta1 = await prepare(null);
+        let proposal = parseProposal(await ask(meta1, "propose"));
+        if (!proposal) {
+          proposal = parseProposal(await ask(meta1, "propose", 'If unsure, output a "region" to zoom into.'));
+        }
+        if (!proposal) throw new Error("Model did not propose a target or region; retry with --rounds 1");
+        if (proposal.type === "region") {
+          cropBox = clampRegion(scaleRegion(proposal.region, meta1), meta1.origW, meta1.origH);
+        } else {
+          const c1 = scaleCenter(proposal.center, meta1);
+          cropBox = windowAround(c1, meta1.origW, meta1.origH, 0.5, 400);
+        }
+        cleanup(meta1);
+      }
+
+      // Round 2: focused locate (full image when --rounds 1)
+      const meta2 = await prepare(cropBox);
+      const res2 = await ask(meta2, "locate");
+      const { head, elements } = extractCoordinates(res2);
+      if (elements.length === 0) throw new Error("No coordinates found in the model response");
+      const finalElements = elements.map((el) => scaleElement(el, meta2));
+      const finalHead = head;
+
+      if (opts.rounds >= 3 && finalElements.length > 0) {
+        // Round 3: verify the primary target in a small zoomed window
+        const crop3 = windowAround(finalElements[0].center, meta2.origW, meta2.origH, 0.25, 200);
+        const meta3 = await prepare(crop3);
+        const v = parseVerify(await ask(meta3, "verify"));
+        if (v && v.center) {
+          const c3 = scaleCenter(v.center, meta3);
+          const prev = finalElements[0];
+          const next = { name: prev.name, text: prev.text, center: c3 };
+          if (prev.bbox) {
+            next.bbox = {
+              x: Math.round(c3.x - prev.bbox.w / 2),
+              y: Math.round(c3.y - prev.bbox.h / 2),
+              w: prev.bbox.w,
+              h: prev.bbox.h,
+            };
+          }
+          finalElements[0] = next;
+        }
+        cleanup(meta3);
+      }
+
+      const coordsText = finalElements.map((el) => JSON.stringify(formatElement(el, opts.coordFormat))).join("\n");
+      console.log(finalHead ? `${finalHead}\n\n## Coordinates\n${coordsText}` : coordsText);
+      cleanup(meta2);
+    } else {
+      const { dataUrl } = await resolveImage(opts.imageSource, opts.isUrl);
+      const result = await requestVisionApi(
+        buildPayload(dataUrl, prompt, {
+          contract: null,
+          detail: opts.detail,
+          maxTokens: opts.maxTokens,
+          size: null,
+        }),
+      );
+      console.log(result);
+    }
   } catch (err) {
     console.error("Vision failed:", err.message);
     process.exit(1);
   }
 }
 
-main();
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) main();
