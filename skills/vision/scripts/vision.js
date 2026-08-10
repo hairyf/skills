@@ -23,7 +23,7 @@
  *   element (no fixed cap; group similar elements), visible text verbatim.
  *   With --coords, localization runs coarse-to-fine: round 1 proposes a point
  *   or a zoom region, round 2 locates in the focused crop, optional round 3
- *   verifies. Views are resampled by vision-preprocess.js and every coordinate
+ *   verifies. Views are resampled by lib/preprocess.js and every coordinate
  *   is remapped back to the ORIGINAL image pixels. The first --coords call
  *   auto-installs the resampling dependency (sharp); non-debug calls stay
  *   zero-dependency.
@@ -200,7 +200,7 @@ async function main() {
       // Debug mode: coarse-to-fine localization.
       // Round 1 proposes a point or a zoom region, round 2 locates precisely
       // in the focused crop, optional round 3 verifies in a small window.
-      const preprocess = path.join(__dirname, "vision-preprocess.js");
+      const preprocess = path.join(__dirname, "lib", "preprocess.js");
       const prepare = async (crop) => {
         const args = ["prepare", opts.imageSource, ...(opts.isUrl ? ["--url"] : []), "--model", config.model];
         if (crop) args.push("--crop", `${crop.x},${crop.y},${crop.w},${crop.h}`);

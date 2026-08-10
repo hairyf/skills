@@ -5,8 +5,8 @@
  * vision.js stays dependency-free for non-debug calls.
  *
  * Usage:
- *   node install-deps.js            # install if missing, then print the module dir
- *   node install-deps.js --force    # reinstall even if present
+ *   node lib/install.js            # install if missing, then print the module dir
+ *   node lib/install.js --force    # reinstall even if present
  */
 
 import { execSync } from "node:child_process";
@@ -43,7 +43,7 @@ function main() {
   });
 
   if (!isInstalled()) {
-    console.error("Install failed. Check your network/npm, then retry: node scripts/install-deps.js");
+    console.error("Install failed. Check your network/npm, then retry: node scripts/lib/install.js");
     process.exit(1);
   }
   console.log(path.join(DEPS_DIR, "node_modules"));

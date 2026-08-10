@@ -12,19 +12,20 @@ An ESM pipeline that recognizes images through an OpenAI-compatible vision API. 
 ```
 scripts/
 ├── vision.js            # CLI entry: args, round orchestration, output
-├── vision-preprocess.js # Resample/crop views (--coords), remap mode
-├── install-deps.js      # One-time sharp install into scripts/.deps/
-├── lib/env.js           # .env loading + resolved config
-├── lib/prompts.js       # System prompts + per-round contracts
-├── lib/image.js         # Format sniffing, size detection, base64 data URLs
-├── lib/api.js           # Payload building + OpenAI-compatible request
-└── lib/coords.js        # Parse/normalize/scale coordinates (shared)
+└── lib/
+    ├── preprocess.js    # Resample/crop views (--coords), remap mode
+    ├── install.js       # One-time sharp install into scripts/.deps/
+    ├── env.js           # .env loading + resolved config
+    ├── prompts.js       # System prompts + per-round contracts
+    ├── image.js         # Format sniffing, size detection, base64 data URLs
+    ├── api.js           # Payload building + OpenAI-compatible request
+    └── coords.js        # Parse/normalize/scale coordinates (shared)
 ```
 
 ## Pipeline
 
 1. **Resolve the image** — read a local file and convert it to a base64 data URL, or pass through a remote URL when `--url` is used.
-2. **Resample (debug mode only)** — when `--coords` is passed, `vision-preprocess.js prepare` resizes each view to fit the model's input limits, keeping the shorter side ≥ 96px so tiny flat crops don't degrade grounding (its dependency `sharp` is auto-installed by `scripts/install-deps.js` on first use).
+2. **Resample (debug mode only)** — when `--coords` is passed, `lib/preprocess.js prepare` resizes each view to fit the model's input limits, keeping the shorter side ≥ 96px so tiny flat crops don't degrade grounding (its dependency `sharp` is auto-installed by `scripts/lib/install.js` on first use).
 3. **Coarse-to-fine rounds** — round 1 asks the model to propose a precise point or a zoom region (`propose` contract); round 2 re-locates in the focused crop (`locate` contract, bbox or center per `--coords` format); `--rounds 3` adds a small-window verification round (`verify` contract).
 4. **Call the API per round** — POST to `{BASE_URL}/chat/completions` with a user message containing a base64 `image_url` part and a `text` part.
 5. **Normalize & remap** — each round's `## Coordinates` section is normalized to canonical JSON lines (tolerating malformed output), and every center point is scaled back to the ORIGINAL image pixels using that round's crop offset.
@@ -42,7 +43,7 @@ scripts/
 ## Key points
 
 - Uses the native `fetch` — no npm dependencies.
-- `lib/coords.js` is shared by vision.js (locate rounds) and vision-preprocess.js (remap) — change parsing/remapping there.
+- `lib/coords.js` is shared by vision.js (locate rounds) and lib/preprocess.js (remap) — change parsing/remapping there.
 - Not bound to a specific vendor; works with any OpenAI-compatible vision API.
 - Compactness and coordinate instructions are embedded in the user text part, so strict APIs that only accept user messages still work.
 - Debug mode is caller-driven: coordinates appear only with `--coords`; there is no keyword auto-detection.

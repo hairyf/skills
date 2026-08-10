@@ -20,7 +20,7 @@
  * fallback for unknown models.
  *
  * The first run auto-installs the resampling dependency (sharp) via
- * install-deps.js; install-deps.js can also be run manually.
+ * lib/install.js; lib/install.js can also be run manually.
  */
 
 import { execFileSync } from "node:child_process";
@@ -29,11 +29,11 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { formatElement, normalizeCoordinates, parseCoordinateLine, scaleElement } from "./lib/coords.js";
+import { formatElement, normalizeCoordinates, parseCoordinateLine, scaleElement } from "./coords.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEPS_DIR = path.join(__dirname, ".deps");
-const INSTALLER = path.join(__dirname, "install-deps.js");
+const INSTALLER = path.join(__dirname, "install.js");
 
 /**
  * Resolve sharp, auto-installing it (one-time download) when missing.
@@ -56,7 +56,7 @@ function ensureSharp() {
       return req("sharp");
     } catch (err) {
       console.error("Dependency install failed:", err.message);
-      console.error("Retry manually: node scripts/install-deps.js");
+      console.error("Retry manually: node scripts/lib/install.js");
       process.exit(1);
     }
   }
@@ -260,7 +260,7 @@ async function main() {
   const args = parseArgv(process.argv.slice(3));
 
   if (mode === "--help" || mode === "-h") {
-    console.log(`Usage: node vision-preprocess.js <prepare|remap> ...
+    console.log(`Usage: node lib/preprocess.js <prepare|remap> ...
 
 Modes:
   prepare <image> [--url] [--crop x,y,w,h] [--model M] [--max-pixels N]
@@ -273,24 +273,24 @@ Modes:
     remap coordinates back to ORIGINAL image pixels.
 
 The first run auto-installs the resampling dependency (sharp) via
-scripts/install-deps.js.`);
+scripts/lib/install.js.`);
     process.exit(0);
   }
 
   if (mode === "prepare") {
     if (!args._[0]) {
-      console.error("Usage: node vision-preprocess.js prepare <image> [--url] [--crop x,y,w,h] [--model M] [--max-pixels N] [--max-long-edge N] [--out FILE]");
+      console.error("Usage: node lib/preprocess.js prepare <image> [--url] [--crop x,y,w,h] [--model M] [--max-pixels N] [--max-long-edge N] [--out FILE]");
       process.exit(1);
     }
     await prepare(args);
   } else if (mode === "remap") {
     if (!(args.cropW && args.cropH && args.scaledW && args.scaledH)) {
-      console.error("Usage: node vision-preprocess.js remap --crop-w W --crop-h H --scaled-w W --scaled-h H [--crop-x X --crop-y Y] < output.txt");
+      console.error("Usage: node lib/preprocess.js remap --crop-w W --crop-h H --scaled-w W --scaled-h H [--crop-x X --crop-y Y] < output.txt");
       process.exit(1);
     }
     remap(args);
   } else {
-    console.error("Usage: node vision-preprocess.js <prepare|remap> ...");
+    console.error("Usage: node lib/preprocess.js <prepare|remap> ...");
     process.exit(1);
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Coordinate parsing/normalization and view-to-original pixel mapping.
- * Shared by vision.js (locate rounds) and vision-preprocess.js (remap mode).
+ * Shared by vision.js (locate rounds) and lib/preprocess.js (remap mode).
  */
 
 /**
