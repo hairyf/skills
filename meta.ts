@@ -192,6 +192,7 @@ export const manual = [
   'hairy',
   'antfu',
   'github-workflow',
+  'software-engineering',
   'arch-upkeep',
   'openapi-specification-v2',
   'openapi-specification-v3.2',

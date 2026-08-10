@@ -46,6 +46,7 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [minecraft-texture](skills/minecraft-texture) | Minecraft texture generation and post-processing — image-model generation prompts, background removal, pixel-grid detection, and color-block sampling to 16x16/32x32 PNGs via a local Python script | Hairyf |
 | [minecraft-model](skills/minecraft-model) | Minecraft 3D model creation — vanilla-style design and three-view generation with an image model, then Blockbench MCP modeling, texturing, and animation | Hairyf |
 | [minecraft-orchestra](skills/minecraft-orchestra) | Minecraft mod team orchestration — 7-role subagent pipeline (design, bpm, worldgen, content, art, audio, rendering) with wave scheduling, shared contracts, and user review gates for complex sub-world/dimension mods | Hairyf |
+| [software-engineering](skills/software-engineering) | Generic multi-agent software engineering orchestration — design/bpm/art/audio/qa subagent pipeline with agile & waterfall modes, shared contracts, and user review gates for web/app/game/library projects | Hairyf |
 
 ### Skills Generated from Official Documentation
 
