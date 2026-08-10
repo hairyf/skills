@@ -65,7 +65,7 @@ export async function openaiCompatibleGenerate(opts, model, baseUrl, apiKey) {
   const editImage = opts.edit || latestImage(opts.sessionHistory);
 
   if (editImage) {
-    const fields = { model, prompt };
+    const fields = { model, prompt: opts.prompt };
     if (opts.size) fields.size = opts.size;
     if (opts.quality) fields.quality = opts.quality;
     if (opts.background) fields.background = opts.background;

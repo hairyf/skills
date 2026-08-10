@@ -28,7 +28,7 @@ A zero-dependency ESM script that generates images through multiple provider cha
 
 ## Session continuity (`--session`)
 
-`scripts/lib/session.js` manages conversation state at `.imagine-sessions/<name>.json` (or `IMAGINE_SESSION_DIR`):
+`scripts/lib/session.js` manages conversation state at `.imagine/<name>.json` (or `IMAGINE_SESSION_DIR`):
 
 ```json
 {

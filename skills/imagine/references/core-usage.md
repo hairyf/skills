@@ -84,7 +84,7 @@ node imagine.js "生成一格Minecraft蜗牛，蜗牛壳是一个立方体，不
 node imagine.js "非常好，画出它的三视图" --session snail -o views.png
 ```
 
-Session state is stored in `.imagine-sessions/<name>.json` (cwd), or `IMAGINE_SESSION_DIR/<name>.json` when that env var is set. Each call appends a user turn and the generated image paths to the state.
+Session state is stored in `.imagine/<name>.json` (cwd), or `IMAGINE_SESSION_DIR/<name>.json` when that env var is set. Each call appends a user turn and the generated image paths to the state.
 
 Provider behavior:
 

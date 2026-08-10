@@ -11,3 +11,4 @@ logs
 node_modules
 temp
 __pycache__
+.imagine

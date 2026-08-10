@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 // Session state directory; override with IMAGINE_SESSION_DIR.
-const SESSION_DIR = process.env.IMAGINE_SESSION_DIR || ".imagine-sessions";
+const SESSION_DIR = process.env.IMAGINE_SESSION_DIR || ".imagine";
 
 /**
  * Resolve the state file path for a session name.

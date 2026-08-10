@@ -162,7 +162,7 @@ Options:
       --aspect <ratio>   Aspect ratio for Gemini: 1:1, 16:9, 9:16, 4:3, 3:4
   -S, --session <name>  Conversation continuity: reuse the previous generation in
                         this session as the edit input / conversation context.
-                        State is stored in .imagine-sessions/<name>.json
+                        State is stored in .imagine/<name>.json
                         (IMAGINE_SESSION_DIR overrides the directory). Omit to keep
                         the default stateless behavior.
       --session-reset   Clear the session state before this run
