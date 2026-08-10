@@ -3,7 +3,7 @@
 The underlying model has no native image recognition. When you encounter an image, **do not use the Read tool** — use vision.js instead:
 
 ```
-node vision.js "<image path>" "Describe this image in Chinese"
+node vision.js "<image path>" "Describe this image"
 ```
 
 Keep vision replies concise (no filler). For UI/debug inspection — locating elements, click targets, layout — pass `--coords` to get precise pixel element coordinates.
