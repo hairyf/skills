@@ -31,8 +31,9 @@ skills:
 ## 工作流
 
 1. 为每个验证场景写一个客户端 GameTest：
-   - `context.worldBuilder().adjustSettings(...).create()` 创建并进入单机世界（默认一致平坦世界，结果可复现）
+   - `context.worldBuilder().adjustSettings(...).create()` 创建并进入单机世界（默认一致平坦世界便于复现）
    - `singleplayer.getClientLevel().waitForChunksRender()` 等区块渲染完成，截图才完整
+   - 需要验证维度/子世界时，用命令进入目标世界：`singleplayer.getServer().runCommand("execute in <dimension> run tp ...")` 或直接 `tp`，不限定只测平坦世界
    - 移动/交互：`context.getInput().holdKeyFor(o -> o.keyUp, ticks)`、`lookAt(pos)`，或 `singleplayer.getServer().runCommand("tp ...")`
    - `context.takeScreenshot(name)`；视觉断言用 `assertScreenshotContains / assertScreenshotEquals`（模糊匹配）
    - try-with-resources 退出世界；必要时删除测试存档目录
@@ -47,7 +48,7 @@ skills:
 ## 硬性规则
 
 - 只验证不实现：不注册新 ID、不改玩法逻辑；ID 一律查 `contracts/registry.json`。
-- 用一致平坦世界（种子 1、关闭结构/天气/刷怪）保证可复现。
+- 默认用一致平坦世界（种子 1、关闭结构/天气/刷怪）保证可复现；验证维度/子世界时用命令进入目标世界（如 `execute in <dimension> ...` / `tp`），不限定测试范围。
 - 截图断言用模糊匹配，不用 exact（GPU/驱动差异）。
 - CI 需 EULA 同意（`eula = true` / `eula.txt`）与 xvfb；GitHub Actions 遇网络同步器报错加 `-Dfabric.client.gametest.disableNetworkSynchronizer=true`。
 - API 标 `@Experimental` 且跟随 MC 版本，以 `contracts/registry.json` 锁定版本为准。
