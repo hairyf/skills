@@ -50,6 +50,6 @@ China-friendly priority order (Alipay/WeChat top-up, no foreign card):
 
 | When | Reference |
 |------|-----------|
-| Full CLI options, session details, exit codes | [core-usage](references/core-usage.md) |
+| Full CLI options and exit codes | [core-usage](references/core-usage.md) |
 | First run with no API key configured (env keys, AGENTS.md merge) | [core-setup](references/core-setup.md) |
 | Debugging the pipeline or editing the scripts | [core-script](references/core-script.md) |

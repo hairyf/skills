@@ -45,10 +45,12 @@ scripts/
 }
 ```
 
-- `loadSession` / `saveSession` read and write the state file; `latestImage` returns the most recent generated image path; `mimeOf` guesses MIME types.
+- `loadSession` / `saveSession` read and write the state file; `clearSession` deletes it (used by `--clear <name>`); `latestImage` returns the most recent generated image path; `mimeOf` guesses MIME types.
 - On a session call the provider receives `opts.sessionHistory`. After saving images, `imagine.js` appends the user turn and the model turn with the new absolute image paths, then persists the state.
 - A provider/model mismatch between calls resets the session with a warning.
 - Per-provider replay: Gemini replays all turns as `contents` (native conversation); OpenAI/relay and SiliconFlow pass the latest image as the edit input (`image` field). Without `--session`, behavior is stateless.
+- `--clear <name>` removes the session state file and exits — no prompt or API
+  key is required, so callers can clean up after a finished workflow.
 
 ## Provider channels
 

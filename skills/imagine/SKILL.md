@@ -22,6 +22,9 @@ node scripts/imagine.js "add a red balloon in the sky" -e photo.png -o edited.pn
 # Multi-step session: keep context across calls (design first, then its three views)
 node scripts/imagine.js "a cute robot mascot, front view, flat vector style" --session mascot -o design.png
 node scripts/imagine.js "draw its three views (front, side, back) from the same design" --session mascot -o views.png
+
+# Clean up the session cache when the workflow is done
+node scripts/imagine.js --clear mascot
 ```
 
 ## Model selection

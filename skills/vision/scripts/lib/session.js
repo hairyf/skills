@@ -56,6 +56,17 @@ export function saveSession(name, state) {
 }
 
 /**
+ * Delete a session state file (used by `--clear <name>`).
+ * Returns the removed path, or null when the session does not exist.
+ */
+export function clearSession(name) {
+  const file = sessionPath(name);
+  if (!fs.existsSync(file)) return null;
+  fs.unlinkSync(file);
+  return file;
+}
+
+/**
  * Keep only the most recent N turns for replay (default 10, override with
  * VISION_SESSION_MAX_TURNS). Image-heavy histories are trimmed so replays do
  * not overflow the model's context window; stored turns are never deleted.

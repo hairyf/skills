@@ -42,7 +42,8 @@ node imagine.js "..." --provider relay -m google/gemini-2.5-flash-image  # force
 | `-e, --edit <image>` | Edit an existing image (local path) |
 | `--seed <n>` | Seed for reproducible output (SiliconFlow / Gemini) |
 | `--aspect <ratio>` | Aspect ratio for Gemini: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `2:3`, `3:2`, `21:9` |
-| `-S, --session <name>` | Session continuity — preserve context across calls so later prompts can build on earlier results (default: stateless, no continuity) |
+| `--session <name>` | Session continuity — preserve context across calls so later prompts can build on earlier results (default: stateless, no continuity) |
+| `--clear <name>` | Delete the session state file (`.imagine/<name>.json`) and exit — callers use this after finishing a session |
 
 ## Sessions (`--session`)
 
@@ -61,6 +62,18 @@ node imagine.js "draw its three views (front, side, back) from the same design" 
 - **SiliconFlow** — the latest session image is passed via the `image` field; use an edit-capable model (`Qwen/Qwen-Image-Edit-2509`) for reliable continuity.
 
 A provider/model change between calls resets the session with a warning. `--session` combined with `--edit` uses the explicit `-e` image and still records the turn.
+
+When the workflow is finished, remove the session cache so the next run starts
+clean:
+
+```bash
+node imagine.js --clear mascot
+```
+
+`--clear <name>` deletes `.imagine/<name>.json` (or
+`IMAGINE_SESSION_DIR/<name>.json`) and exits without needing a prompt or API
+key; it prints the removed path, or a "session does not exist" notice when
+there is nothing to clear.
 
 ## Output and exit codes
 

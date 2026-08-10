@@ -26,19 +26,21 @@ node scripts/vision.js --url "<image url>" "[question]"
 node scripts/vision.js "<image path>" "find the search button" --coords
 node scripts/vision.js --base64 "<base64 or data:image/...;base64,... URL>" "[question]"
 node scripts/vision.js --base64 - < shot.b64 "[question]" --coords center
-node scripts/vision.js "<image path>" "[question]" -S ui    # multi-turn conversation
-node scripts/vision.js "<image 2>" "compare with the previous image" -S ui
+node scripts/vision.js "<image path>" "[question]" --session ui    # multi-turn conversation
+node scripts/vision.js "<image 2>" "compare with the previous image" --session ui
+node scripts/vision.js --clear ui                                  # remove the session cache when done
 ```
 
 Run `node scripts/vision.js --help` for the full flag list.
 
 ## Session continuity
 
-Pass the same `-S, --session <name>` to several calls to keep the conversation
+Pass the same `--session <name>` to several calls to keep the conversation
 history — previous images and replies are replayed alongside the current
 question on every call. State is stored in `.vision/<name>.json` (cwd), or
-`VISION_SESSION_DIR/<name>.json` when that env var is set. See
-[core-usage](references/core-usage.md).
+`VISION_SESSION_DIR/<name>.json` when that env var is set. When the
+conversation is finished, remove the cache with
+`node scripts/vision.js --clear <name>`. See [core-usage](references/core-usage.md).
 
 ## Output contract
 

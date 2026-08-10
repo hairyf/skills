@@ -21,4 +21,10 @@ Follow this priority order unless the user specifies otherwise:
 - The user provides a reference image and asks to edit, redraw, or combine it
 - The user needs asset variations (e.g. "another style", "transparent background", "seamless tile")
 
+## Sessions
+
+Pass `--session <name>` to keep context across calls; when the workflow is
+finished, remove the cached session state with
+`node scripts/imagine.js --clear <name>`.
+
 Save outputs to a sensible path, print the saved file path, and mention the model used. Fall back to the next model in the priority order if the preferred provider has no API key configured.

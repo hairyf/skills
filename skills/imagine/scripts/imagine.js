@@ -40,7 +40,7 @@ import {
   siliconflowGenerate,
 } from "./lib/providers.js";
 import { extractImages, resolveOutputPath } from "./lib/output.js";
-import { loadSession, saveSession } from "./lib/session.js";
+import { clearSession, loadSession, saveSession } from "./lib/session.js";
 
 /**
  * Parse CLI arguments
@@ -63,6 +63,7 @@ function parseArgs() {
     steps: 0,
     aspect: "",
     session: "",
+    clear: "",
     help: false,
   };
   const positional = [];
@@ -116,9 +117,15 @@ function parseArgs() {
       case "--aspect":
         opts.aspect = argv[++i] || "";
         break;
-      case "-S":
       case "--session":
         opts.session = argv[++i] || "";
+        break;
+      case "-S":
+        console.error('Error: the "-S" shorthand was removed - use "--session <name>" instead.');
+        process.exit(1);
+        break;
+      case "--clear":
+        opts.clear = argv[++i] || "";
         break;
       case "-h":
       case "--help":
@@ -156,10 +163,12 @@ Options:
       --seed <n>         Seed for reproducible output
       --steps <n>        Inference steps (SiliconFlow, default 20)
       --aspect <ratio>   Aspect ratio for Gemini: 1:1, 16:9, 9:16, 4:3, 3:4
-  -S, --session <name>  Session continuity: keep context across calls so later
+      --session <name>  Session continuity: keep context across calls so later
                         prompts can build on earlier results. State is stored in
                         .imagine/<name>.json (IMAGINE_SESSION_DIR overrides the
                         directory). Omit to keep the default stateless behavior.
+      --clear <name>    Delete the session state (.imagine/<name>.json) and
+                        exit. Callers use this after finishing a session.
   -h, --help             Show this help
 
 Env vars (or .env next to the script / in cwd):
@@ -176,6 +185,18 @@ async function main() {
 
   if (opts.help) {
     printHelp();
+    process.exit(0);
+  }
+
+  if (opts.clear) {
+    try {
+      const file = clearSession(opts.clear);
+      if (file) console.error(`会话 "${opts.clear}" 已清除: ${file}`);
+      else console.error(`会话 "${opts.clear}" 不存在，无需清除。`);
+    } catch (err) {
+      console.error(`Error: ${err.message}`);
+      process.exit(1);
+    }
     process.exit(0);
   }
 

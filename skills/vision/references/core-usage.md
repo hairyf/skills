@@ -72,7 +72,8 @@ Unknown models fall back to a conservative 1568px / 1.15MP limit. Tune via env v
 | `--coords [center]` | Debug mode: append the `## Coordinates` section (bbox by default; center points with `--coords center`) in original pixels |
 | `--detail [n]` | Fuller detail output; optional token cap `n` (default 1600; compact mode caps at 1000) |
 | `--rounds N` | 1 = single locate, 2 = coarse-to-fine (default), 3 = + verification round |
-| `-S, --session <name>` | Session continuity — replay this session's previous turns (images + text) together with the current question (default: stateless, no continuity) |
+| `--session <name>` | Session continuity — replay this session's previous turns (images + text) together with the current question (default: stateless, no continuity) |
+| `--clear <name>` | Delete the session state file (`.vision/<name>.json`) and exit — callers use this after finishing a session |
 | `-h, --help` | Print usage and exit |
 
 Supported local formats: jpg, jpeg, png, gif, webp, bmp.
@@ -94,15 +95,15 @@ node vision.js "chart.png" "extract all labels and values" --detail 2500
 
 Some workflows need a follow-up question that builds on images seen earlier in
 the same conversation (e.g. "describe this screenshot", then "where is the
-search bar compared to the previous one?"). Pass the same `-S <name>` to both
+search bar compared to the previous one?"). Pass the same `--session <name>` to both
 calls; omit it to keep the existing stateless behavior.
 
 ```bash
 # First call: recognize the first screenshot
-node vision.js "shot1.png" "Describe this screenshot" -S ui
+node vision.js "shot1.png" "Describe this screenshot" --session ui
 
 # Second call: same session replays shot1 + its answer alongside shot2
-node vision.js "shot2.png" "Compare the layout with the previous screenshot" -S ui
+node vision.js "shot2.png" "Compare the layout with the previous screenshot" --session ui
 ```
 
 Session state is stored in `.vision/<name>.json` (cwd), or
@@ -122,9 +123,21 @@ How history is replayed:
 - `--coords` rounds replay the same history; the final coordinates reply is
   stored as the assistant turn.
 
+When the conversation is finished, remove the cache so the next run starts
+clean:
+
+```bash
+node vision.js --clear ui
+```
+
+`--clear <name>` deletes `.vision/<name>.json` (or
+`VISION_SESSION_DIR/<name>.json`) and exits without needing an image or API
+key; it prints the removed path, or a "session does not exist" notice when
+there is nothing to clear.
+
 ## Exit codes
 
 | Code | Meaning |
 |------|---------|
-| `0` | Success, description printed to stdout (and session saved when `--session` was passed) |
-| `1` | Missing API key, missing image argument, or API failure (error printed to stderr) |
+| `0` | Success (description printed to stdout; session saved when `--session` was passed; `--clear` removes the session file) |
+| `1` | Missing API key, missing image argument, invalid session name, or API failure (error printed to stderr) |

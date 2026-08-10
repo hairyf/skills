@@ -49,7 +49,8 @@ scripts/
 
 - `isValidSessionName` / `sessionPath` / `loadSession` / `saveSession`
   validate the name (letters/digits/`-`/`_`), resolve, read, and write the
-  state file; `trimTurns` caps the replayed history
+  state file; `clearSession` deletes it (used by `--clear <name>`);
+  `trimTurns` caps the replayed history
   (default 10, `VISION_SESSION_MAX_TURNS`); `imageUrlFor` converts a stored
   source (data URL, http URL, or local path) into an API-ready image at replay
   time — missing local files yield `null` so the turn degrades to text-only.
@@ -85,7 +86,9 @@ scripts/
 - Remote URLs are downloaded so resampling works everywhere; no caller-supplied dimensions needed.
 - `--base64` materializes the payload to a temp file in the OS temp dir (cleaned up on exit), keeping `--coords` resampling unchanged.
 - Session continuity is stateless by default — history is replayed only when
-  `-S/--session` is passed; the same session name resumes the conversation.
+  `--session` is passed; the same session name resumes the conversation.
+  `--clear <name>` removes the session state file and exits — no image or API
+  key is required, so callers can clean up after a finished conversation.
 - Resampling uses `sharp` (installed on first `--coords` use into `scripts/.deps/`); the non-debug path stays zero-dependency.
 - The coordinate contract emits bbox by default and center points with `--coords center`; parsing derives the other representation (bbox ↔ center) automatically.
 - Model input limits come from a per-model table with `VISION_MAX_PIXELS` / `VISION_MAX_LONG_EDGE` env overrides, since the API does not expose them.

@@ -39,6 +39,17 @@ export function saveSession(name, state) {
 }
 
 /**
+ * Delete a session state file (used by `--clear <name>`).
+ * Returns the removed path, or null when the session does not exist.
+ */
+export function clearSession(name) {
+  const file = sessionPath(name);
+  if (!fs.existsSync(file)) return null;
+  fs.unlinkSync(file);
+  return file;
+}
+
+/**
  * Return the most recent generated image path in the session history.
  */
 export function latestImage(state) {

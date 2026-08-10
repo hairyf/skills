@@ -46,6 +46,7 @@ import { config } from "./lib/env.js";
 import { detectMime, resolveImage } from "./lib/image.js";
 import { buildPayload, requestVisionApi } from "./lib/api.js";
 import {
+  clearSession,
   imageUrlFor,
   isValidSessionName,
   loadSession,
@@ -81,6 +82,7 @@ export {
   windowAround,
 } from "./lib/coords.js";
 export {
+  clearSession,
   imageUrlFor,
   isValidSessionName,
   loadSession,
@@ -107,17 +109,19 @@ Flags:
   --detail [n]            Fuller detail output; token cap n (default 1600).
   --rounds N              1 = single locate, 2 = coarse-to-fine (default),
                           3 = + verification round.
-  -S, --session <name>    Session continuity: keep context across calls so later
+      --session <name>    Session continuity: keep context across calls so later
                           questions can build on earlier images and replies.
                           State is stored in .vision/<name>.json
                           (VISION_SESSION_DIR overrides the directory). Omit to
                           keep the default stateless behavior.
+      --clear <name>      Delete the session state (.vision/<name>.json) and
+                          exit. Callers use this after finishing a session.
   -h, --help              Show this help.
 
 Examples:
   node vision.js shot.png "Describe this image"
-  node vision.js shot.png "Describe this image" -S ui
-  node vision.js shot2.png "Compare with the previous image" -S ui
+  node vision.js shot.png "Describe this image" --session ui
+  node vision.js shot2.png "Compare with the previous image" --session ui
   node vision.js ui.png "find the login button" --coords center
   node vision.js --base64 - "find the login button" --coords center`;
 }
@@ -137,6 +141,7 @@ function parseArgs() {
     maxTokens: 1000,
     rounds: 2,
     session: "",
+    clear: "",
     help: false,
     promptParts: [],
   };
@@ -167,8 +172,13 @@ function parseArgs() {
     } else if (arg === "--rounds" && argv[i + 1] && /^\d+$/.test(argv[i + 1])) {
       opts.rounds = Math.max(1, Math.min(3, parseInt(argv[i + 1], 10)));
       i++;
-    } else if (arg === "-S" || arg === "--session") {
+    } else if (arg === "--session") {
       opts.session = argv[++i] || "";
+    } else if (arg === "-S") {
+      console.error('Error: the "-S" shorthand was removed - use "--session <name>" instead.');
+      process.exit(1);
+    } else if (arg === "--clear") {
+      opts.clear = argv[++i] || "";
     } else if (arg === "--help" || arg === "-h") {
       opts.help = true;
     } else if (arg.startsWith("--")) {
@@ -264,6 +274,18 @@ async function main() {
 
   if (opts.help) {
     console.log(usage());
+    process.exit(0);
+  }
+
+  if (opts.clear) {
+    try {
+      const file = clearSession(opts.clear);
+      if (file) console.error(`会话 "${opts.clear}" 已清除: ${file}`);
+      else console.error(`会话 "${opts.clear}" 不存在，无需清除。`);
+    } catch (err) {
+      console.error(`Error: ${err.message}`);
+      process.exit(1);
+    }
     process.exit(0);
   }
 
