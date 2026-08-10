@@ -39,7 +39,9 @@ This call produces the **design image** — the structure scheme and texture ref
 
 ## 3. Review the design
 
-The user reviews the design between the two calls. By default the AI reviews it against the prompt requirements (chunky cuboids, cube-only parts, no stacking, simple structure, 1:1). If the AI's judgment is not trusted — or the user is unhappy with the result — involve the user: show the image and ask whether the design is acceptable. Iterate the design prompt with their feedback before generating the three views.
+The user reviews the design between the two calls. By default the AI reviews it against the requirements that actually affect modeling: chunky cuboids only (no smooth curves/spheres), cube-only parts, no stacking, simple structure with the requested details, unified low-spec pixel style. Do **not** check the composition aspect ratio (e.g. strict 1:1) — the three views are the final output and composition details of the design image are irrelevant; never spend extra calls fixing the design image's framing.
+
+If the AI's judgment is not trusted — or the user is unhappy with the result — involve the user: show the image and ask whether the design is acceptable. Iterate the design prompt with their feedback before generating the three views.
 
 ## 4. Request the three views (call 2, same session)
 
@@ -61,6 +63,7 @@ node scripts/imagine.js "非常好，画出它的三视图" --session snail -o v
 - The texture grid is small (each face is only tens of pixels), so sampling colors from the reference is quick.
 - Keep the design low-spec: cuboids only, uniform 16x16 pixel grid, flat shading, restricted palette, hue shifting, checkered dithering.
 - Without session continuity (stateless generation), the three-view call would lose the design; always reuse the same `--session` name.
+- Review only what affects modeling; ignore the design image's framing/aspect ratio to avoid wasting calls before the three views.
 
 <!--
 Source references:

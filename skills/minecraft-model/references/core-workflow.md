@@ -10,7 +10,7 @@ description: End-to-end Minecraft model workflow — design the model and three-
 Follow [core-design-prompts](core-design-prompts.md):
 
 1. **Design image** — send the vanilla pre-prompt, then describe the model (one-block footprint, cube-only parts, simple structure, functional constraints, `1:1` aspect) and generate the design.
-2. **Review** — check the design against the requirements (AI by default; involve the user if the AI's judgment isn't trusted or the user is unhappy). Iterate the design prompt with feedback before continuing.
+2. **Review** — check the design against modeling-relevant requirements only: chunky cuboids, cube-only parts, no stacking, simple structure, unified pixel style (AI by default; involve the user if the AI's judgment isn't trusted or the user is unhappy). Do not review or iterate on the image framing/aspect ratio — the three views are the final output. Iterate the design prompt with feedback before continuing.
 3. **Three views** — ask for the three views in the **same session** so the model keeps the design:
 
 ```bash
