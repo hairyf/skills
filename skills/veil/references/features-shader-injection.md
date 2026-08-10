@@ -1,47 +1,45 @@
 ---
 name: features-shader-injection
-description: Inject or replace vanilla/Veil shaders — old .txt modifier format (1.20.x) and new JSON+GLSL format (1.21+).
+description: Modify vanilla or Veil shaders without replacing them — JSON injections with head()/tail(), redirects, and replaces.
 ---
 
 # Shader Injection
 
-Veil can modify vanilla (or Veil) shaders without replacing files — useful for global effects like "make all entity shaders grayscale".
+Injection definitions live in `assets/{modid}/pinwheel/shader_injection/*.json` and reference GLSL files with `void head()` / `void tail()` marker functions.
 
-## New format (1.21+, `pinwheel/shader_injection/*.json`)
+## JSON Format
 
-```json
+```json5
 {
-  "target": "minecraft:shaders/core/rendertype_solid.fsh",
-  "redirect": "mymod:grayscale.glsl",
-  "priority": 1000
+  "target": "minecraft:shaders/core/rendertype_solid.fsh",  // string or string[]
+  "redirect": "modid:example.glsl",                          // GLSL file(s); required unless "replace"
+  "replace": "modid:custom_shader",                          // replace target entirely; exclusive with redirect
+  "priority": 1000,                                          // lower = injected earlier, default 1000
+  "debug": true                                              // log parsed body and globals
 }
 ```
 
-The GLSL file uses `void head()` / `void tail()` markers; code outside them becomes globals:
+- `redirect` targets include the extension (`.fsh`, `.vsh`, ...).
+- `replace` targets omit the extension and may only target vanilla Minecraft shaders (e.g. `minecraft:shaders/core/rendertype_solid`). To replace a Veil shader, use `redirect`.
+
+## GLSL Format
+
+`void tail()` injects at the end of the target function; `void head()` at the start. Code outside the marker is treated as globals (uniforms, helper functions):
 
 ```glsl
-// globals (uniforms / helpers)
-float luminance(vec3 c) {
-    return dot(c, vec3(0.299, 0.587, 0.114));
+vec4 tintColor(vec4 color) {
+    return color * vec4(1.0, 0.5, 0.5, 1.0);
 }
 
 void tail() {
-    float gray = luminance(fragColor.rgb);
+    float gray = dot(fragColor.rgb, vec3(0.299, 0.587, 0.114));
     fragColor.rgb = vec3(gray);
 }
 ```
 
-Fields:
+At least one marker function is required — otherwise the injection is silently skipped with a warning. A `#version` line is auto-detected and applied when the target's version is lower.
 
-| Field | Meaning |
-|-------|---------|
-| `target` | shader to inject into; must include extension for `redirect` (`...rendertype_solid.fsh`), no extension for `replace` |
-| `redirect` | GLSL file(s) providing the injection code |
-| `replace` | replace the target shader entirely with another Veil program (mutually exclusive with `redirect`) |
-| `priority` | injection order, lower first (default 1000) |
-| `debug` | log parsed body/globals |
-
-Multi-target and `#version` are supported:
+## Multi-Target Example
 
 ```json
 {
@@ -49,37 +47,22 @@ Multi-target and `#version` are supported:
     "minecraft:shaders/core/rendertype_entity_solid.fsh",
     "minecraft:shaders/core/rendertype_entity_cutout.fsh"
   ],
-  "redirect": "mymod:red_overlay.glsl"
+  "redirect": "modid:multi_target.glsl"
 }
 ```
 
-## Old format (1.20.x, `pinwheel/shader_modifiers/*.txt`)
+## Migration from the Old `.txt` Format
 
-On Veil `1.0.0.x` (MC 1.20.1) the modifier files mirror the vanilla shader path:
-
-```text
-src/main/resources/assets/mymod/pinwheel/shader_modifiers/minecraft/shaders/core/rendertype_cutout.txt
-```
-
-```text
-#version 330
-#priority 1000
-
-// Inject at the end of main()
-[FUNCTION main(0) TAIL]
-fragColor.rgb = vec3(dot(fragColor.rgb, vec3(0.299, 0.587, 0.114)));
-```
-
-Directives: `#version`, `#priority`, `#include modid:path`, `#replace modid:shader`, and `[FUNCTION main(0) HEAD]` / `[FUNCTION main(0) TAIL]`.
-
-## Key points
-
-- `redirect` injects code into the existing shader; `replace` swaps it for another Veil program.
-- At least one of `head()`/`tail()` must exist in the new format, or the injection is skipped with a warning.
-- Only vanilla Minecraft shaders can be replaced; to replace a Veil shader use `redirect` with head/tail injections.
-- 1.20.x projects must use the `.txt` modifier format under `shader_modifiers/`.
+| Old | New |
+|-----|-----|
+| `#priority 1000` | `"priority": 1000` |
+| `#include modid:path` | `#include "path.glsl"` in GLSL |
+| `#replace modid:path` | `"replace": "modid:path"` |
+| `[FUNCTION main(0) HEAD]` / `[FUNCTION main(0) TAIL]` | `void head() { }` / `void tail() { }` |
+| `[OUTPUT]`, `[UNIFORM]`, `[GET_ATTRIBUTE]` | Plain globals outside markers |
+| `assets/.../shader_modifiers/*.txt` | `assets/.../shader_injection/*.json` |
 
 <!--
 Source references:
-- https://github.com/FoundryMC/Veil/wiki/ShaderInject
+- https://github.com/FoundryMC/Veil/blob/1.21/wiki/ShaderInject.md
 -->

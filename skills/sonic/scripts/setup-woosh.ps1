@@ -26,8 +26,10 @@ Step "检查 NVIDIA GPU"
 $smi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if (-not $smi) {
   Warn "未检测到 nvidia-smi。Woosh 需要 NVIDIA GPU (8G+ 显存)，请先安装/更新 NVIDIA 驱动。"
+  $gpuExtra = "cpu"
 } else {
   nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+  $gpuExtra = "cuda"
 }
 
 Step "检查 git"
@@ -56,10 +58,13 @@ if (-not (Test-Path (Join-Path $Dest ".git"))) {
   Write-Host "已存在，跳过克隆"
 }
 
+Step "复制 woosh-server.py（空闲 15 分钟自动退出）到仓库目录"
+Copy-Item (Join-Path $PSScriptRoot "woosh-server.py") (Join-Path $Dest "woosh-server.py") -Force
+
 Push-Location $Dest
 try {
   Step "安装 Python 依赖 (uv sync，首次较慢)"
-  uv sync
+  uv sync --extra $gpuExtra
 
   Step "下载模型权重 (~5GB，仅首次)"
   $ckpt = Join-Path $Dest "checkpoints"
@@ -68,7 +73,11 @@ try {
   foreach ($a in $assets) {
     $zip = Join-Path $ckpt $a
     $target = Join-Path $ckpt ($a -replace '\.zip$', '')
-    if (Test-Path $target) {
+    # 仓库自带 checkpoints/<name>/config.yaml 占位目录，必须检查真实权重文件
+    # （.safetensors / .pt），否则会误判为已下载而跳过 5GB 权重。
+    $hasWeights = Get-ChildItem -Path $target -Recurse -File -ErrorAction SilentlyContinue |
+      Where-Object { $_.Extension -in ".safetensors", ".pt", ".ckpt", ".bin" }
+    if ($hasWeights) {
       Write-Host "$a 已就绪，跳过"
       continue
     }
@@ -77,18 +86,25 @@ try {
       curl.exe -L -o $zip "https://github.com/SonyResearch/Woosh/releases/download/v1.0.0/$a"
     }
     Write-Host "解压 $a ..."
-    Expand-Archive -Path $zip -DestinationPath $ckpt -Force
+    # release zip 自带 checkpoints/ 前缀，必须解压到仓库根目录，
+    # 否则会生成 checkpoints/checkpoints/<name> 嵌套目录。
+    Expand-Archive -Path $zip -DestinationPath $Dest -Force
     Remove-Item -LiteralPath $zip -Force
   }
 
   if ($Start) {
     Step "启动 Woosh API server (http://127.0.0.1:8000)"
-    uv run uvicorn api.api_server:app --host 0.0.0.0 --port 8000
+    # 必须带 --extra cuda/cpu：uv run 默认会按无 extra 重新同步环境，
+    # 把刚装好的 CUDA torch 换回 CPU 版，导致模型跑在 CPU 上。
+    # woosh-server.py 提供空闲自动退出（WOOSH_IDLE_TIMEOUT，默认 15 分钟）。
+    uv run --extra $gpuExtra uvicorn woosh-server:app --host 0.0.0.0 --port 8000
   } else {
     Write-Host "`n安装完成。启动服务："
-    Write-Host "  cd $Dest && uv run uvicorn api.api_server:app --host 0.0.0.0 --port 8000"
+    Write-Host "  cd $Dest && uv run --extra $gpuExtra uvicorn woosh-server:app --host 0.0.0.0 --port 8000"
+    $idleMinutes = if ($env:WOOSH_IDLE_TIMEOUT) { $env:WOOSH_IDLE_TIMEOUT } else { 15 }
+    Write-Host "服务空闲 $idleMinutes 分钟后自动退出（WOOSH_IDLE_TIMEOUT=0 关闭自动退出）"
     Write-Host "然后生成音效："
-    Write-Host '  node sonic.js sfx "脚步声踩在雪地上" -o steps.flac'
+    Write-Host '  node sonic.js sfx "footsteps crunching in the snow" -o steps.flac'
   }
 } finally {
   Pop-Location

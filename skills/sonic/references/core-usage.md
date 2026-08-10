@@ -17,10 +17,10 @@ node sonic.js sfx "sound description" -o out.flac
 ## tts — text to speech
 
 ```bash
-node sonic.js tts "你好，世界" -o hi.mp3
+node sonic.js tts "Hello, world" -o hi.mp3
 node sonic.js tts "hello" -m FunAudioLLM/CosyVoice2-0.5B --voice fishaudio/fish-speech-1.5:alex
 node sonic.js tts "good morning" -m tts-1 --provider openai --speed 1.2
-node sonic.js tts "你好" --provider minimax -v female-shaonv
+node sonic.js tts "Hello" --provider minimax -v female-shaonv
 ```
 
 Provider is inferred from the model id (`FunAudioLLM/`, `fishaudio/`, `fnlp/` → siliconflow; `speech-*` → minimax; `tts-1`/`gpt-*` → openai; `eleven_*` → elevenlabs), or forced with `--provider`. Default: siliconflow `FunAudioLLM/CosyVoice2-0.5B`.
@@ -29,20 +29,20 @@ Provider is inferred from the model id (`FunAudioLLM/`, `fishaudio/`, `fnlp/` �
 
 ```bash
 # Full song with auto-written lyrics
-node sonic.js music "欢快的 1940 年代大乐队摇摆爵士" -o song.mp3 --lyrics-optimizer
+node sonic.js music "upbeat 1940s big-band swing jazz" -o song.mp3 --lyrics-optimizer
 
 # Song with provided lyrics
-node sonic.js music "治愈系民谣" -o song.mp3 --lyrics "我在夏天的海边..."
+node sonic.js music "healing folk ballad" -o song.mp3 --lyrics "by the sea in summer..."
 
 # Song with lyrics from a file (long lyrics / from the lyrics command)
-node sonic.js lyrics "毕业季的校园" > lyrics.txt
-node sonic.js music "青春民谣" -o song.mp3 --lyrics-file lyrics.txt
+node sonic.js lyrics "graduation season on campus" > lyrics.txt
+node sonic.js music "youthful folk ballad" -o song.mp3 --lyrics-file lyrics.txt
 
 # Instrumental
-node sonic.js music "史诗管弦乐，渐强" -o bgm.mp3 --instrumental
+node sonic.js music "epic orchestral, crescendo" -o bgm.mp3 --instrumental
 
 # Cover version from a reference audio URL
-node sonic.js music "爵士慵懒夜店风" -o cover.mp3 --cover https://example.com/original.mp3
+node sonic.js music "lazy jazz lounge vibe" -o cover.mp3 --cover https://example.com/original.mp3
 ```
 
 Music generation is slow (tens of seconds to minutes) — set a generous timeout.
@@ -50,7 +50,7 @@ Music generation is slow (tens of seconds to minutes) — set a generous timeout
 ## lyrics — generate lyrics (MiniMax)
 
 ```bash
-node sonic.js lyrics "夏日的海边" --mode write_full_song
+node sonic.js lyrics "summer seaside" --mode write_full_song
 ```
 
 Prints the lyrics (with `[Verse]`/`[Chorus]` structure tags) to stdout.
@@ -59,15 +59,15 @@ Prints the lyrics (with `[Verse]`/`[Chorus]` structure tags) to stdout.
 
 ```bash
 # Local Sony Woosh (default, needs the server running)
-node sonic.js sfx "脚步声踩在雪地上" -o steps.flac --steps 8
+node sonic.js sfx "footsteps crunching in the snow" -o steps.flac --steps 8
 
 # MMAudio cloud (zero install, needs MMAUDIO_API_KEY)
-node sonic.js sfx "雨声敲打木屋顶" -o rain.wav --provider mmaudio --duration 10
-node sonic.js sfx "森林鸟鸣" -o forest.wav --provider mmaudio --video https://example.com/video.mp4
+node sonic.js sfx "rain falling on a wooden roof" -o rain.wav --provider mmaudio --duration 10
+node sonic.js sfx "forest birdsong" -o forest.wav --provider mmaudio --video https://example.com/video.mp4
 
 # Local MMAudio (your GPU, free — auto-installed by the agent)
-node sonic.js sfx "雨声敲打木屋顶" -o rain.flac --provider mmaudio-local --duration 10
-node sonic.js sfx "森林鸟鸣" -o forest.flac --provider mmaudio-local --video C:\clips\forest.mp4
+node sonic.js sfx "rain falling on a wooden roof" -o rain.flac --provider mmaudio-local --duration 10
+node sonic.js sfx "forest birdsong" -o forest.flac --provider mmaudio-local --video C:\clips\forest.mp4
 
 # ElevenLabs (needs key + proxy)
 node sonic.js sfx "laser gun firing" -o laser.mp3 --provider elevenlabs --duration 3

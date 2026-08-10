@@ -178,3 +178,21 @@
 [submodule "vendor/uniwind"]
 	path = vendor/uniwind
 	url = https://github.com/uni-stack/uniwind
+[submodule "sources/fabric"]
+	path = sources/fabric
+	url = https://github.com/FabricMC/fabric-docs
+[submodule "sources/veil"]
+	path = sources/veil
+	url = https://github.com/FoundryMC/Veil
+[submodule "sources/geckolib"]
+	path = sources/geckolib
+	url = https://github.com/bernie-g/geckolib
+[submodule "sources/blockbench"]
+	path = sources/blockbench
+	url = https://github.com/JannisX11/blockbench
+[submodule "sources/blockbench-mcp"]
+	path = sources/blockbench-mcp
+	url = https://github.com/jasonjgardner/blockbench-mcp-plugin
+[submodule "sources/blockbench-docs"]
+	path = sources/blockbench-docs
+	url = https://github.com/JannisX11/blockbench.net

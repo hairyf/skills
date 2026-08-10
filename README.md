@@ -43,9 +43,6 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [vision](skills/vision) | Image recognition for agents without native vision support — send local images or remote URLs to an OpenAI-compatible vision model | Hairyf |
 | [imagine](skills/imagine) | Image, sticker, icon, and seamless-texture generation — GPT Image 2 / Nano Banana / SiliconFlow Qwen-Image / GPT Image via a zero-dependency script | Hairyf |
 | [sonic](skills/sonic) | Voice (TTS), music, lyrics, and sound-effect generation — SiliconFlow / MiniMax / OpenAI / ElevenLabs TTS, MiniMax music, local Sony Woosh SFX | Hairyf |
-| [fabric](skills/fabric) | Minecraft Fabric mod development — Loom, Yarn mappings, registries, data generation, mixins, events, client/server separation (1.20.1 stack) | Hairyf |
-| [veil](skills/veil) | Foundry Veil — GLSL shaders, post-processing pipelines, framebuffers, VHS/CRT/film effects for Minecraft Fabric/NeoForge mods | Hairyf |
-| [geckolib](skills/geckolib) | GeckoLib 4.x — animated entities/blocks/items/armor for Minecraft mods using Blockbench JSON models and keyframe animations | Hairyf |
 
 ### Skills Generated from Official Documentation
 
@@ -124,6 +121,14 @@ Generated from official documentation and fine-tuned for agent usage.
 | Skill | Description | Source |
 |-------|-------------|--------|
 | [valtio](skills/valtio) | Valtio - proxy-state library for React and Vanilla | [pmndrs/valtio](https://github.com/pmndrs/valtio) |
+
+#### Minecraft Modding
+
+| Skill | Description | Source |
+|-------|-------------|--------|
+| [fabric](skills/fabric) | Fabric — lightweight Minecraft modding toolchain (Fabric Loader, Fabric API, Loom): project setup, registries, networking, events, commands, rendering, data generation, mixins, and porting | [FabricMC/fabric-docs](https://github.com/FabricMC/fabric-docs) |
+| [veil](skills/veil) | Veil — advanced rendering for Minecraft mods (shaders, post-processing, framebuffers, deferred lights, Quasar particles, Flare effects, Necromancer animations) | [FoundryMC/Veil](https://github.com/FoundryMC/Veil) |
+| [geckolib](skills/geckolib) | GeckoLib 5 — keyframe animations for Minecraft mods (entities, blocks, items, armor, replaced entities, Molang, render states) | [bernie-g/geckolib](https://github.com/bernie-g/geckolib) |
 
 #### Architecture & Starters
 

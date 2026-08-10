@@ -1,78 +1,110 @@
 ---
-name: core-setup
-description: GeckoLib 4.x dependencies, Blockbench workflow, resource layout, and version selection.
+name: geckolib-setup
+description: Adding GeckoLib 5 to a Minecraft mod project (Fabric/Forge/NeoForge), installing the Blockbench plugin, and placing asset files.
 ---
 
-# Setup
+# GeckoLib Project Setup
 
-## Dependencies (1.19.3 → 1.20.4)
+GeckoLib 5 is distributed as a per-loader, per-Minecraft-version artifact under the `com.geckolib` group. All three major loaders (Fabric, Forge, NeoForge) use the same Cloudsmith Maven repository.
+
+## Finding the version
+
+Pick the GeckoLib version for your Minecraft version + loader from the [CurseForge page](https://www.curseforge.com/minecraft/mc-mods/geckolib) (Files tab) or [Modrinth](https://modrinth.com/mod/geckolib) (Versions tab). Filter by your Minecraft version (e.g. `1.21.11`, `26.1`) and loader.
+
+## Repository
+
+Add GeckoLib's Maven repository to the `repositories` block of `build.gradle` (NOT the one inside `publishing` or `buildscript`):
 
 ```groovy
 repositories {
-    maven {
-        name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content {
-            includeGroupByRegex("software\\.bernie.*")
-            includeGroup("com.eliotlash.mclib")
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'GeckoLib'
+                url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+            }
         }
+        filter { includeGroupAndSubgroups('com.geckolib') }
     }
 }
-
-dependencies {
-    // Fabric
-    modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
-    implementation("com.eliotlash.mclib:mclib:20")
-
-    // Forge instead:
-    // implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
-}
 ```
 
-```properties
-# gradle.properties
-geckolib_version=4.4.9    # 1.20.1 (up to 4.8.x exist; 4.5+ targets 1.20.6+)
+Kotlin DSL equivalent: `url = uri("...")` and `includeGroupAndSubgroups("com.geckolib")`.
+
+The Maven URL is intentionally not browsable (returns 404). Browse packages at `https://cloudsmith.io/~geckolib3/repos/geckolib/packages/` instead.
+
+## Dependency
+
+Declare `geckolibVersion` in `gradle.properties` (or a `geckolib` entry in `libs.versions.toml`), plus a `minecraftVersion` property, then add the artifact per loader:
+
+| Loader | Groovy dependency | Notes |
+|---|---|---|
+| Fabric | `modImplementation "com.geckolib:geckolib-fabric-${minecraftVersion}:${geckolibVersion}"` | |
+| Forge | `implementation minecraft.dependency("com.geckolib:geckolib-forge-${minecraftVersion}:${geckolibVersion}")` | Requires ForgeGradle 7 |
+| NeoForge | `implementation "com.geckolib:geckolib-neoforge-${minecraftVersion}:${geckolibVersion}"` | Optionally add `interfaceInjectionData` (see below) |
+
+With a version catalog (`libs.versions.toml`):
+
+```toml
+[versions]
+geckolib = "5.5.3"
+
+[libraries]
+geckolib = { group = "com.geckolib", name = "geckolib-fabric-26.1", version.ref = "geckolib" }
 ```
 
-`fabric.mod.json`:
+Then `modImplementation libs.geckolib`. Change `26.1` to your actual Minecraft version.
 
-```json
-{
-  "depends": {
-    "minecraft": "~1.20.1",
-    "geckolib": ">=4.4.9"
-  }
-}
+### NeoForge interface injections (optional)
+
+NeoForge ModDevGradle users can add compile-time interface injections so GeckoLib's interfaces are visible on vanilla classes:
+
+```groovy
+interfaceInjectionData "com.geckolib:geckolib-neoforge-${minecraftVersion}:${geckolibVersion}"
 ```
 
-Forge (≤1.20.4) additionally needs the SpongePowered mixin plugin: add `https://repo.spongepowered.org/repository/maven-public/` to `pluginManagement.repositories` and apply `id 'org.spongepowered.mixin' version '0.7.+'`.
+## Blockbench plugin
 
-## Blockbench workflow
+GeckoLib models are created in Blockbench with the official plugin.
 
-1. Install the GeckoLib plugin in Blockbench (File → Plugins).
-2. Create a model with entity/block/item settings, rig it, and make animations with keyframes.
-3. Export: model → `geo/<name>.geo.json`, animations → `animations/<name>.animation.json`; save texture PNG separately.
-4. Bedrock-style animation names (e.g. `move.walk`, `misc.idle`) referenced from Java must match exactly.
+1. In Blockbench: `File` → `Plugins` → `Available` tab
+2. Search for `GeckoLib`, install **GeckoLib Models & Animations**
 
-## Resource layout
+Plugin settings (in the GeckoLib plugin window's `Settings` tab):
 
-```text
-assets/<modid>/
-├── geo/entity/<name>.geo.json            # Blockbench model
-├── animations/entity/<name>.animation.json
-└── textures/entity/<name>.png
-```
+- **Auto-compute block/item particle texture** — auto-create particle texture references on export
+- **Bake in bezier keyframes** — export bezier-interpolated keyframes as discrete linear keyframes
+- **Always show display tab** — force the Display tab visible
+- **Remember file export locations** — remember export paths, stored in the `.bbmodel` file
+- **Default Mod ID** — used for exporting texture/asset paths
 
-The `GeoModel` methods (or defaulted model) must point at these paths. Subdirectories are allowed.
+Create a model via `File` → `New Project` → `GeckoLib Animated Model`. For armor choose the `Armor` model type template and only add cubes inside the `armor`-prefixed bones.
 
-## Key points
+Export:
 
-- Maven group is `software.bernie.geckolib`; artifact is `geckolib-fabric-<mc>` / `geckolib-forge-<mc>`.
-- Verify available versions via the cloudsmith maven-metadata for your MC version.
-- 1.20.5+ is fully multiloader; ≤1.20.4 pick the platform artifact.
+- Model: `File` → `Export` → `Export GeckoLib Model`
+- Animations: `File` → `Export` → `Export GeckoLib Animations`
+- Display settings: `File` → `Export` → `Export GeckoLib Display Settings`
+- Texture: right-click the texture → `Save As`
+
+## Asset file placement (GeckoLib 5)
+
+Since v5, model and animation files live under a dedicated `geckolib/` asset folder:
+
+| Asset | Path |
+|---|---|
+| Model | `assets/<modid>/geckolib/models/<path>.geo.json` |
+| Animations | `assets/<modid>/geckolib/animations/<path>.animation.json` |
+| Texture | `assets/<modid>/textures/<path>.png` |
+
+Subfolders are allowed everywhere; the `.geo` and `.animation` filename suffixes are optional in v5. `DefaultedGeoModel` classes add automatic subfolders (see [GeoModels](core-geomodels.md)).
 
 <!--
 Source references:
-- https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)
-- https://github.com/bernie-g/geckolib/wiki/Making-Your-Models-(Blockbench)
+- https://wiki.geckolib.com/docs/geckolib5/setup/fabric/quick-reference
+- https://wiki.geckolib.com/docs/geckolib5/setup/forge/quick-reference
+- https://wiki.geckolib.com/docs/geckolib5/setup/neoforge/quick-reference
+- https://wiki.geckolib.com/docs/geckolib5/setup/blockbench/the-plugin
+- https://wiki.geckolib.com/docs/geckolib5/making-models/exporting-the-files
+- https://wiki.geckolib.com/docs/geckolib5/making-models/placing-the-files
 -->

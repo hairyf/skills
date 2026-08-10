@@ -1,156 +1,85 @@
 ---
-name: features-entities
-description: Full GeckoLib 4.x custom-entity walkthrough for Fabric (Yarn) — class, model, renderer, registration, animation JSON, server triggers.
+name: geckolib-entities
+description: Creating animated entities — entity class, renderer (simple/advanced), registration, asset layout, and common issues.
 ---
 
-# Custom Animated Entity
+# GeckoLib Entities
 
-## 1. Entity class (implements `GeoEntity`)
+Steps: create the entity class → register the entity → create the renderer class → register the renderer.
+
+## Entity class
 
 ```java
-package com.mymod.entity;
+public class ExampleEntity extends PathfinderMob implements GeoEntity {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.world.World;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.util.AnimatableInstanceCache;
-import software.bernie.geckolib.util.GeckoLibUtil;
-
-public class SkinwalkerEntity extends PathAwareEntity implements GeoEntity {
-    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("misc.idle");
-    private static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
-    private static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("attack.swing");
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
-    public SkinwalkerEntity(EntityType<? extends SkinwalkerEntity> type, World world) {
-        super(type, world);
+    public ExampleEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "move", 5, state ->
-            state.isMoving() ? state.setAndContinue(WALK) : state.setAndContinue(IDLE)));
-
-        controllers.add(new AnimationController<>(this, "attack", 0, state -> {
-            if (this.handSwinging)
-                return state.setAndContinue(ATTACK);
-            state.resetCurrentAnimation();
-            return PlayState.STOP;
-        }).triggerableAnim("attack", ATTACK));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(DefaultAnimations.genericWalkIdleController());
     }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
+        return this.geoCache;
     }
 }
 ```
 
-## 2. Model
+Register the `EntityType` normally per loader (Fabric/Forge/NeoForge registration docs — vanilla modding, not GeckoLib-specific).
+
+## Renderer
+
+Simple (no custom class needed — recommended):
 
 ```java
-package com.mymod.client.model;
-
-import net.minecraft.util.Identifier;
-import software.bernie.geckolib.model.GeoModel;
-import com.mymod.entity.SkinwalkerEntity;
-
-public class SkinwalkerModel extends GeoModel<SkinwalkerEntity> {
-    private static final Identifier MODEL = new Identifier("mymod", "geo/entity/skinwalker.geo.json");
-    private static final Identifier TEXTURE = new Identifier("mymod", "textures/entity/skinwalker.png");
-    private static final Identifier ANIMATION = new Identifier("mymod", "animations/entity/skinwalker.animation.json");
-
-    @Override public Identifier getModelLocation(SkinwalkerEntity animatable) { return MODEL; }
-    @Override public Identifier getTextureLocation(SkinwalkerEntity animatable) { return TEXTURE; }
-    @Override public Identifier getAnimationFileLocation(SkinwalkerEntity animatable) { return ANIMATION; }
-}
+// Fabric
+context -> new GeoEntityRenderer<>(context, EntityRegistry.EXAMPLE_ENTITY);
+// Forge / NeoForge
+context -> new GeoEntityRenderer<>(context, EntityRegistry.EXAMPLE_ENTITY.get());
 ```
 
-Or simply `new DefaultedEntityGeoModel<>(new Identifier("mymod", "skinwalker"))` with matching paths.
-
-## 3. Renderer
+Advanced (custom class):
 
 ```java
-package com.mymod.client.renderer;
-
-import com.mymod.client.model.SkinwalkerModel;
-import com.mymod.entity.SkinwalkerEntity;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
-
-public class SkinwalkerRenderer extends GeoEntityRenderer<SkinwalkerEntity> {
-    public SkinwalkerRenderer(EntityRendererFactory.Context ctx) {
-        super(ctx, new SkinwalkerModel());
+public class ExampleEntityRenderer<R extends LivingEntityRenderState & GeoRenderState> extends GeoEntityRenderer<ExampleEntity, R> {
+    public ExampleEntityRenderer(EntityRendererProvider.Context context, EntityType<ExampleEntity> entityType) {
+        super(context, entityType);
     }
 }
 ```
 
-## 4. Register entity + renderer
+`R` is the render state type (default `LivingEntityRenderState` + `GeoRenderState`); the second generic is your entity.
 
-```java
-// Common: register the EntityType as usual (Registry.register(Registries.ENTITY_TYPE, ...))
-// Client entrypoint:
-@Override
-public void onInitializeClient() {
-    EntityRendererRegistry.register(ModEntities.SKINWALKER, SkinwalkerRenderer::new);
-}
-```
+Register the renderer with your loader's entity-renderer registration system (Fabric `EntityRendererRegistry`, NeoForge `EntityRenderersEvent.RegisterRenderers`, etc.).
 
-**Missing renderer registration = NPE crash when the entity spawns.**
+## Asset files
 
-## 5. Animation JSON
+For an entity registered as `example_entity` (automatic model):
 
-`assets/mymod/animations/entity/skinwalker.animation.json`:
+- Model: `assets/<mod_id>/geckolib/models/entity/example_entity.geo.json`
+- Animations: `assets/<mod_id>/geckolib/animations/entity/example_entity.animation.json`
+- Texture: `assets/<mod_id>/textures/entity/example_entity.png`
 
-```json
-{
-  "format_version": "1.8.0",
-  "animations": {
-    "misc.idle": {
-      "loop": true,
-      "animation_length": 2.0,
-      "bones": {
-        "head": { "rotation": { "0.0": [0, 0, 0], "1.0": [5, 0, 0], "2.0": [0, 0, 0] } }
-      }
-    },
-    "move.walk": {
-      "loop": true,
-      "animation_length": 1.0,
-      "bones": {
-        "left_leg": { "rotation": { "0.0": [0, 0, 25], "0.5": [0, 0, -25], "1.0": [0, 0, 25] } }
-      }
-    },
-    "attack.swing": {
-      "loop": false,
-      "animation_length": 0.5,
-      "bones": {
-        "right_arm": { "rotation": { "0.0": [0, 0, 0], "0.25": [-120, 0, 0], "0.5": [0, 0, 0] } }
-      }
-    }
-  }
-}
-```
+## Animating
 
-## 6. Trigger from the server
+Add `AnimationController`s in `registerControllers`; see [Animation Controllers](core-animation-controller.md).
 
-```java
-// Anywhere server-side (e.g. an attack goal)
-if (entity instanceof GeoEntity geo)
-    geo.triggerAnim("attack", "attack");
-```
+For animated projectiles, GeckoLib ships `DirectionalProjectileRenderer` in `com.geckolib.renderer.specialty` — an entity renderer that orients the model along the projectile's motion direction (useful for arrows, thrown weapons, and similar).
 
-## Key points
+## Common issues
 
-- Animation names in JSON (`misc.idle`, `move.walk`, `attack.swing`) must match the `RawAnimation` strings.
-- The attack controller uses `handSwinging` + `resetCurrentAnimation()` so swings replay reliably.
-- Renderer/model classes are client-only (keep them out of the common entrypoint).
+- **Crash on spawn: `NullPointerException ... entityrenderer is null`** — the renderer was never registered.
+- **`/summon` fails** — entity attributes were not registered.
 
 <!--
 Source references:
-- https://github.com/bernie-g/geckolib/wiki/Geckolib-Entities-(Geckolib4)
-- https://github.com/bernie-g/geckolib/wiki/Custom-GeckoLib-Entity
+- https://wiki.geckolib.com/docs/geckolib5/entities/intro
+- https://wiki.geckolib.com/docs/geckolib5/entities/the-entity-class
+- https://wiki.geckolib.com/docs/geckolib5/entities/the-entity-renderer
+- https://wiki.geckolib.com/docs/geckolib5/entities/copy-paste-templates
+- https://wiki.geckolib.com/docs/geckolib5/entities/common-issues
 -->

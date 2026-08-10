@@ -22,9 +22,10 @@ node scripts/sonic.js sfx "<sound description>" -o <out.flac> [--provider woosh|
 - The user needs a voiceover for a video/presentation, or game/UI sound effects
 - The user shares a style/genre/mood description and wants matching music or audio
 
-## 自动安装（不要要求用户手动装环境）
+## Auto-install (never ask the user to install manually)
 
-- 需要本地 **Woosh / MMAudio** 且尚未安装时，由 agent 自动运行 `scripts/setup-woosh.ps1` / `scripts/setup-mmaudio.ps1`（Windows）或对应 `.sh`（macOS/Linux），必要时加 `-Start` / `--start` 直接启动 API server；不要让用户手动安装。
-- 云端通道（SiliconFlow / MiniMax / OpenAI / ElevenLabs / MMAudio）只需 API key：用户提供 key 后，由 agent 写入 `scripts/.env`（git 已忽略）。
+- When local **Woosh / MMAudio** is needed but not installed, the agent runs `scripts/setup-woosh.ps1` / `scripts/setup-mmaudio.ps1` automatically (Windows) or the matching `.sh` (macOS/Linux), adding `-Start` / `--start` to start the API server directly; never make the user install it by hand.
+- Cloud channels (SiliconFlow / MiniMax / OpenAI / ElevenLabs / MMAudio) only need an API key: once the user provides the key, the agent writes it to `scripts/.env` (git-ignored).
+- The local MMAudio server exits by itself after 15 idle minutes (`MMAUDIO_IDLE_TIMEOUT=0` disables). If a request fails to connect, restart it with the setup script before retrying.
 
 Save outputs to a sensible path, print the saved file path, and mention the model used. Fall back down the priority order when a provider has no key configured.

@@ -33,6 +33,8 @@ MINIMAX_API_KEY=sk-xxx
 # RELAY_BASE_URL=https://api.ofox.ai/v1
 # RELAY_API_KEY=sk-xxx
 # WOOSH_URL=http://127.0.0.1:8000
+# WOOSH_IDLE_TIMEOUT=15             # local Woosh: auto-exit after N idle minutes (0 = keep running)
+# MMAUDIO_IDLE_TIMEOUT=15           # local MMAudio: auto-exit after N idle minutes (0 = keep running)
 # HTTPS_PROXY=http://127.0.0.1:7890   # required for blocked endpoints (e.g. ElevenLabs)
 # NO_PROXY=api.minimaxi.com           # hosts that bypass the proxy (long connections, direct domains)
 ```
@@ -57,9 +59,9 @@ pwsh scripts/setup-mmaudio.ps1 -Start
 ./scripts/setup-mmaudio.sh --start
 ```
 
-Woosh: clones the repo, sets up `uv`, downloads ~5GB of weights, starts at `http://127.0.0.1:8000` (serves `Woosh-DFlow` fast mode).
+Woosh: clones the repo, sets up `uv`, downloads ~5GB of weights, starts at `http://127.0.0.1:8000` (serves `Woosh-DFlow` fast mode). The server exits automatically after 15 idle minutes to free the GPU (`WOOSH_IDLE_TIMEOUT=0` disables; every `/generate` refreshes the timer).
 
-MMAudio: clones the repo, installs torch CUDA + `mmaudio-server.py`, auto-downloads weights on first start, runs at `http://127.0.0.1:8001` (`--provider mmaudio-local`).
+MMAudio: clones the repo, installs torch CUDA + `mmaudio-server.py`, auto-downloads weights on first start, runs at `http://127.0.0.1:8001` (`--provider mmaudio-local`). The server exits automatically after 15 idle minutes to free the GPU (`MMAUDIO_IDLE_TIMEOUT=0` disables; every `/generate` refreshes the timer).
 
 No local install is needed for the **MMAudio cloud** channel — just an API key: `node scripts/sonic.js sfx "..." --provider mmaudio`.
 
@@ -75,7 +77,7 @@ To make the project agent generate audio automatically, **merge the content of `
 
 ```bash
 # TTS with the cheapest configured provider
-node scripts/sonic.js tts "你好" -o verify.mp3
+node scripts/sonic.js tts "Hello" -o verify.mp3
 ```
 
 ## Key points
