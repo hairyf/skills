@@ -23,6 +23,8 @@ The underlying model has no native image understanding. When an image arrives, *
 node scripts/vision.js "<image path>" "[question]"
 node scripts/vision.js --url "<image url>" "[question]"
 node scripts/vision.js "<image path>" "find the search button" --coords
+node scripts/vision.js --base64 "<base64 or data:image/...;base64,... URL>" "[question]"
+node scripts/vision.js --base64 - < shot.b64 "[question]" --coords center
 ```
 
 Run `node scripts/vision.js --help` for the full flag list.
@@ -38,6 +40,8 @@ The reply is injected into the caller's context, so keep it compact:
 ## Gotchas
 
 - Never try to "see" an image directly — always use `scripts/vision.js`.
+- `--base64` accepts raw base64 or a full data URL; use `--base64 -` (stdin) for
+  large payloads that exceed the Windows command-line limit, e.g. screenshots.
 - Keep replies dense: they enter the caller's context, so compactness is a hard contract, not a suggestion.
 - Do not pass width/height or rescale coordinates — the script handles both automatically.
 - The first `--coords` call downloads one dependency (`sharp`, one-time); non-debug calls are zero-dependency.

@@ -7,8 +7,11 @@
  * Usage:
  *   node vision.js <image path> [question] [flags]
  *   node vision.js --url <image url> [question] [flags]
+ *   node vision.js --base64 <data|-> [question] [flags]
  *
  * Flags:
+ *   --base64 <data|->      Image as raw base64 or data:image/...;base64,... URL;
+ *                          "-" reads the payload from stdin.
  *   --coords [bbox|center]  Debug mode: append a "## Coordinates" section.
  *                           Default format is bbox; "center" emits center
  *                           points. Values are in ORIGINAL image pixels.
@@ -35,11 +38,12 @@
 
 import fs from "node:fs";
 import { spawnSync } from "node:child_process";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { config } from "./lib/env.js";
-import { resolveImage } from "./lib/image.js";
+import { detectMime, resolveImage } from "./lib/image.js";
 import { buildPayload, requestVisionApi } from "./lib/api.js";
 import {
   clampRegion,
@@ -76,8 +80,12 @@ function usage() {
   return `Usage:
   node vision.js <image> [question] [flags]
   node vision.js --url <image-url> [question] [flags]
+  node vision.js --base64 <base64-or-data-url> [question] [flags]
+  node vision.js --base64 - < shot.b64 [question] [flags]
 
 Flags:
+  --base64 <data|->        Image as raw base64 or data:image/...;base64,... URL;
+                           "-" reads the payload from stdin (for large payloads).
   --coords [bbox|center]  Debug mode: append "## Coordinates" (element boxes
                           by default, center points with "center") in ORIGINAL
                           image pixels.
@@ -88,7 +96,8 @@ Flags:
 
 Examples:
   node vision.js shot.png "Describe this image"
-  node vision.js ui.png "find the login button" --coords center`;
+  node vision.js ui.png "find the login button" --coords center
+  node vision.js --base64 - "find the login button" --coords center`;
 }
 
 /**
@@ -99,6 +108,7 @@ function parseArgs() {
   const opts = {
     imageSource: "",
     isUrl: false,
+    isBase64: false,
     coords: false, // debug mode — enabled only via --coords
     coordFormat: "bbox", // "bbox" | "center"
     detail: false,
@@ -114,6 +124,10 @@ function parseArgs() {
     if (arg === "--url" && argv[i + 1]) {
       opts.isUrl = true;
       opts.imageSource = argv[++i];
+    } else if (arg === "--base64") {
+      opts.isBase64 = true;
+      const next = argv[i + 1];
+      opts.imageSource = next && !next.startsWith("--") ? argv[++i] : "-";
     } else if (arg === "--coords") {
       opts.coords = true;
       if (argv[i + 1] === "center" || argv[i + 1] === "bbox") {
@@ -169,6 +183,54 @@ function cleanup(meta) {
   }
 }
 
+const DATA_URL_RE = /^data:image\/[a-z0-9.+-]+;base64,/i;
+
+/**
+ * Read the full stdin as a UTF-8 string (for `--base64 -`).
+ */
+function readStdin() {
+  return new Promise((resolve, reject) => {
+    let data = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => {
+      data += chunk;
+    });
+    process.stdin.on("end", () => resolve(data));
+    process.stdin.on("error", reject);
+  });
+}
+
+/**
+ * Decode a raw base64 string or data:image/...;base64,... URL into a temp
+ * image file so the rest of the pipeline can treat it as a local file.
+ * Returns the temp path.
+ */
+function materializeBase64(payload) {
+  let b64 = String(payload).trim();
+  const prefix = DATA_URL_RE.exec(b64);
+  if (prefix) b64 = b64.slice(prefix[0].length);
+  b64 = b64.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  if (!b64) {
+    throw new Error("Empty base64 input (pass data with --base64 <data>, or '-' for stdin)");
+  }
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(b64)) {
+    throw new Error("Invalid base64 input; expected raw base64 or a data:image/...;base64,... URL");
+  }
+  const buf = Buffer.from(b64, "base64");
+  if (buf.length === 0) throw new Error("Base64 input decoded to an empty image");
+  const mime = detectMime(buf);
+  const ext = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/bmp": "bmp",
+  }[mime] || "img";
+  const tmpPath = path.join(os.tmpdir(), `vision-base64-${process.pid}-${Date.now()}.${ext}`);
+  fs.writeFileSync(tmpPath, buf);
+  return tmpPath;
+}
+
 /**
  * Main entry point
  */
@@ -193,7 +255,14 @@ async function main() {
     process.exit(1);
   }
 
+  let base64TempPath = null;
   try {
+    if (opts.isBase64) {
+      const payload = opts.imageSource === "-" ? await readStdin() : opts.imageSource;
+      base64TempPath = materializeBase64(payload);
+      opts.imageSource = base64TempPath;
+      opts.isUrl = false;
+    }
     const prompt = opts.promptParts.join(" ") || "Describe this image concisely.";
 
     if (opts.coords) {
@@ -284,7 +353,15 @@ async function main() {
     }
   } catch (err) {
     console.error("Vision failed:", err.message);
-    process.exit(1);
+    process.exitCode = 1;
+  } finally {
+    if (base64TempPath) {
+      try {
+        fs.unlinkSync(base64TempPath);
+      } catch {
+        // Best-effort temp file cleanup
+      }
+    }
   }
 }
 

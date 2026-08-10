@@ -6,6 +6,13 @@ The underlying model has no native image recognition. When you encounter an imag
 node vision.js "<image path>" "Describe this image"
 ```
 
+Base64 / data URLs (e.g. screenshots from Computer Use):
+
+```
+node vision.js --base64 "<data URL>" "Describe this image"
+node vision.js --base64 - < shot.b64 "Describe this image" --coords center
+```
+
 Keep vision replies concise (no filler). For UI/debug inspection — locating elements, click targets, layout — pass `--coords` to get precise pixel element coordinates.
 
 ## Trigger scenarios

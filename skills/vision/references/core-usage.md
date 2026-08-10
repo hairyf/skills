@@ -20,6 +20,26 @@ node vision.js "path/to/image.png" "Describe this image"
 node vision.js --url "https://example.com/image.png" "Describe this image"
 ```
 
+## Base64 / data URL
+
+Pass the image as a raw base64 string or a full `data:image/...;base64,...` URL:
+
+```bash
+node vision.js --base64 "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" "Describe this image"
+node vision.js --base64 "data:image/png;base64,iVBORw0KGgo..." "find the login button" --coords center
+```
+
+Use `-` to read the payload from stdin — required for large payloads
+(screenshots, full windows) that would exceed the Windows command-line length
+limit:
+
+```bash
+node vision.js --base64 - < shot.b64 "find the login button" --coords center
+```
+
+The payload is decoded and written to a temp file (removed when the run
+finishes); supported formats are the same as local files.
+
 ## Output contract
 
 - Default: concise — 1 subject line + compact bullets covering every key element (no fixed cap; group similar elements), visible text verbatim, no filler.
@@ -47,6 +67,7 @@ Unknown models fall back to a conservative 1568px / 1.15MP limit. Tune via env v
 |----------|-------------|
 | `<image>` | Path to a local image file, or a URL when used with `--url` |
 | `--url` | Treat the first argument as a remote URL instead of a file path |
+| `--base64 <data|->` | Image as raw base64 or `data:image/...;base64,...` URL; `-` reads the payload from stdin |
 | `[question]` | Optional prompt; defaults to a concise "describe the image" request |
 | `--coords [center]` | Debug mode: append the `## Coordinates` section (bbox by default; center points with `--coords center`) in original pixels |
 | `--detail [n]` | Fuller detail output; optional token cap `n` (default 1600; compact mode caps at 1000) |
