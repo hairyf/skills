@@ -1,0 +1,46 @@
+{
+  "skill_name": "dsh-plugin-creator",
+  "evals": [
+    {
+      "id": 1,
+      "name": "private-plugin-full-flow",
+      "prompt": "帮我从 dsh-tauri/starter-plugin 做一个 DSH 会话备注插件：在当前会话显示备注输入框，保存后重新打开会话仍能读到。仓库用我的账号，名字 dsh-plugin-session-notes，默认权限即可，推送并等 CI。现在是隔离命令演练：不执行远端写入、网络访问或安装，不编造完成结果，只输出执行方案、具体命令模板和验收证据要求。已知 gh 登录账号是 example-user，工作区是无关的 skills 仓库；模板 host/client 入口、cordis.patch.yml、ModuleLoader CJS 客户端打包；CI 仅 main push/PR，Release 仅 v* tag。请覆盖真实数据流及从建仓到 CI 完成，不要求 npm 发布。",
+      "expected_output": "Private template-based new repository in a separate directory; complete session-scoped persistent flow with SDK contract inspection; local checks, intentional staging/push and exact-SHA CI verification; no automatic publication.",
+      "files": [],
+      "expectations": [
+        "Uses gh repo create with dsh-tauri/starter-plugin and private visibility, in a new checkout separate from the unrelated workspace.",
+        "Plans session-scoped persistent host/client data flow with installed SDK contract inspection, not just an input UI.",
+        "Preserves patch/package identity and ModuleLoader CJS client contract while adapting starter placeholders.",
+        "Includes local lint, typecheck, non-watch tests and build before reviewed intentional staging and push.",
+        "Verifies all applicable CI workflows and required jobs for the pushed SHA, and does not auto-tag or publish npm."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "missing-run-not-success",
+      "prompt": "DSH 插件代码已推送。隔离命令演练，不执行命令或网络访问：仓库 example-user/dsh-plugin-timer，工作分支 feature/timer，当前提交 2222222222222222222222222222222222222222，默认分支 main。ci.yml 只监听 main push 和以 main 为目标的 PR；Release 只监听 v* tag。gh run list 最新记录是 main 的旧提交 1111111111111111111111111111111111111111 成功；按当前 SHA 查询返回 []。请继续整个交付流程，给出下一步命令和真实状态，不要直接宣布完成，不要为测试发 tag。",
+      "expected_output": "Reject old green/empty results, diagnose branch trigger, use PR checks with source/merge association or authorized default-branch path, wait for applicable checks, do not publish.",
+      "files": [],
+      "expectations": [
+        "Explicitly rejects the old green main commit and empty current-SHA run list as proof of completion.",
+        "Diagnoses feature/timer not matching the main-push trigger and chooses a legitimate PR-to-main or authorized default-branch validation path.",
+        "Provides concrete PR/run wait and inspection commands, including source-head/merge-SHA association instead of insisting every PR run headSha equals the source SHA.",
+        "Does not tag, publish, force-push or weaken workflows to manufacture success; reports CI still pending/unverified."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "failed-ci-new-sha",
+      "prompt": "帮我继续 DSH 插件 CI 到完成。隔离命令演练，不执行命令或访问网络：仓库 example-user/dsh-plugin-counter，main 已推送 SHA aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa。Unit Test run 314 结论 failure，lint 成功，Windows test 失败，日志提示 stale-build guard / API snapshot diff；这是新包名替换后旧 dist 和 snapshot 还没更新。Release 是 tag-only；另有 run 200 是旧提交成功。watch 在工具超时后断开。请给出恢复步骤和具体命令模板；如果修复需要新提交，用符号 NEW_SHA 表示，说明怎样判定最终完成，别跳过失败测试或说已发布。",
+      "expected_output": "Resume run 314/read logs, inspect intended package/API changes, rebuild and review snapshots without disabling guards, rerun local checks, commit/push, validate all applicable runs at NEW_SHA and their jobs; distinguish CI and npm release.",
+      "files": [],
+      "expectations": [
+        "Resumes/inspects run 314 and failed job logs, rather than treating watcher timeout as a CI conclusion or using old run 200.",
+        "Inspects intended API/package changes, rebuilds stale output and reviews snapshot changes while preserving stale guards and failed tests.",
+        "Reruns relevant local validation and uses reviewed staging, a new commit and push for code/artifact corrections.",
+        "Rediscovers and verifies all applicable runs and required jobs against NEW_SHA, not repaired runs for the previous SHA.",
+        "Does not auto-release or claim npm publication, and states current work remains unexecuted/CI incomplete."
+      ]
+    }
+  ]
+}

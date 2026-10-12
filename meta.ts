@@ -192,6 +192,7 @@ export const manual = [
   'hairy',
   'antfu',
   'github-workflow',
+  'dsh-plugin-creator',
   'software-engineering',
   'arch-upkeep',
   'openapi-specification-v2',
