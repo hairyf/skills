@@ -37,6 +37,7 @@ Manually maintained skills reflecting personal preferences and best practices.
 | [hairy](skills/hairy) | Hairyf's preferences and best practices for web development (TypeScript, ESLint, pnpm, Vitest, etc.) | Hairyf |
 | [antfu](skills/antfu) | Anthony Fu's preferences and best practices for app/library projects (eslint, pnpm, vitest, vue, etc.) | Anthony Fu |
 | [github-workflow](skills/github-workflow) | Standard flow from task source (link or description) to creating a PR: resolve task, create branch and TODO.md, create PR against origin only | Hairyf |
+| [dsh-plugin-creator](<skills/dsh-plugin-creator>) | Create DSH plugins from dsh-tauri/starter-plugin — create a GitHub repository, implement host/client behavior, validate locally, commit/push, and wait for CI on the delivered commit | Hairyf |
 | [openapi-specification-v2](skills/openapi-specification-v2) | OpenAPI (Swagger) 2.0 — describe REST APIs (path, operation, parameter, response, schema). Use when writing, validating, or interpreting Swagger 2.0 specs | Hairyf |
 | [openapi-specification-v3.2](skills/openapi-specification-v3.2) | OpenAPI 3.2 — OAD format, paths, operations, JSON Schema 2020-12, security. Use when authoring or validating OpenAPI 3.2 documents | Hairyf |
 | [create-skill-from-repo](skills/create-skill-from-repo) | Bootstrap modular Agent Skills from any repository: clone to sources/, extract docs into references/, register in AGENTS.md | Hairyf |
